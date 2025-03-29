@@ -2,6 +2,7 @@
 import React from 'react';
 import AssetsList from '@/components/AssetsList';
 import { useAssets } from '@/hooks/useAssets';
+import { toast } from '@/hooks/use-toast';
 
 const Assets: React.FC = () => {
   const { assets, loading, error } = useAssets();
@@ -22,7 +23,12 @@ const Assets: React.FC = () => {
       <div className="text-center py-10">
         <div className="bg-red-100 text-red-700 p-4 rounded-lg inline-block">
           <p>{error}</p>
-          <button className="mt-2 text-sm underline">Reintentar</button>
+          <button 
+            className="mt-2 text-sm underline"
+            onClick={() => window.location.reload()}
+          >
+            Reintentar
+          </button>
         </div>
       </div>
     );

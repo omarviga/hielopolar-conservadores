@@ -3,17 +3,40 @@ import React, { useState } from 'react';
 import AssetCard, { Asset } from './AssetCard';
 import { Button } from '@/components/ui/button';
 import { Plus, Filter } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import NewAssetForm from './NewAssetForm';
+import { useAssets } from '@/hooks/useAssets';
 
 interface AssetsListProps {
   assets: Asset[];
 }
 
-const AssetsList: React.FC<AssetsListProps> = ({ assets }) => {
+const AssetsList: React.FC<AssetsListProps> = ({ assets: initialAssets }) => {
   const [filter, setFilter] = useState<Asset['status'] | 'all'>('all');
+  const { updateAsset } = useAssets();
+  const [isNewAssetFormOpen, setIsNewAssetFormOpen] = useState(false);
+  
+  // Usar los activos pasados como props
+  const [localAssets, setLocalAssets] = useState(initialAssets);
+  
+  // Actualizar localAssets cuando initialAssets cambia
+  React.useEffect(() => {
+    setLocalAssets(initialAssets);
+  }, [initialAssets]);
   
   const filteredAssets = filter === 'all' 
-    ? assets 
-    : assets.filter(asset => asset.status === filter);
+    ? localAssets 
+    : localAssets.filter(asset => asset.status === filter);
+    
+  const handleUpdateAsset = (id: string, updates: Partial<Asset>) => {
+    // Actualizamos tanto el estado local para la UI inmediata
+    setLocalAssets(prev => prev.map(asset => 
+      asset.id === id ? { ...asset, ...updates } : asset
+    ));
+    
+    // Como también el estado global a través del hook
+    updateAsset(id, updates);
+  };
 
   return (
     <div>
@@ -56,10 +79,20 @@ const AssetsList: React.FC<AssetsListProps> = ({ assets }) => {
             </Button>
           </div>
           
-          <Button className="bg-polar-600 hover:bg-polar-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Nuevo
-          </Button>
+          <Sheet open={isNewAssetFormOpen} onOpenChange={setIsNewAssetFormOpen}>
+            <SheetTrigger asChild>
+              <Button className="bg-polar-600 hover:bg-polar-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Nuevo
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Añadir nuevo conservador</SheetTitle>
+              </SheetHeader>
+              <NewAssetForm onComplete={() => setIsNewAssetFormOpen(false)} />
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
       
@@ -70,7 +103,10 @@ const AssetsList: React.FC<AssetsListProps> = ({ assets }) => {
             className="animate-slide-in" 
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <AssetCard asset={asset} />
+            <AssetCard 
+              asset={asset} 
+              onUpdate={handleUpdateAsset}
+            />
           </div>
         ))}
       </div>

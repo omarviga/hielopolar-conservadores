@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { Asset } from '@/components/AssetCard';
+import { toast } from '@/hooks/use-toast';
 
-// Simulated data
+// Datos iniciales para cuando no hay datos guardados en localStorage
 const mockAssets: Asset[] = [
   {
     id: 'CON-001',
@@ -97,24 +98,41 @@ const mockAssets: Asset[] = [
   }
 ];
 
+// Clave para LocalStorage
+const LOCAL_STORAGE_KEY = 'hielo-polar-assets';
+
 export const useAssets = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Cargar datos al inicio
   useEffect(() => {
-    // Simulate API call
     const fetchAssets = async () => {
       try {
-        // In a real app, this would be an API call
         setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setAssets(mockAssets);
+        
+        // Intentar cargar desde localStorage
+        const savedAssets = localStorage.getItem(LOCAL_STORAGE_KEY);
+        
+        if (savedAssets) {
+          // Si hay datos guardados, los usamos
+          setAssets(JSON.parse(savedAssets));
+          console.log('Datos cargados desde localStorage');
+        } else {
+          // Si no hay datos guardados, usamos los datos iniciales
+          console.log('No hay datos en localStorage, usando datos iniciales');
+          setAssets(mockAssets);
+          // Y los guardamos en localStorage para uso futuro
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mockAssets));
+        }
+        
         setError(null);
       } catch (err) {
+        console.error('Error al cargar datos:', err);
         setError('Error al cargar los conservadores');
-        console.error(err);
+        // En caso de error, intentamos usar los datos iniciales
+        setAssets(mockAssets);
       } finally {
         setLoading(false);
       }
@@ -123,20 +141,53 @@ export const useAssets = () => {
     fetchAssets();
   }, []);
 
+  // Guardar cambios en localStorage cada vez que assets cambia
+  useEffect(() => {
+    if (assets.length > 0 && !loading) {
+      console.log('Guardando datos en localStorage');
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(assets));
+    }
+  }, [assets, loading]);
+
+  // Función para añadir un nuevo conservador
   const addAsset = (asset: Asset) => {
-    setAssets(prev => [...prev, asset]);
+    setAssets(prev => {
+      const newAssets = [...prev, asset];
+      return newAssets;
+    });
+    
+    toast({
+      title: "Conservador añadido",
+      description: `${asset.model} (${asset.id}) ha sido añadido con éxito.`
+    });
   };
 
+  // Función para actualizar un conservador existente
   const updateAsset = (id: string, updates: Partial<Asset>) => {
-    setAssets(prev => 
-      prev.map(asset => 
+    setAssets(prev => {
+      const newAssets = prev.map(asset => 
         asset.id === id ? { ...asset, ...updates } : asset
-      )
-    );
+      );
+      return newAssets;
+    });
+    
+    toast({
+      title: "Conservador actualizado",
+      description: `La información del conservador ${id} ha sido actualizada.`
+    });
   };
 
+  // Función para eliminar un conservador
   const deleteAsset = (id: string) => {
-    setAssets(prev => prev.filter(asset => asset.id !== id));
+    setAssets(prev => {
+      const newAssets = prev.filter(asset => asset.id !== id);
+      return newAssets;
+    });
+    
+    toast({
+      title: "Conservador eliminado",
+      description: `El conservador ${id} ha sido eliminado de la base de datos.`
+    });
   };
 
   return {
