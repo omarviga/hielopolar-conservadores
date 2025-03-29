@@ -4,7 +4,8 @@ import {
   Package, 
   MapPin, 
   Calendar, 
-  AlertCircle 
+  AlertCircle,
+  Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
