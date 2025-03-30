@@ -153,12 +153,14 @@ const ClientsMap: React.FC = () => {
         </div>
       )}
       <div ref={mapContainer} className="w-full h-full rounded-lg shadow-md" />
-      <style jsx>{`
+      <style>
+        {`
         .mapboxgl-popup-content {
           border-radius: 8px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
