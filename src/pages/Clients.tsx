@@ -1,7 +1,10 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ClientsList from '@/components/ClientsList';
 import { useClients } from '@/hooks/useClients';
+import { Button } from '@/components/ui/button';
+import { MapPin } from 'lucide-react';
 
 const Clients: React.FC = () => {
   const { clients, loading, error } = useClients();
@@ -28,7 +31,20 @@ const Clients: React.FC = () => {
     );
   }
 
-  return <ClientsList clients={clients} />;
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-end">
+        <Link to="/clients/map">
+          <Button className="bg-polar-600 hover:bg-polar-700">
+            <MapPin className="h-4 w-4 mr-2" />
+            Ver en Mapa
+          </Button>
+        </Link>
+      </div>
+      
+      <ClientsList clients={clients} />
+    </div>
+  );
 };
 
 export default Clients;

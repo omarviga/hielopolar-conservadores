@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Assets from "./pages/Assets";
 import Clients from "./pages/Clients";
+import ClientsMap from "./pages/ClientsMap";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
             <Route index element={<Index />} />
             <Route path="/assets" element={<Assets />} />
             <Route path="/clients" element={<Clients />} />
+            <Route path="/clients/map" element={<ClientsMap />} />
             {/* Placeholder routes for future implementation */}
             <Route path="/maintenance" element={<NotFound />} />
             <Route path="/calendar" element={<NotFound />} />

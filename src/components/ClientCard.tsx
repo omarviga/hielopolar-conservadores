@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   User, 
@@ -20,6 +19,7 @@ export interface Client {
   activeCredit: number;
   status: 'active' | 'inactive';
   imageSrc: string;
+  coordinates?: [number, number]; // Longitud, Latitud
 }
 
 interface ClientCardProps {

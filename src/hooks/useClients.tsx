@@ -15,7 +15,8 @@ const mockClients: Client[] = [
     maxCredit: 5,
     activeCredit: 3,
     status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/men/1.jpg'
+    imageSrc: 'https://randomuser.me/api/portraits/men/1.jpg',
+    coordinates: [-70.4001, -23.6509] // Antofagasta
   },
   {
     id: 'CL-002',
@@ -28,7 +29,8 @@ const mockClients: Client[] = [
     maxCredit: 8,
     activeCredit: 5,
     status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/women/2.jpg'
+    imageSrc: 'https://randomuser.me/api/portraits/women/2.jpg',
+    coordinates: [-72.9392, -41.4718] // Puerto Montt
   },
   {
     id: 'CL-003',
@@ -41,7 +43,8 @@ const mockClients: Client[] = [
     maxCredit: 4,
     activeCredit: 2,
     status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/men/3.jpg'
+    imageSrc: 'https://randomuser.me/api/portraits/men/3.jpg',
+    coordinates: [-70.6506, -33.4372] // Santiago
   },
   {
     id: 'CL-004',
@@ -54,7 +57,8 @@ const mockClients: Client[] = [
     maxCredit: 3,
     activeCredit: 0,
     status: 'inactive',
-    imageSrc: 'https://randomuser.me/api/portraits/women/4.jpg'
+    imageSrc: 'https://randomuser.me/api/portraits/women/4.jpg',
+    coordinates: [-71.6188, -33.0472] // Valparaiso
   },
   {
     id: 'CL-005',
@@ -67,7 +71,8 @@ const mockClients: Client[] = [
     maxCredit: 6,
     activeCredit: 4,
     status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/men/5.jpg'
+    imageSrc: 'https://randomuser.me/api/portraits/men/5.jpg',
+    coordinates: [-70.1435, -20.2307] // Iquique
   },
   {
     id: 'CL-006',
@@ -80,7 +85,8 @@ const mockClients: Client[] = [
     maxCredit: 6,
     activeCredit: 6,
     status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/women/6.jpg'
+    imageSrc: 'https://randomuser.me/api/portraits/women/6.jpg',
+    coordinates: [-70.6523, -33.4372] // Santiago (ligeramente diferente para distinguir en el mapa)
   }
 ];
 
