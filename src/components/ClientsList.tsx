@@ -2,7 +2,10 @@
 import React, { useState } from 'react';
 import ClientCard, { Client } from './ClientCard';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import NewClientForm from './NewClientForm';
 
 interface ClientsListProps {
   clients: Client[];
@@ -10,17 +13,37 @@ interface ClientsListProps {
 
 const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
   const [filter, setFilter] = useState<Client['status'] | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
-  const filteredClients = filter === 'all' 
-    ? clients 
-    : clients.filter(client => client.status === filter);
+  const filteredClients = clients
+    .filter(client => filter === 'all' || client.status === filter)
+    .filter(client => 
+      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.contactPerson.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.address.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+  const activeCount = clients.filter(client => client.status === 'active').length;
+  const inactiveCount = clients.filter(client => client.status === 'inactive').length;
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-2xl font-bold">Clientes ({filteredClients.length})</h2>
         
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+            <Input 
+              type="text" 
+              placeholder="Buscar clientes..." 
+              className="pl-8"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
           <div className="flex items-center bg-white border rounded-lg overflow-hidden">
             <Button 
               variant="ghost" 
@@ -28,7 +51,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
               className={`px-3 rounded-none ${filter === 'all' ? 'bg-polar-600 text-white' : ''}`}
               onClick={() => setFilter('all')}
             >
-              Todos
+              Todos ({clients.length})
             </Button>
             <Button 
               variant="ghost"
@@ -36,7 +59,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
               className={`px-3 rounded-none ${filter === 'active' ? 'bg-polar-600 text-white' : ''}`}
               onClick={() => setFilter('active')}
             >
-              Activos
+              Activos ({activeCount})
             </Button>
             <Button 
               variant="ghost" 
@@ -44,11 +67,14 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
               className={`px-3 rounded-none ${filter === 'inactive' ? 'bg-polar-600 text-white' : ''}`}
               onClick={() => setFilter('inactive')}
             >
-              Inactivos
+              Inactivos ({inactiveCount})
             </Button>
           </div>
           
-          <Button className="bg-polar-600 hover:bg-polar-700">
+          <Button 
+            className="bg-polar-600 hover:bg-polar-700"
+            onClick={() => setIsDialogOpen(true)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Nuevo Cliente
           </Button>
@@ -69,9 +95,18 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
       
       {filteredClients.length === 0 && (
         <div className="text-center py-10">
-          <p className="text-gray-500">No hay clientes que coincidan con el filtro.</p>
+          <p className="text-gray-500">No hay clientes que coincidan con el filtro o búsqueda.</p>
         </div>
       )}
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Nuevo Cliente</DialogTitle>
+          </DialogHeader>
+          <NewClientForm onSubmit={() => setIsDialogOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
