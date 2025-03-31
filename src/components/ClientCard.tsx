@@ -25,6 +25,8 @@ export interface Client {
   status: 'active' | 'inactive';
   imageSrc: string;
   coordinates?: [number, number]; // Longitud, Latitud
+  channelType: 'tradicional' | 'moderno' | 'industrial';
+  conserverProductivity: number;
 }
 
 interface ClientCardProps {
@@ -44,6 +46,19 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const toggleClientStatus = () => {
     const newStatus = client.status === 'active' ? 'inactive' : 'active';
     updateClient(client.id, { status: newStatus });
+  };
+
+  const getChannelLabel = (channelType: 'tradicional' | 'moderno' | 'industrial') => {
+    switch (channelType) {
+      case 'tradicional':
+        return 'Canal Tradicional';
+      case 'moderno':
+        return 'Canal Moderno';
+      case 'industrial':
+        return 'Canal Industrial';
+      default:
+        return 'No especificado';
+    }
   };
 
   return (
@@ -192,18 +207,34 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
             </div>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-sm text-muted-foreground mb-2">Límite de crédito</h4>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className={`h-2 rounded-full ${creditStatus}`}
-                style={{ width: `${creditPercentage}%` }}
-              ></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="space-y-2">
+              <h4 className="font-semibold text-sm text-muted-foreground">Información comercial</h4>
+              
+              <div className="flex items-center text-sm">
+                <span className="font-medium">Canal comercial:</span>
+                <span className="ml-2">{getChannelLabel(client.channelType)}</span>
+              </div>
+              
+              <div className="flex items-center text-sm">
+                <span className="font-medium">Productividad de conservador:</span>
+                <span className="ml-2">{client.conserverProductivity}</span>
+              </div>
             </div>
-            <div className="flex justify-between text-xs mt-1">
-              <span>0</span>
-              <span>{client.activeCredit} utilizados</span>
-              <span>Máximo: {client.maxCredit}</span>
+            
+            <div>
+              <h4 className="font-semibold text-sm text-muted-foreground mb-2">Límite de crédito</h4>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full ${creditStatus}`}
+                  style={{ width: `${creditPercentage}%` }}
+                ></div>
+              </div>
+              <div className="flex justify-between text-xs mt-1">
+                <span>0</span>
+                <span>{client.activeCredit} utilizados</span>
+                <span>Máximo: {client.maxCredit}</span>
+              </div>
             </div>
           </div>
           
