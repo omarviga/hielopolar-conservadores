@@ -3,6 +3,7 @@ import React from 'react';
 import AssetsList from '@/components/AssetsList';
 import { useAssets } from '@/hooks/useAssets';
 import { toast } from '@/hooks/use-toast';
+import { Package } from 'lucide-react';
 
 const Assets: React.FC = () => {
   const { assets, loading, error } = useAssets();
@@ -34,7 +35,15 @@ const Assets: React.FC = () => {
     );
   }
 
-  return <AssetsList assets={assets} />;
+  return (
+    <div>
+      <div className="mb-6 flex items-center gap-2">
+        <Package className="h-6 w-6 text-polar-600" />
+        <h1 className="text-2xl font-bold">Gestión de Conservadores</h1>
+      </div>
+      <AssetsList assets={assets} />
+    </div>
+  );
 };
 
 export default Assets;

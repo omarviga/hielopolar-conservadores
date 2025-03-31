@@ -52,7 +52,6 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, onUpdate, onSelect }) => {
     if (onSelect) {
       onSelect(asset);
     } else {
-      // Navigate to detail view when implemented
       toast({
         title: "Función en desarrollo",
         description: `Detalles completos del conservador ${asset.id} estarán disponibles pronto.`,
@@ -62,16 +61,9 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, onUpdate, onSelect }) => {
 
   const handleManage = () => {
     if (onUpdate) {
-      // For now just toggle between available and in-use as a demonstration
-      const newStatus = asset.status === 'available' ? 'in-use' : 'available';
-      onUpdate(asset.id, { status: newStatus });
-      
-      toast({
-        title: "Estado actualizado",
-        description: `Conservador ${asset.id} ahora está ${statusLabels[newStatus].toLowerCase()}.`,
-      });
+      // Si hay selección de activo, navegar a la página de mantenimiento será más útil
+      navigate('/maintenance', { state: { assetId: asset.id } });
     } else {
-      // Navigate to management view when implemented
       toast({
         title: "Función en desarrollo",
         description: "La gestión completa estará disponible pronto.",
