@@ -7,7 +7,10 @@ export const clientFormSchema = z.object({
   phone: z.string().min(5, { message: 'El teléfono debe tener al menos 5 caracteres.' }),
   email: z.string().email({ message: 'Por favor ingresa un email válido.' }),
   address: z.string().min(5, { message: 'La dirección debe tener al menos 5 caracteres.' }),
-  maxCredit: z.coerce.number().min(1, { message: 'El límite de crédito debe ser mayor a 0.' }),
+  channelType: z.enum(['tradicional', 'moderno', 'industrial'], {
+    required_error: 'Selecciona un tipo de canal.',
+  }),
+  conserverProductivity: z.coerce.number().min(0, { message: 'La productividad debe ser un número positivo.' }),
   status: z.enum(['active', 'inactive']).default('active'),
 });
 
@@ -19,6 +22,7 @@ export const defaultValues: ClientFormValues = {
   phone: '',
   email: '',
   address: '',
-  maxCredit: 5,
+  channelType: 'tradicional',
+  conserverProductivity: 0,
   status: 'active',
 };

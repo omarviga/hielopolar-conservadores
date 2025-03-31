@@ -9,6 +9,8 @@ import Index from "./pages/Index";
 import Assets from "./pages/Assets";
 import Clients from "./pages/Clients";
 import ClientsMap from "./pages/ClientsMap";
+import Maintenance from "./pages/Maintenance";
+import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,9 +27,9 @@ const App = () => (
             <Route path="/assets" element={<Assets />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/clients/map" element={<ClientsMap />} />
+            <Route path="/maintenance" element={<Maintenance />} />
+            <Route path="/calendar" element={<Calendar />} />
             {/* Placeholder routes for future implementation */}
-            <Route path="/maintenance" element={<NotFound />} />
-            <Route path="/calendar" element={<NotFound />} />
             <Route path="/reports" element={<NotFound />} />
             <Route path="/settings" element={<NotFound />} />
           </Route>

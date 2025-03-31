@@ -10,6 +10,7 @@ import { toast } from '@/hooks/use-toast';
 import StatusToggle from '@/components/client/StatusToggle';
 import { clientFormSchema, ClientFormValues, defaultValues } from '@/components/client/ClientFormSchema';
 import { Client } from '@/components/ClientCard';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface NewClientFormProps {
   onSubmit: () => void;
@@ -42,11 +43,13 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
       email: values.email,
       address: values.address,
       assetsAssigned: 0,
-      maxCredit: values.maxCredit,
+      maxCredit: 5, // Mantenemos este campo para compatibilidad con la interfaz Client
       activeCredit: 0,
       status: values.status,
       imageSrc: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
       coordinates: coordinates,
+      channelType: values.channelType,
+      conserverProductivity: values.conserverProductivity,
     };
 
     addClient(newClient);
@@ -134,22 +137,47 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="maxCredit"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Límite de crédito (máximo de conservadores)</FormLabel>
-              <FormControl>
-                <Input type="number" min="1" max="20" {...field} />
-              </FormControl>
-              <FormDescription>
-                Máximo número de conservadores que puede tener este cliente
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="channelType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Canal Comercial</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un tipo de canal" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="tradicional">Canal Tradicional</SelectItem>
+                    <SelectItem value="moderno">Canal Moderno</SelectItem>
+                    <SelectItem value="industrial">Canal Industrial</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="conserverProductivity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Productividad del Conservador</FormLabel>
+                <FormControl>
+                  <Input type="number" min="0" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Nivel de productividad por conservador asignado
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}

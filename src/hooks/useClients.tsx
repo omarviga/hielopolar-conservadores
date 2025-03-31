@@ -17,7 +17,9 @@ const mockClients: Client[] = [
     activeCredit: 3,
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/men/1.jpg',
-    coordinates: [-70.4001, -23.6509] // Antofagasta
+    coordinates: [-70.4001, -23.6509], // Antofagasta
+    channelType: 'tradicional',
+    conserverProductivity: 85
   },
   {
     id: 'CL-002',
@@ -31,7 +33,9 @@ const mockClients: Client[] = [
     activeCredit: 5,
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/women/2.jpg',
-    coordinates: [-72.9392, -41.4718] // Puerto Montt
+    coordinates: [-72.9392, -41.4718], // Puerto Montt
+    channelType: 'moderno',
+    conserverProductivity: 92
   },
   {
     id: 'CL-003',
@@ -45,7 +49,9 @@ const mockClients: Client[] = [
     activeCredit: 2,
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/men/3.jpg',
-    coordinates: [-70.6506, -33.4372] // Santiago
+    coordinates: [-70.6506, -33.4372], // Santiago
+    channelType: 'industrial',
+    conserverProductivity: 78
   },
   {
     id: 'CL-004',
@@ -59,7 +65,9 @@ const mockClients: Client[] = [
     activeCredit: 0,
     status: 'inactive',
     imageSrc: 'https://randomuser.me/api/portraits/women/4.jpg',
-    coordinates: [-71.6188, -33.0472] // Valparaiso
+    coordinates: [-71.6188, -33.0472], // Valparaiso
+    channelType: 'moderno',
+    conserverProductivity: 65
   },
   {
     id: 'CL-005',
@@ -73,7 +81,9 @@ const mockClients: Client[] = [
     activeCredit: 4,
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/men/5.jpg',
-    coordinates: [-70.1435, -20.2307] // Iquique
+    coordinates: [-70.1435, -20.2307], // Iquique
+    channelType: 'tradicional',
+    conserverProductivity: 88
   },
   {
     id: 'CL-006',
@@ -87,7 +97,9 @@ const mockClients: Client[] = [
     activeCredit: 6,
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/women/6.jpg',
-    coordinates: [-70.6523, -33.4372] // Santiago (ligeramente diferente para distinguir en el mapa)
+    coordinates: [-70.6523, -33.4372], // Santiago (ligeramente diferente para distinguir en el mapa)
+    channelType: 'industrial',
+    conserverProductivity: 95
   }
 ];
 
