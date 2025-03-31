@@ -15,16 +15,6 @@ const ClientsMap: React.FC = () => {
   const { clients } = useClients();
   const [mapInitialized, setMapInitialized] = useState(false);
 
-  // Coordenadas de ejemplo para clientes (ya que en el mock actual no tenemos las coordenadas)
-  const clientsWithCoords: Array<Client & { coordinates?: [number, number] }> = [
-    {...clients[0], coordinates: [-70.6506, -33.4372]}, // Santiago
-    {...clients[1], coordinates: [-71.6188, -33.0472]}, // Valparaiso
-    {...clients[2], coordinates: [-70.4001, -23.6509]}, // Antofagasta
-    {...clients[3], coordinates: [-72.9392, -41.4718]}, // Puerto Montt
-    {...clients[4], coordinates: [-70.1435, -20.2307]}, // Iquique
-    {...clients[5], coordinates: [-71.2519, -29.9027]}  // La Serena
-  ];
-
   // Función para inicializar el mapa con el token de Mapbox
   const initializeMap = (token: string) => {
     if (!mapContainer.current || mapInitialized) return;
@@ -49,7 +39,7 @@ const ClientsMap: React.FC = () => {
 
       // Añadir marcadores para cada cliente
       map.current.on('load', () => {
-        clientsWithCoords.forEach((client) => {
+        clients.forEach((client) => {
           if (!client.coordinates || !map.current) return;
           
           // Crear elemento HTML para el marcador

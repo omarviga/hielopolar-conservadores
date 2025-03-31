@@ -1,25 +1,15 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useClients } from '@/hooks/useClients';
 import { toast } from '@/hooks/use-toast';
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres.' }),
-  contactPerson: z.string().min(2, { message: 'El nombre de contacto debe tener al menos 2 caracteres.' }),
-  phone: z.string().min(5, { message: 'El teléfono debe tener al menos 5 caracteres.' }),
-  email: z.string().email({ message: 'Por favor ingresa un email válido.' }),
-  address: z.string().min(5, { message: 'La dirección debe tener al menos 5 caracteres.' }),
-  maxCredit: z.coerce.number().min(1, { message: 'El límite de crédito debe ser mayor a 0.' }),
-  status: z.enum(['active', 'inactive']).default('active'),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import StatusToggle from '@/components/client/StatusToggle';
+import { clientFormSchema, ClientFormValues, defaultValues } from '@/components/client/ClientFormSchema';
+import { Client } from '@/components/ClientCard';
 
 interface NewClientFormProps {
   onSubmit: () => void;
@@ -28,32 +18,23 @@ interface NewClientFormProps {
 const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
   const { addClient } = useClients();
   
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      contactPerson: '',
-      phone: '',
-      email: '',
-      address: '',
-      maxCredit: 5,
-      status: 'active',
-    },
+  const form = useForm<ClientFormValues>({
+    resolver: zodResolver(clientFormSchema),
+    defaultValues,
   });
 
-  const handleSubmit = (values: FormValues) => {
-    // Crear un nuevo id basado en el último cliente + 1
+  const handleSubmit = (values: ClientFormValues) => {
+    // Crear un nuevo id basado en un número aleatorio
     const newId = `CL-${String(Math.floor(Math.random() * 900) + 100)}`;
     
     // Generar coordenadas aleatorias para Chile como una tupla [longitud, latitud]
-    // Ensure it's a tuple with exactly two elements
     const coordinates: [number, number] = [
       -70.6506 + (Math.random() - 0.5) * 5, 
       -33.4372 + (Math.random() - 0.5) * 10
     ];
     
     // Crear el nuevo cliente
-    const newClient = {
+    const newClient: Client = {
       id: newId,
       name: values.name,
       contactPerson: values.contactPerson,
@@ -65,7 +46,6 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
       activeCredit: 0,
       status: values.status,
       imageSrc: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
-      // Ahora coordinates es una tupla con exactamente 2 elementos
       coordinates: coordinates,
     };
 
@@ -177,24 +157,9 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Estado</FormLabel>
-              <div className="flex gap-4">
-                <Button
-                  type="button"
-                  variant={field.value === 'active' ? 'default' : 'outline'}
-                  className={field.value === 'active' ? 'bg-polar-600' : ''}
-                  onClick={() => form.setValue('status', 'active')}
-                >
-                  Activo
-                </Button>
-                <Button
-                  type="button"
-                  variant={field.value === 'inactive' ? 'default' : 'outline'}
-                  className={field.value === 'inactive' ? 'bg-red-600' : ''}
-                  onClick={() => form.setValue('status', 'inactive')}
-                >
-                  Inactivo
-                </Button>
-              </div>
+              <FormControl>
+                <StatusToggle value={field.value} onChange={field.onChange} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

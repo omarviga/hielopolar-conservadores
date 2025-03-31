@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Client } from '@/components/ClientCard';
+import { toast } from '@/hooks/use-toast';
 
 // Simulated data
 const mockClients: Client[] = [
@@ -126,10 +127,19 @@ export const useClients = () => {
         client.id === id ? { ...client, ...updates } : client
       )
     );
+    toast({
+      title: 'Cliente actualizado',
+      description: 'Los cambios han sido guardados correctamente',
+    });
   };
 
   const deleteClient = (id: string) => {
     setClients(prev => prev.filter(client => client.id !== id));
+    toast({
+      title: 'Cliente eliminado',
+      description: 'El cliente ha sido eliminado correctamente',
+      variant: 'destructive',
+    });
   };
 
   return {

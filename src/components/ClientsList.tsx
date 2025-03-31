@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import ClientCard, { Client } from './ClientCard';
 import { Button } from '@/components/ui/button';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Download, Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import NewClientForm from './NewClientForm';
 
 interface ClientsListProps {
@@ -21,6 +21,8 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
     .filter(client => 
       client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client.contactPerson.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client.address.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -78,6 +80,15 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
             <Plus className="h-4 w-4 mr-2" />
             Nuevo Cliente
           </Button>
+
+          <div className="hidden md:flex gap-2">
+            <Button variant="outline" size="icon" title="Importar clientes">
+              <Upload className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon" title="Exportar clientes">
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
       

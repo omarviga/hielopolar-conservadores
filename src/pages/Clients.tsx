@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import ClientsList from '@/components/ClientsList';
 import { useClients } from '@/hooks/useClients';
 import { Button } from '@/components/ui/button';
-import { MapPin, Users, UserCheck, UserMinus, Building } from 'lucide-react';
+import { MapPin, Users, UserCheck, UserMinus, Building, RefreshCcw } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const Clients: React.FC = () => {
@@ -26,7 +26,10 @@ const Clients: React.FC = () => {
       <div className="text-center py-10">
         <div className="bg-red-100 text-red-700 p-4 rounded-lg inline-block">
           <p>{error}</p>
-          <button className="mt-2 text-sm underline">Reintentar</button>
+          <Button className="mt-2 text-sm" variant="link">
+            <RefreshCcw className="h-4 w-4 mr-1" />
+            Reintentar
+          </Button>
         </div>
       </div>
     );
