@@ -112,11 +112,22 @@ export const useClients = () => {
     // Simulate API call
     const fetchClients = async () => {
       try {
-        // In a real app, this would be an API call
+        // Try to get clients from localStorage first
+        const savedClients = localStorage.getItem('clients');
         setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setClients(mockClients);
+        
+        if (savedClients) {
+          console.info('Datos cargados desde localStorage');
+          setClients(JSON.parse(savedClients));
+        } else {
+          // If no saved clients, use mock data
+          // Simulate network delay
+          await new Promise(resolve => setTimeout(resolve, 500));
+          setClients(mockClients);
+          // Save initial data to localStorage
+          localStorage.setItem('clients', JSON.stringify(mockClients));
+        }
+        
         setError(null);
       } catch (err) {
         setError('Error al cargar los clientes');
@@ -129,16 +140,32 @@ export const useClients = () => {
     fetchClients();
   }, []);
 
+  // Helper function to save clients to localStorage
+  const saveToLocalStorage = (updatedClients: Client[]) => {
+    try {
+      localStorage.setItem('clients', JSON.stringify(updatedClients));
+      console.info('Guardando datos en localStorage');
+    } catch (err) {
+      console.error('Error al guardar en localStorage:', err);
+    }
+  };
+
   const addClient = (client: Client) => {
-    setClients(prev => [...prev, client]);
+    const updatedClients = [...clients, client];
+    setClients(updatedClients);
+    saveToLocalStorage(updatedClients);
+    toast({
+      title: 'Cliente agregado',
+      description: `El cliente "${client.name}" ha sido añadido exitosamente.`,
+    });
   };
 
   const updateClient = (id: string, updates: Partial<Client>) => {
-    setClients(prev => 
-      prev.map(client => 
-        client.id === id ? { ...client, ...updates } : client
-      )
+    const updatedClients = clients.map(client => 
+      client.id === id ? { ...client, ...updates } : client
     );
+    setClients(updatedClients);
+    saveToLocalStorage(updatedClients);
     toast({
       title: 'Cliente actualizado',
       description: 'Los cambios han sido guardados correctamente',
@@ -146,7 +173,9 @@ export const useClients = () => {
   };
 
   const deleteClient = (id: string) => {
-    setClients(prev => prev.filter(client => client.id !== id));
+    const updatedClients = clients.filter(client => client.id !== id);
+    setClients(updatedClients);
+    saveToLocalStorage(updatedClients);
     toast({
       title: 'Cliente eliminado',
       description: 'El cliente ha sido eliminado correctamente',

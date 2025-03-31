@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -43,22 +42,20 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
       email: values.email,
       address: values.address,
       assetsAssigned: 0,
-      maxCredit: 5, // Mantenemos este campo para compatibilidad con la interfaz Client
+      maxCredit: 5,
       activeCredit: 0,
       status: values.status,
       imageSrc: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
       coordinates: coordinates,
       channelType: values.channelType,
-      conserverProductivity: values.conserverProductivity,
+      conserverProductivity: parseInt(String(values.conserverProductivity)), // Ensure it's a number
     };
 
+    // Add the new client
     addClient(newClient);
-
-    toast({
-      title: 'Cliente añadido',
-      description: `El cliente "${values.name}" ha sido añadido exitosamente.`,
-    });
-
+    
+    // Cleanup form and close dialog
+    form.reset();
     onSubmit();
   };
 
