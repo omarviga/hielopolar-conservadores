@@ -4,7 +4,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Tool } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Wrench } from 'lucide-react';
 import { addDays, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -134,11 +134,11 @@ const CalendarPage: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         {event.type === 'maintenance' ? (
-                          <Tool className="h-4 w-4 text-blue-500" />
+                          <Wrench className="h-4 w-4 text-blue-500" />
                         ) : event.type === 'inspection' ? (
                           <ClockIcon className="h-4 w-4 text-amber-500" />
                         ) : (
-                          <Tool className="h-4 w-4 text-red-500" />
+                          <Wrench className="h-4 w-4 text-red-500" />
                         )}
                         <h4 className="font-medium">{event.title}</h4>
                       </div>

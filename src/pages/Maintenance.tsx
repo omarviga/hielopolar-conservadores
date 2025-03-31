@@ -3,14 +3,14 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, Tool, ClipboardCheck, AlertTriangle, Clock } from 'lucide-react';
+import { Calendar as CalendarIcon, Wrench, ClipboardCheck, AlertTriangle, Clock } from 'lucide-react';
 
 const Maintenance: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Tool className="h-6 w-6 text-polar-600" />
+          <Wrench className="h-6 w-6 text-polar-600" />
           <h2 className="text-2xl font-bold">Mantenimiento</h2>
         </div>
         
