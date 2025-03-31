@@ -45,6 +45,13 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
     // Crear un nuevo id basado en el último cliente + 1
     const newId = `CL-${String(Math.floor(Math.random() * 900) + 100)}`;
     
+    // Generar coordenadas aleatorias para Chile como una tupla [longitud, latitud]
+    // Ensure it's a tuple with exactly two elements
+    const coordinates: [number, number] = [
+      -70.6506 + (Math.random() - 0.5) * 5, 
+      -33.4372 + (Math.random() - 0.5) * 10
+    ];
+    
     // Crear el nuevo cliente
     const newClient = {
       id: newId,
@@ -58,8 +65,8 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
       activeCredit: 0,
       status: values.status,
       imageSrc: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
-      // Coordenadas aleatorias en Chile
-      coordinates: [-70.6506 + (Math.random() - 0.5) * 5, -33.4372 + (Math.random() - 0.5) * 10],
+      // Ahora coordinates es una tupla con exactamente 2 elementos
+      coordinates: coordinates,
     };
 
     addClient(newClient);
