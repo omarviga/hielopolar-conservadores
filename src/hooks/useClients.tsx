@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Client } from '@/components/ClientCard';
+import { Client } from '@/components/client/ClientInterface';
 import { toast } from '@/hooks/use-toast';
 
 // Simulated data

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import { useClients } from '@/hooks/useClients';
-import { Client } from '@/components/ClientCard';
+import { Client } from '@/components/client/ClientInterface';
 import { clientFormSchema, ClientFormValues, defaultValues } from '@/components/client/ClientFormSchema';
 import ContactInfoFields from '@/components/client/ContactInfoFields';
 import AddressField from '@/components/client/AddressField';

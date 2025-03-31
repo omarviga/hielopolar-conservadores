@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import ClientCard, { Client } from './ClientCard';
+import ClientCard from './ClientCard';
+import { Client } from './client/ClientInterface';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Download, Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
