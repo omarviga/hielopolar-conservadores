@@ -37,7 +37,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
         <div className="p-4">
           <ContactInfo client={client} />
           <CreditProgress client={client} />
-          <ClientActions onShowDetails={() => setShowDetails(true)} />
+          <ClientActions onShowDetails={() => setShowDetails(true)} client={client} />
         </div>
       </div>
 
@@ -59,7 +59,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
             <DetailCreditInfo client={client} />
           </div>
           
-          <ClientDetailActions onClose={() => setShowDetails(false)} />
+          <ClientDetailActions onClose={() => setShowDetails(false)} client={client} />
         </DialogContent>
       </Dialog>
     </>

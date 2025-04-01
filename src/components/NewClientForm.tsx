@@ -2,7 +2,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form } from '@/components/ui/form';
 import { useClients } from '@/hooks/useClients';
 import { Client } from '@/components/client/ClientInterface';
 import { clientFormSchema, ClientFormValues, defaultValues } from '@/components/client/ClientFormSchema';
@@ -11,6 +10,7 @@ import AddressField from '@/components/client/AddressField';
 import BusinessInfoFields from '@/components/client/BusinessInfoFields';
 import StatusToggle from '@/components/client/StatusToggle';
 import FormActions from '@/components/client/FormActions';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 
 interface NewClientFormProps {
   onSubmit: () => void;
@@ -49,7 +49,7 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
       imageSrc: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
       coordinates: coordinates,
       channelType: values.channelType,
-      conserverProductivity: parseInt(String(values.conserverProductivity)), // Ensure it's a number
+      conserverProductivity: parseInt(String(values.conserverProductivity)),
     };
 
     // Add the new client
@@ -68,17 +68,17 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
         <BusinessInfoFields form={form} />
         
         <div className="mt-4">
-          <Form.FormField
+          <FormField
             control={form.control}
             name="status"
             render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Estado</Form.FormLabel>
-                <Form.FormControl>
+              <FormItem>
+                <FormLabel>Estado</FormLabel>
+                <FormControl>
                   <StatusToggle value={field.value} onChange={field.onChange} />
-                </Form.FormControl>
-                <Form.FormMessage />
-              </Form.FormItem>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
           />
         </div>
