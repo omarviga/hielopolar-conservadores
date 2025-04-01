@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Stats from './Stats';
 import { 
@@ -11,7 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Asset } from './AssetCard';
-import { Client } from './ClientCard';
+import { Client } from './client/ClientInterface';
 
 interface DashboardProps {
   recentAssets: Asset[];
