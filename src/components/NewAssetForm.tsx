@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -9,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Asset } from './AssetCard';
 import { useAssets } from '@/hooks/useAssets';
 import { toast } from '@/hooks/use-toast';
+import { generateUniqueAssetId } from '@/services/assetService';
 
 const formSchema = z.object({
   model: z.string().min(1, "El modelo es requerido"),
@@ -42,15 +42,8 @@ const NewAssetForm: React.FC<NewAssetFormProps> = ({ onComplete }) => {
   
   const onSubmit = (data: FormValues) => {
     try {
-      // Generar un nuevo ID único basado en los existentes
-      const existingIds = assets.map(asset => asset.id);
-      let newId = '';
-      let counter = assets.length + 1;
-      
-      do {
-        newId = `CON-${String(counter).padStart(3, '0')}`;
-        counter++;
-      } while (existingIds.includes(newId));
+      // Generar un nuevo ID único
+      const newId = generateUniqueAssetId(assets);
       
       // Usar una imagen por defecto si no se proporciona una
       const imageSrc = data.imageSrc || 'https://images.unsplash.com/photo-1562184552-997c461abbe6?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60';
