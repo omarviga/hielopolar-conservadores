@@ -117,7 +117,7 @@ export const useClients = () => {
         setLoading(true);
         
         if (savedClients) {
-          console.info('Datos cargados desde localStorage');
+          console.log('Datos cargados desde localStorage:', savedClients);
           setClients(JSON.parse(savedClients));
         } else {
           // If no saved clients, use mock data
@@ -126,6 +126,7 @@ export const useClients = () => {
           setClients(mockClients);
           // Save initial data to localStorage
           localStorage.setItem('clients', JSON.stringify(mockClients));
+          console.log('Datos iniciales guardados en localStorage');
         }
         
         setError(null);
@@ -144,7 +145,7 @@ export const useClients = () => {
   const saveToLocalStorage = (updatedClients: Client[]) => {
     try {
       localStorage.setItem('clients', JSON.stringify(updatedClients));
-      console.info('Guardando datos en localStorage');
+      console.log('Guardando datos en localStorage:', updatedClients);
     } catch (err) {
       console.error('Error al guardar en localStorage:', err);
     }

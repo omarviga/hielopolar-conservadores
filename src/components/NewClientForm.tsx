@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -52,6 +51,8 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
       conserverProductivity: parseInt(String(values.conserverProductivity)),
     };
 
+    console.log('Adding new client:', newClient);
+    
     // Add the new client
     addClient(newClient);
     

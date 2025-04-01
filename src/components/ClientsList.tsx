@@ -29,6 +29,11 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
 
   const activeCount = clients.filter(client => client.status === 'active').length;
   const inactiveCount = clients.filter(client => client.status === 'inactive').length;
+  
+  const handleNewClientSubmit = () => {
+    console.log('Client form submitted, closing dialog');
+    setIsDialogOpen(false);
+  };
 
   return (
     <div>
@@ -116,7 +121,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
           <DialogHeader>
             <DialogTitle>Nuevo Cliente</DialogTitle>
           </DialogHeader>
-          <NewClientForm onSubmit={() => setIsDialogOpen(false)} />
+          <NewClientForm onSubmit={handleNewClientSubmit} />
         </DialogContent>
       </Dialog>
     </div>
