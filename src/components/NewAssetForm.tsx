@@ -68,6 +68,8 @@ const NewAssetForm: React.FC<NewAssetFormProps> = ({ onComplete }) => {
         imageSrc
       };
       
+      console.log('Creando nuevo conservador:', newAsset);
+      
       // Añadir a la lista de activos
       addAsset(newAsset);
       

@@ -117,11 +117,12 @@ export const useAssets = () => {
         
         if (savedAssets) {
           // Si hay datos guardados, los usamos
-          setAssets(JSON.parse(savedAssets));
-          console.log('Datos cargados desde localStorage');
+          const parsedAssets = JSON.parse(savedAssets);
+          setAssets(parsedAssets);
+          console.log('Datos de conservadores cargados desde localStorage:', parsedAssets);
         } else {
           // Si no hay datos guardados, usamos los datos iniciales
-          console.log('No hay datos en localStorage, usando datos iniciales');
+          console.log('No hay datos de conservadores en localStorage, usando datos iniciales');
           setAssets(mockAssets);
           // Y los guardamos en localStorage para uso futuro
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mockAssets));
@@ -129,7 +130,7 @@ export const useAssets = () => {
         
         setError(null);
       } catch (err) {
-        console.error('Error al cargar datos:', err);
+        console.error('Error al cargar datos de conservadores:', err);
         setError('Error al cargar los conservadores');
         // En caso de error, intentamos usar los datos iniciales
         setAssets(mockAssets);
@@ -141,18 +142,26 @@ export const useAssets = () => {
     fetchAssets();
   }, []);
 
-  // Guardar cambios en localStorage cada vez que assets cambia
-  useEffect(() => {
-    if (assets.length > 0 && !loading) {
-      console.log('Guardando datos en localStorage');
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(assets));
+  // Función para guardar en localStorage
+  const saveToLocalStorage = (updatedAssets: Asset[]) => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedAssets));
+      console.log('Guardando conservadores en localStorage:', updatedAssets);
+    } catch (err) {
+      console.error('Error al guardar conservadores en localStorage:', err);
+      toast({
+        title: "Error",
+        description: "No se pudieron guardar los cambios",
+        variant: "destructive"
+      });
     }
-  }, [assets, loading]);
+  };
 
   // Función para añadir un nuevo conservador
   const addAsset = (asset: Asset) => {
     setAssets(prev => {
       const newAssets = [...prev, asset];
+      saveToLocalStorage(newAssets);
       return newAssets;
     });
     
@@ -168,6 +177,7 @@ export const useAssets = () => {
       const newAssets = prev.map(asset => 
         asset.id === id ? { ...asset, ...updates } : asset
       );
+      saveToLocalStorage(newAssets);
       return newAssets;
     });
     
@@ -181,6 +191,7 @@ export const useAssets = () => {
   const deleteAsset = (id: string) => {
     setAssets(prev => {
       const newAssets = prev.filter(asset => asset.id !== id);
+      saveToLocalStorage(newAssets);
       return newAssets;
     });
     

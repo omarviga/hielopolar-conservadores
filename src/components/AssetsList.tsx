@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AssetCard, { Asset } from './AssetCard';
 import { Button } from '@/components/ui/button';
-import { Plus, Filter, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import NewAssetForm from './NewAssetForm';
 import { useAssets } from '@/hooks/useAssets';
@@ -25,8 +25,9 @@ const AssetsList: React.FC<AssetsListProps> = ({ assets: initialAssets }) => {
   const [localAssets, setLocalAssets] = useState(initialAssets);
   
   // Actualizar localAssets cuando initialAssets cambia
-  React.useEffect(() => {
+  useEffect(() => {
     setLocalAssets(initialAssets);
+    console.log('Lista de conservadores actualizada:', initialAssets);
   }, [initialAssets]);
   
   // Filtrar por estado y búsqueda de texto
@@ -53,6 +54,11 @@ const AssetsList: React.FC<AssetsListProps> = ({ assets: initialAssets }) => {
     
     // Como también el estado global a través del hook
     updateAsset(id, updates);
+    console.log(`Conservador ${id} actualizado con:`, updates);
+  };
+
+  const handleNewAssetComplete = () => {
+    setIsNewAssetFormOpen(false);
   };
 
   const handleViewDetails = (asset: Asset) => {
@@ -125,7 +131,7 @@ const AssetsList: React.FC<AssetsListProps> = ({ assets: initialAssets }) => {
               <SheetHeader>
                 <SheetTitle>Añadir nuevo conservador</SheetTitle>
               </SheetHeader>
-              <NewAssetForm onComplete={() => setIsNewAssetFormOpen(false)} />
+              <NewAssetForm onComplete={handleNewAssetComplete} />
             </SheetContent>
           </Sheet>
         </div>
