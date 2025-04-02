@@ -39,18 +39,28 @@ export const parseImportedClients = (file: File): Promise<Partial<Client>[]> => 
       skipEmptyLines: true,
       complete: (results) => {
         try {
-          const importedClients = results.data.map((row: any) => ({
-            name: row.name || row.nombre || '',
-            contactPerson: row.contactPerson || row.contacto || '',
-            phone: row.phone || row.telefono || '',
-            email: row.email || row.correo || '',
-            address: row.address || row.direccion || '',
-            channelType: mapSpanishToChannelType(
-              row.channelType || row.canal || 'tradicional'
-            ),
-            conserverProductivity: parseInt(row.conserverProductivity || row.productividad || '0'),
-            status: row.status === 'Activo' ? 'active' : 'inactive',
-          }));
+          const importedClients: Partial<Client>[] = results.data.map((row: any) => {
+            // Determine status value
+            let statusValue: 'active' | 'inactive';
+            if (row.status === 'Activo' || row.status === 'active') {
+              statusValue = 'active';
+            } else {
+              statusValue = 'inactive';
+            }
+
+            return {
+              name: row.name || row.nombre || '',
+              contactPerson: row.contactPerson || row.contacto || '',
+              phone: row.phone || row.telefono || '',
+              email: row.email || row.correo || '',
+              address: row.address || row.direccion || '',
+              channelType: mapSpanishToChannelType(
+                row.channelType || row.canal || 'tradicional'
+              ),
+              conserverProductivity: parseInt(row.conserverProductivity || row.productividad || '0'),
+              status: statusValue,
+            };
+          });
           
           resolve(importedClients);
         } catch (error) {

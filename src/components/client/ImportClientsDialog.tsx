@@ -6,7 +6,7 @@ import { useClients } from '@/hooks/useClients';
 import { parseImportedClients } from '@/utils/clientsExportUtils';
 import { Client } from './ClientInterface';
 import { toast } from '@/hooks/use-toast';
-import { InfoCircle, Upload, AlertTriangle } from 'lucide-react';
+import { Info, Upload, AlertTriangle } from 'lucide-react';
 
 interface ImportClientsDialogProps {
   open: boolean;
@@ -75,7 +75,7 @@ const ImportClientsDialog: React.FC<ImportClientsDialogProps> = ({ open, onOpenC
           maxCredit: 5,
           activeCredit: 0,
           status: clientData.status as 'active' | 'inactive' || 'active',
-          imageSrc: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
+          imageSrc: `https://randomuser.me/api/portraits//${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
           coordinates: coordinates,
           channelType: clientData.channelType as 'tradicional' | 'moderno' | 'industrial' || 'tradicional',
           conserverProductivity: clientData.conserverProductivity || 0,
@@ -118,7 +118,7 @@ const ImportClientsDialog: React.FC<ImportClientsDialogProps> = ({ open, onOpenC
         
         <div className="space-y-4">
           <div className="flex items-center p-4 bg-blue-50 text-blue-700 rounded-md">
-            <InfoCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+            <Info className="h-5 w-5 mr-2 flex-shrink-0" />
             <p className="text-sm">
               El archivo CSV debe contener columnas con los nombres: name, contactPerson, phone, email, address, channelType, etc.
             </p>
