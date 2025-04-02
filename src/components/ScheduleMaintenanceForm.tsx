@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -57,10 +56,12 @@ const ScheduleMaintenanceForm: React.FC<ScheduleMaintenanceFormProps> = ({
   
   const onSubmit = (data: FormValues) => {
     // Crear el objeto de datos de mantenimiento
+    // Ensure all required fields are passed
     const maintenanceData: MaintenanceFormData = {
       ...data,
       assetId,
-      assetModel
+      assetModel,
+      // date is already required in FormValues so we don't need to explicitly set it here
     };
     
     // Enviar los datos al componente padre
