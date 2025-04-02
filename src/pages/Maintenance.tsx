@@ -6,20 +6,151 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar as CalendarIcon, Wrench, ClipboardCheck, AlertTriangle, Clock, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import ScheduleMaintenanceForm, { MaintenanceFormData } from '@/components/ScheduleMaintenanceForm';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
+// Interfaz para los datos de mantenimiento
+interface MaintenanceData {
+  id: string;
+  title: string;
+  client: string;
+  asset: string;
+  assetId?: string;
+  date: string;
+  status: 'active' | 'scheduled' | 'completed' | 'delayed';
+  technician: string;
+  type?: string;
+  notes?: string;
+}
 
 const Maintenance: React.FC = () => {
-  const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceCardProps | null>(null);
+  const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceData | null>(null);
+  const [showMaintenanceForm, setShowMaintenanceForm] = useState(false);
+  const [maintenances, setMaintenances] = useState<MaintenanceData[]>([
+    {
+      id: "001",
+      title: "Mantenimiento #001",
+      client: "Pescados Norte",
+      asset: "Conservador #101",
+      date: "12/06/2023",
+      status: "active",
+      technician: "Carlos Méndez"
+    },
+    {
+      id: "002",
+      title: "Mantenimiento #002",
+      client: "Pescados Norte",
+      asset: "Conservador #102",
+      date: "12/06/2023",
+      status: "active",
+      technician: "Carlos Méndez"
+    },
+    {
+      id: "003",
+      title: "Mantenimiento #003",
+      client: "Pescados Norte",
+      asset: "Conservador #103",
+      date: "12/06/2023",
+      status: "active",
+      technician: "Carlos Méndez"
+    },
+    {
+      id: "004",
+      title: "Mantenimiento #004",
+      client: "Mariscos Sur",
+      asset: "Conservador #104",
+      date: "15/06/2023",
+      status: "scheduled",
+      technician: "Andrea Gómez"
+    },
+    {
+      id: "005",
+      title: "Mantenimiento #005",
+      client: "Mariscos Sur",
+      asset: "Conservador #105",
+      date: "15/06/2023",
+      status: "scheduled",
+      technician: "Andrea Gómez"
+    },
+    {
+      id: "006",
+      title: "Mantenimiento #006",
+      client: "Hielos Centro",
+      asset: "Conservador #106",
+      date: "10/06/2023",
+      status: "completed",
+      technician: "Pedro Soto"
+    },
+    {
+      id: "007",
+      title: "Mantenimiento #007",
+      client: "Hielos Centro",
+      asset: "Conservador #107",
+      date: "10/06/2023",
+      status: "completed",
+      technician: "Pedro Soto"
+    },
+    {
+      id: "008",
+      title: "Mantenimiento #008",
+      client: "Hielos Centro",
+      asset: "Conservador #108",
+      date: "10/06/2023",
+      status: "completed",
+      technician: "Pedro Soto"
+    },
+    {
+      id: "009",
+      title: "Mantenimiento #009",
+      client: "Distribuidora Pacífico",
+      asset: "Conservador #109",
+      date: "01/06/2023",
+      status: "delayed",
+      technician: "José Flores"
+    }
+  ]);
 
-  const handleShowDetails = (maintenance: MaintenanceCardProps) => {
+  const handleShowDetails = (maintenance: MaintenanceData) => {
     setSelectedMaintenance(maintenance);
   };
 
   const handleScheduleMaintenance = () => {
-    toast({
-      title: "Programar mantenimiento",
-      description: "Funcionalidad en desarrollo",
-    });
+    setShowMaintenanceForm(true);
   };
+
+  const handleMaintenanceFormComplete = (data?: MaintenanceFormData) => {
+    setShowMaintenanceForm(false);
+    
+    if (data) {
+      // Generar un ID para el nuevo mantenimiento
+      const newId = String(maintenances.length + 1).padStart(3, '0');
+      
+      // Crear un nuevo mantenimiento con los datos del formulario
+      const newMaintenance: MaintenanceData = {
+        id: newId,
+        title: `Mantenimiento #${newId}`,
+        client: "Cliente Pendiente", // En un caso real, esto vendría del activo o se seleccionaría
+        asset: data.assetModel,
+        assetId: data.assetId,
+        date: format(data.date, 'dd/MM/yyyy'),
+        status: "scheduled",
+        technician: data.technician,
+        type: data.type,
+        notes: data.notes
+      };
+      
+      // Añadir el nuevo mantenimiento a la lista
+      setMaintenances(prev => [...prev, newMaintenance]);
+    }
+  };
+
+  // Filtrar mantenimientos por estado para cada pestaña
+  const activeMaintenances = maintenances.filter(m => m.status === "active");
+  const scheduledMaintenances = maintenances.filter(m => m.status === "scheduled");
+  const completedMaintenances = maintenances.filter(m => m.status === "completed");
+  const delayedMaintenances = maintenances.filter(m => m.status === "delayed");
 
   return (
     <div className="space-y-6">
@@ -45,15 +176,10 @@ const Maintenance: React.FC = () => {
         
         <TabsContent value="active" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map(i => (
+            {activeMaintenances.map(maintenance => (
               <MaintenanceCard 
-                key={i}
-                title={`Mantenimiento #00${i}`}
-                client="Pescados Norte"
-                asset={`Conservador #${100 + i}`}
-                date="12/06/2023"
-                status="active"
-                technician="Carlos Méndez"
+                key={maintenance.id}
+                maintenance={maintenance}
                 onViewDetails={handleShowDetails}
               />
             ))}
@@ -62,15 +188,10 @@ const Maintenance: React.FC = () => {
         
         <TabsContent value="scheduled" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[4, 5].map(i => (
+            {scheduledMaintenances.map(maintenance => (
               <MaintenanceCard 
-                key={i}
-                title={`Mantenimiento #00${i}`}
-                client="Mariscos Sur"
-                asset={`Conservador #${100 + i}`}
-                date="15/06/2023"
-                status="scheduled"
-                technician="Andrea Gómez"
+                key={maintenance.id}
+                maintenance={maintenance}
                 onViewDetails={handleShowDetails}
               />
             ))}
@@ -79,15 +200,10 @@ const Maintenance: React.FC = () => {
         
         <TabsContent value="completed" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[6, 7, 8].map(i => (
+            {completedMaintenances.map(maintenance => (
               <MaintenanceCard 
-                key={i}
-                title={`Mantenimiento #00${i}`}
-                client="Hielos Centro"
-                asset={`Conservador #${100 + i}`}
-                date="10/06/2023"
-                status="completed"
-                technician="Pedro Soto"
+                key={maintenance.id}
+                maintenance={maintenance}
                 onViewDetails={handleShowDetails}
               />
             ))}
@@ -96,15 +212,13 @@ const Maintenance: React.FC = () => {
         
         <TabsContent value="delayed" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <MaintenanceCard 
-              title="Mantenimiento #009"
-              client="Distribuidora Pacífico"
-              asset="Conservador #109"
-              date="01/06/2023"
-              status="delayed"
-              technician="José Flores"
-              onViewDetails={handleShowDetails}
-            />
+            {delayedMaintenances.map(maintenance => (
+              <MaintenanceCard 
+                key={maintenance.id}
+                maintenance={maintenance}
+                onViewDetails={handleShowDetails}
+              />
+            ))}
           </div>
         </TabsContent>
       </Tabs>
@@ -141,6 +255,16 @@ const Maintenance: React.FC = () => {
                   <span className="text-muted-foreground">Técnico:</span>
                   <span className="font-medium">{selectedMaintenance.technician}</span>
                 </div>
+                {selectedMaintenance.type && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Tipo:</span>
+                    <span className="font-medium">
+                      {selectedMaintenance.type === 'preventive' ? 'Preventivo' : 
+                       selectedMaintenance.type === 'corrective' ? 'Correctivo' : 
+                       'Inspección'}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Estado:</span>
                   <span className={`font-medium px-2 py-1 rounded-full text-xs ${
@@ -157,6 +281,13 @@ const Maintenance: React.FC = () => {
                 </div>
               </div>
 
+              {selectedMaintenance.notes && (
+                <div className="pt-4 border-t">
+                  <h4 className="font-medium mb-1">Notas:</h4>
+                  <p className="text-sm">{selectedMaintenance.notes}</p>
+                </div>
+              )}
+
               <div className="pt-4 flex justify-end border-t">
                 <Button 
                   onClick={() => setSelectedMaintenance(null)}
@@ -168,27 +299,31 @@ const Maintenance: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
+      
+      {/* Sheet para programar mantenimiento */}
+      <Sheet open={showMaintenanceForm} onOpenChange={setShowMaintenanceForm}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Programar Mantenimiento</SheetTitle>
+          </SheetHeader>
+          <ScheduleMaintenanceForm 
+            assetId="NUEVO" 
+            assetModel="Nuevo Conservador"
+            onComplete={handleMaintenanceFormComplete} 
+          />
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
 
 interface MaintenanceCardProps {
-  title: string;
-  client: string;
-  asset: string;
-  date: string;
-  status: 'active' | 'scheduled' | 'completed' | 'delayed';
-  technician: string;
-  onViewDetails?: (maintenance: MaintenanceCardProps) => void;
+  maintenance: MaintenanceData;
+  onViewDetails?: (maintenance: MaintenanceData) => void;
 }
 
 const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
-  title,
-  client,
-  asset,
-  date,
-  status,
-  technician,
+  maintenance,
   onViewDetails,
 }) => {
   const statusConfig = {
@@ -216,24 +351,17 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
 
   const handleViewDetails = () => {
     if (onViewDetails) {
-      onViewDetails({
-        title,
-        client,
-        asset,
-        date,
-        status,
-        technician,
-      });
+      onViewDetails(maintenance);
     }
   };
 
   return (
     <Card className="overflow-hidden">
-      <div className={`px-6 py-3 ${status === 'active' ? 'bg-blue-50' : status === 'scheduled' ? 'bg-amber-50' : status === 'completed' ? 'bg-green-50' : 'bg-red-50'}`}>
+      <div className={`px-6 py-3 ${maintenance.status === 'active' ? 'bg-blue-50' : maintenance.status === 'scheduled' ? 'bg-amber-50' : maintenance.status === 'completed' ? 'bg-green-50' : 'bg-red-50'}`}>
         <div className="flex justify-between items-center">
-          <h3 className="font-semibold">{title}</h3>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusConfig[status].color}`}>
-            {statusConfig[status].text}
+          <h3 className="font-semibold">{maintenance.title}</h3>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusConfig[maintenance.status].color}`}>
+            {statusConfig[maintenance.status].text}
           </span>
         </div>
       </div>
@@ -241,19 +369,19 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Cliente:</span>
-            <span className="font-medium">{client}</span>
+            <span className="font-medium">{maintenance.client}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Equipo:</span>
-            <span className="font-medium">{asset}</span>
+            <span className="font-medium">{maintenance.asset}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Fecha:</span>
-            <span className="font-medium">{date}</span>
+            <span className="font-medium">{maintenance.date}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Técnico:</span>
-            <span className="font-medium">{technician}</span>
+            <span className="font-medium">{maintenance.technician}</span>
           </div>
         </div>
         <div className="pt-4 flex justify-end">

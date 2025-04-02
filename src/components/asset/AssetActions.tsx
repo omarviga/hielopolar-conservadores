@@ -15,9 +15,13 @@ const AssetActions: React.FC<AssetActionsProps> = ({
   onScheduleMaintenance, 
   onUpdateStatus 
 }) => {
+  // Determinar si el activo está disponible para mantenimiento
+  const canScheduleMaintenance = asset.status !== 'retired';
+  const isMaintenance = asset.status === 'maintenance';
+  
   return (
     <div className="flex flex-wrap gap-2 pt-4 justify-end border-t">
-      {asset.status !== 'maintenance' && (
+      {canScheduleMaintenance && !isMaintenance && (
         <Button 
           variant="outline" 
           onClick={onScheduleMaintenance}

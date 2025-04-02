@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   date: z.date({
@@ -27,10 +28,16 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+export interface MaintenanceFormData extends FormValues {
+  assetId: string;
+  assetModel: string;
+  date: Date;
+}
+
 interface ScheduleMaintenanceFormProps {
   assetId: string;
   assetModel: string;
-  onComplete: () => void;
+  onComplete: (data?: MaintenanceFormData) => void;
 }
 
 const ScheduleMaintenanceForm: React.FC<ScheduleMaintenanceFormProps> = ({ 
@@ -49,16 +56,21 @@ const ScheduleMaintenanceForm: React.FC<ScheduleMaintenanceFormProps> = ({
   });
   
   const onSubmit = (data: FormValues) => {
-    // En una implementación real, aquí se enviaría la información al backend
-    console.log("Programando mantenimiento:", {
-      assetId,
-      assetModel,
+    // Crear el objeto de datos de mantenimiento
+    const maintenanceData: MaintenanceFormData = {
       ...data,
-      date: format(data.date, 'yyyy-MM-dd'),
-    });
+      assetId,
+      assetModel
+    };
     
-    // Cerrar el formulario
-    onComplete();
+    // Enviar los datos al componente padre
+    onComplete(maintenanceData);
+    
+    // Mostrar toast de confirmación
+    toast({
+      title: "Mantenimiento programado",
+      description: `Se ha programado mantenimiento para ${assetModel} el ${format(data.date, 'PP', { locale: es })}`,
+    });
   };
 
   return (
@@ -98,6 +110,7 @@ const ScheduleMaintenanceForm: React.FC<ScheduleMaintenanceFormProps> = ({
                     onSelect={field.onChange}
                     disabled={(date) => date < new Date()}
                     locale={es}
+                    className="pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>
@@ -164,7 +177,7 @@ const ScheduleMaintenanceForm: React.FC<ScheduleMaintenanceFormProps> = ({
         />
         
         <div className="pt-4 flex gap-2 justify-end">
-          <Button type="button" variant="outline" onClick={onComplete}>
+          <Button type="button" variant="outline" onClick={() => onComplete()}>
             Cancelar
           </Button>
           <Button type="submit" className="bg-polar-600 hover:bg-polar-700">
