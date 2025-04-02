@@ -1,11 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, Wrench, ClipboardCheck, AlertTriangle, Clock } from 'lucide-react';
+import { Calendar as CalendarIcon, Wrench, ClipboardCheck, AlertTriangle, Clock, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from '@/hooks/use-toast';
 
 const Maintenance: React.FC = () => {
+  const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceCardProps | null>(null);
+
+  const handleShowDetails = (maintenance: MaintenanceCardProps) => {
+    setSelectedMaintenance(maintenance);
+  };
+
+  const handleScheduleMaintenance = () => {
+    toast({
+      title: "Programar mantenimiento",
+      description: "Funcionalidad en desarrollo",
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -14,7 +29,7 @@ const Maintenance: React.FC = () => {
           <h2 className="text-2xl font-bold">Mantenimiento</h2>
         </div>
         
-        <Button className="bg-polar-600 hover:bg-polar-700">
+        <Button className="bg-polar-600 hover:bg-polar-700" onClick={handleScheduleMaintenance}>
           <CalendarIcon className="h-4 w-4 mr-2" />
           Programar mantenimiento
         </Button>
@@ -39,6 +54,7 @@ const Maintenance: React.FC = () => {
                 date="12/06/2023"
                 status="active"
                 technician="Carlos Méndez"
+                onViewDetails={handleShowDetails}
               />
             ))}
           </div>
@@ -55,6 +71,7 @@ const Maintenance: React.FC = () => {
                 date="15/06/2023"
                 status="scheduled"
                 technician="Andrea Gómez"
+                onViewDetails={handleShowDetails}
               />
             ))}
           </div>
@@ -71,6 +88,7 @@ const Maintenance: React.FC = () => {
                 date="10/06/2023"
                 status="completed"
                 technician="Pedro Soto"
+                onViewDetails={handleShowDetails}
               />
             ))}
           </div>
@@ -85,10 +103,71 @@ const Maintenance: React.FC = () => {
               date="01/06/2023"
               status="delayed"
               technician="José Flores"
+              onViewDetails={handleShowDetails}
             />
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Dialog para mostrar detalles del mantenimiento */}
+      <Dialog open={!!selectedMaintenance} onOpenChange={() => setSelectedMaintenance(null)}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Detalles del Mantenimiento</DialogTitle>
+          </DialogHeader>
+          
+          {selectedMaintenance && (
+            <div className="space-y-4">
+              <div className={`p-3 rounded-md ${
+                selectedMaintenance.status === 'active' ? 'bg-blue-50' : 
+                selectedMaintenance.status === 'scheduled' ? 'bg-amber-50' : 
+                selectedMaintenance.status === 'completed' ? 'bg-green-50' : 
+                'bg-red-50'
+              }`}>
+                <h3 className="font-semibold text-lg">{selectedMaintenance.title}</h3>
+                <p className="text-sm text-muted-foreground">{selectedMaintenance.client}</p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Equipo:</span>
+                  <span className="font-medium">{selectedMaintenance.asset}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Fecha:</span>
+                  <span className="font-medium">{selectedMaintenance.date}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Técnico:</span>
+                  <span className="font-medium">{selectedMaintenance.technician}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Estado:</span>
+                  <span className={`font-medium px-2 py-1 rounded-full text-xs ${
+                    selectedMaintenance.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                    selectedMaintenance.status === 'scheduled' ? 'bg-amber-100 text-amber-800' :
+                    selectedMaintenance.status === 'completed' ? 'bg-green-100 text-green-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {selectedMaintenance.status === 'active' ? 'En proceso' :
+                     selectedMaintenance.status === 'scheduled' ? 'Programado' :
+                     selectedMaintenance.status === 'completed' ? 'Completado' :
+                     'Atrasado'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end border-t">
+                <Button 
+                  onClick={() => setSelectedMaintenance(null)}
+                >
+                  Cerrar
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -100,6 +179,7 @@ interface MaintenanceCardProps {
   date: string;
   status: 'active' | 'scheduled' | 'completed' | 'delayed';
   technician: string;
+  onViewDetails?: (maintenance: MaintenanceCardProps) => void;
 }
 
 const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
@@ -109,6 +189,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
   date,
   status,
   technician,
+  onViewDetails,
 }) => {
   const statusConfig = {
     active: {
@@ -131,6 +212,19 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
       color: 'bg-red-100 text-red-800',
       text: 'Atrasado',
     },
+  };
+
+  const handleViewDetails = () => {
+    if (onViewDetails) {
+      onViewDetails({
+        title,
+        client,
+        asset,
+        date,
+        status,
+        technician,
+      });
+    }
   };
 
   return (
@@ -163,7 +257,8 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
           </div>
         </div>
         <div className="pt-4 flex justify-end">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleViewDetails}>
+            <Eye className="h-4 w-4 mr-2" />
             Ver detalles
           </Button>
         </div>
