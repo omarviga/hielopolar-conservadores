@@ -7,6 +7,9 @@ import { Plus, Search, Download, Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import NewClientForm from './NewClientForm';
+import ImportClientsDialog from './client/ImportClientsDialog';
+import { exportClientsToCSV } from '@/utils/clientsExportUtils';
+import { toast } from '@/hooks/use-toast';
 
 interface ClientsListProps {
   clients: Client[];
@@ -16,6 +19,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
   const [filter, setFilter] = useState<Client['status'] | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   
   const filteredClients = clients
     .filter(client => filter === 'all' || client.status === filter)
@@ -33,6 +37,25 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
   const handleNewClientSubmit = () => {
     console.log('Client form submitted, closing dialog');
     setIsDialogOpen(false);
+  };
+
+  const handleExportClients = () => {
+    try {
+      // Export all clients or just the filtered ones based on current view
+      const clientsToExport = filteredClients.length > 0 ? filteredClients : clients;
+      exportClientsToCSV(clientsToExport);
+      
+      toast({
+        title: "Exportación exitosa",
+        description: `Se exportaron ${clientsToExport.length} clientes a CSV.`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error en la exportación",
+        description: "No se pudo exportar la lista de clientes.",
+      });
+    }
   };
 
   return (
@@ -88,10 +111,20 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
           </Button>
 
           <div className="hidden md:flex gap-2">
-            <Button variant="outline" size="icon" title="Importar clientes">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              title="Importar clientes"
+              onClick={() => setIsImportDialogOpen(true)}
+            >
               <Upload className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon" title="Exportar clientes">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              title="Exportar clientes"
+              onClick={handleExportClients}
+            >
               <Download className="h-4 w-4" />
             </Button>
           </div>
@@ -124,6 +157,11 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
           <NewClientForm onSubmit={handleNewClientSubmit} />
         </DialogContent>
       </Dialog>
+
+      <ImportClientsDialog 
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
+      />
     </div>
   );
 };
