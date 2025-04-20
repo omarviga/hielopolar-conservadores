@@ -6,6 +6,8 @@ import { Asset } from './AssetCard';
 import { useAssets } from '@/hooks/useAssets';
 import LocationUploader from './LocationUploader';
 import { toast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface Location {
   address: string;
@@ -17,18 +19,43 @@ const AssetsMap = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const { assets } = useAssets();
   const [locations, setLocations] = useState<Location[]>([]);
+  const [mapboxToken, setMapboxToken] = useState<string>(() => {
+    return localStorage.getItem('mapboxToken') || '';
+  });
+  const [tokenSubmitted, setTokenSubmitted] = useState<boolean>(() => {
+    return !!localStorage.getItem('mapboxToken');
+  });
+
+  const handleTokenSubmit = () => {
+    if (mapboxToken.trim()) {
+      localStorage.setItem('mapboxToken', mapboxToken);
+      setTokenSubmitted(true);
+      toast({
+        title: "Token guardado",
+        description: "El token de Mapbox ha sido guardado correctamente"
+      });
+      // Reload page to reinitialize map with new token
+      window.location.reload();
+    } else {
+      toast({
+        title: "Token requerido",
+        description: "Por favor, introduce un token válido de Mapbox",
+        variant: "destructive"
+      });
+    }
+  };
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || !tokenSubmitted) return;
 
-    // Initialize map
-    mapboxgl.accessToken = 'pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHRxbXd4aWgwMnZ4MmlxbTRvdjhtN2ttIn0.O8lasM-7_3BZWeBX9E9Z7Q';
+    // Initialize map with the stored token
+    mapboxgl.accessToken = mapboxToken;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v11',
       center: [-100.6172, 19.9404],
-      zoom: 9,
+      zoom: 5,
     });
 
     // Add navigation controls
@@ -102,25 +129,41 @@ const AssetsMap = () => {
     return () => {
       map.current?.remove();
     };
-  }, [assets, locations]);
+  }, [assets, locations, mapboxToken, tokenSubmitted]);
 
   const handleLocationsLoaded = async (newLocations: Location[]) => {
+    if (!tokenSubmitted) {
+      toast({
+        title: "Token requerido",
+        description: "Primero debes ingresar un token válido de Mapbox",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       const geocodedLocations = await Promise.all(
         newLocations.map(async (loc) => {
           try {
             const response = await fetch(
-              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(loc.address)}.json?access_token=${mapboxgl.accessToken}&country=mx`
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(loc.address)}.json?access_token=${mapboxToken}&country=mx`
             );
+            
+            if (!response.ok) {
+              throw new Error(`Error en la geocodificación: ${response.status}`);
+            }
+            
             const data = await response.json();
             
             if (data.features && data.features[0]) {
               const [lng, lat] = data.features[0].center;
+              console.log(`Geocodificada: ${loc.address} -> [${lng}, ${lat}]`);
               return {
                 ...loc,
                 coordinates: [lng, lat] as [number, number]
               };
             }
+            console.warn(`No se encontraron coordenadas para: ${loc.address}`);
             return loc;
           } catch (error) {
             console.error('Error geocoding address:', loc.address, error);
@@ -129,12 +172,14 @@ const AssetsMap = () => {
         })
       );
 
+      console.log('Ubicaciones geocodificadas:', geocodedLocations);
       setLocations(geocodedLocations);
       
-      // Center map on the first location if exists
-      if (geocodedLocations[0]?.coordinates && map.current) {
+      // Center map on the first location with coordinates
+      const firstWithCoords = geocodedLocations.find(loc => loc.coordinates);
+      if (firstWithCoords?.coordinates && map.current) {
         map.current.flyTo({
-          center: geocodedLocations[0].coordinates,
+          center: firstWithCoords.coordinates,
           zoom: 9
         });
       }
@@ -148,9 +193,35 @@ const AssetsMap = () => {
     }
   };
 
+  if (!tokenSubmitted) {
+    return (
+      <div className="space-y-4">
+        <div className="p-4 bg-white rounded-lg shadow-sm space-y-4">
+          <h3 className="font-medium">Configuración de Mapbox</h3>
+          <p className="text-sm text-gray-500">
+            Para utilizar el mapa, necesitas un token de Mapbox. Puedes obtener uno gratuito en{' '}
+            <a href="https://account.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+              account.mapbox.com
+            </a>
+          </p>
+          <Input
+            type="text"
+            value={mapboxToken}
+            onChange={(e) => setMapboxToken(e.target.value)}
+            placeholder="Ingresa tu token de Mapbox"
+            className="w-full"
+          />
+          <Button onClick={handleTokenSubmit} className="w-full bg-polar-600 hover:bg-polar-700">
+            Guardar Token
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      <LocationUploader onLocationsLoaded={handleLocationsLoaded} />
+      <LocationUploader onLocationsLoaded={handleLocationsLoaded} mapboxToken={mapboxToken} />
       
       <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg">
         <div ref={mapContainer} className="absolute inset-0" />
@@ -174,6 +245,19 @@ const AssetsMap = () => {
               <span className="text-sm">Ubicación Adicional</span>
             </div>
           </div>
+        </div>
+        <div className="absolute top-4 right-4 bg-white p-2 rounded-lg shadow z-10">
+          <Button 
+            onClick={() => {
+              localStorage.removeItem('mapboxToken');
+              setTokenSubmitted(false);
+              setMapboxToken('');
+            }}
+            variant="outline"
+            size="sm"
+          >
+            Cambiar Token
+          </Button>
         </div>
       </div>
     </div>

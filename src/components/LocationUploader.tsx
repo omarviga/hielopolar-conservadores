@@ -4,15 +4,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { MapPin } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface Location {
   address: string;
   coordinates?: [number, number];
 }
 
-const LocationUploader = ({ onLocationsLoaded }: { onLocationsLoaded: (locations: Location[]) => void }) => {
+const LocationUploader = ({ 
+  onLocationsLoaded,
+  mapboxToken 
+}: { 
+  onLocationsLoaded: (locations: Location[]) => void;
+  mapboxToken: string;
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fileContent, setFileContent] = useState<string | null>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -28,6 +36,10 @@ const LocationUploader = ({ onLocationsLoaded }: { onLocationsLoaded: (locations
     }
     
     setFile(file);
+    
+    // Read and show file content preview
+    const text = await file.text();
+    setFileContent(text);
   };
 
   const processLocations = async () => {
@@ -39,12 +51,14 @@ const LocationUploader = ({ onLocationsLoaded }: { onLocationsLoaded: (locations
       const lines = text.split('\n').filter(line => line.trim());
       
       // Remove header if exists
-      const addresses = lines.slice(1);
+      const dataStartIndex = lines[0].toLowerCase().includes('address') ? 1 : 0;
+      const addresses = lines.slice(dataStartIndex);
       
       const locations: Location[] = addresses.map(address => ({
         address: address.trim(),
       }));
 
+      console.log('Procesando ubicaciones:', locations);
       onLocationsLoaded(locations);
       toast({
         title: "Direcciones cargadas",
@@ -81,6 +95,17 @@ const LocationUploader = ({ onLocationsLoaded }: { onLocationsLoaded: (locations
         </p>
       </div>
 
+      {fileContent && (
+        <Alert>
+          <AlertTitle>Vista previa del archivo</AlertTitle>
+          <AlertDescription>
+            <pre className="text-xs max-h-32 overflow-y-auto mt-2 bg-gray-50 p-2 rounded">
+              {fileContent}
+            </pre>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Button
         onClick={processLocations}
         disabled={!file || loading}
@@ -88,6 +113,15 @@ const LocationUploader = ({ onLocationsLoaded }: { onLocationsLoaded: (locations
       >
         {loading ? 'Procesando...' : 'Cargar Direcciones'}
       </Button>
+      
+      <div className="text-xs text-gray-500">
+        <p>Formato esperado:</p>
+        <pre className="bg-gray-50 p-1 rounded mt-1">
+          address
+          Av. Ejemplo 123, Ciudad
+          Calle Principal 456, Estado
+        </pre>
+      </div>
     </div>
   );
 };
