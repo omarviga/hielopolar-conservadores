@@ -22,7 +22,7 @@ const AssetInfo: React.FC<AssetInfoProps> = ({ asset }) => {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Package className="h-4 w-4 text-polar-600" />
-            <span className="font-semibold">Capacidad</span>
+            <span className="font-semibold">Capacidad en Bolsas</span>
           </div>
           <p className="pl-6">{asset.capacity}</p>
         </div>
