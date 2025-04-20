@@ -98,3 +98,4 @@ export const mockAssets: Asset[] = [
     imageSrc: 'https://images.unsplash.com/photo-1575663620136-5ebbfcc2c597?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   }
 ];
+
