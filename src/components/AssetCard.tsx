@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Package, 
@@ -22,6 +21,7 @@ export interface Asset {
   capacity: string;
   temperatureRange: string;
   imageSrc: string;
+  coordinates?: [number, number]; // Added coordinates property as optional
 }
 
 interface AssetCardProps {
