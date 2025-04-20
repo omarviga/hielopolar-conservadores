@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Assets from "./pages/Assets";
+import AssetsMap from "./pages/AssetsMap";
 import Clients from "./pages/Clients";
 import ClientsMap from "./pages/ClientsMap";
 import Maintenance from "./pages/Maintenance";
@@ -15,11 +16,11 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
-// Crear una instancia del cliente de consulta
+// Create a query client instance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutos
+      staleTime: 5 * 60 * 1000, // 5 minutes
       refetchOnWindowFocus: false,
       retry: 1,
     },
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
             <Route path="/assets" element={<Assets />} />
+            <Route path="/assets/map" element={<AssetsMap />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/clients/map" element={<ClientsMap />} />
             <Route path="/maintenance" element={<Maintenance />} />

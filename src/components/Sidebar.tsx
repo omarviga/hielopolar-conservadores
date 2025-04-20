@@ -25,7 +25,11 @@ const menuItems = [
   {
     title: 'Conservadores',
     icon: <Package className="h-5 w-5" />,
-    path: '/assets'
+    path: '/assets',
+    subItems: [
+      { title: 'Lista de Conservadores', path: '/assets' },
+      { title: 'Mapa de Conservadores', path: '/assets/map' }
+    ]
   }, 
   {
     title: 'Clientes',
