@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Asset } from './AssetCard';
@@ -10,11 +11,21 @@ import { useAssets } from '@/hooks/useAssets';
 import { toast } from '@/hooks/use-toast';
 import { generateUniqueAssetId } from '@/services/assetService';
 
+const validCapacities = [
+  '20 bolsas (5kg)', 
+  '40 bolsas (5kg)', 
+  '60 bolsas (5kg)', 
+  '100 bolsas (5kg)', 
+  '250 bolsas (5kg)'
+] as const;
+
 const formSchema = z.object({
   model: z.string().min(1, "El modelo es requerido"),
   serialNumber: z.string().min(1, "El número de serie es requerido"),
   location: z.string().min(1, "La ubicación es requerida"),
-  capacity: z.string().min(1, "La capacidad es requerida"),
+  capacity: z.enum(validCapacities, {
+    errorMap: () => ({ message: "Debe seleccionar una capacidad válida" })
+  }),
   temperatureRange: z.string().min(1, "El rango de temperatura es requerido"),
   imageSrc: z.string().url("Debe ser una URL válida").or(z.string().min(0).max(0))
 });
@@ -34,7 +45,7 @@ const NewAssetForm: React.FC<NewAssetFormProps> = ({ onComplete }) => {
       model: '',
       serialNumber: '',
       location: 'Almacén Principal',
-      capacity: '',
+      capacity: '100 bolsas (5kg)',
       temperatureRange: '',
       imageSrc: ''
     }
@@ -134,9 +145,20 @@ const NewAssetForm: React.FC<NewAssetFormProps> = ({ onComplete }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Capacidad</FormLabel>
-              <FormControl>
-                <Input placeholder="Ej. 250L" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione la capacidad" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {validCapacities.map((capacity) => (
+                    <SelectItem key={capacity} value={capacity}>
+                      {capacity}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

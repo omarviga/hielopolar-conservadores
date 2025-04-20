@@ -1,3 +1,4 @@
+
 import { Asset } from '@/components/AssetCard';
 
 // Clave para LocalStorage
@@ -12,7 +13,7 @@ export const mockAssets: Asset[] = [
     status: 'available',
     location: 'Almacén Principal',
     lastMaintenance: '15/03/2023',
-    capacity: '200 bolsas (5kg)',
+    capacity: '250 bolsas (5kg)',
     temperatureRange: '-18°C a -22°C',
     imageSrc: 'https://images.unsplash.com/photo-1562184552-997c461abbe6?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   },
@@ -35,7 +36,7 @@ export const mockAssets: Asset[] = [
     status: 'maintenance',
     location: 'Taller Central',
     lastMaintenance: '10/01/2023',
-    capacity: '120 bolsas (5kg)',
+    capacity: '40 bolsas (5kg)',
     temperatureRange: '-20°C a -25°C',
     imageSrc: 'https://images.unsplash.com/photo-1589096044321-9274646f36fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   },
@@ -58,7 +59,7 @@ export const mockAssets: Asset[] = [
     location: 'Cliente: Mariscos Sur',
     lastMaintenance: '05/02/2023',
     assignedTo: 'Mariscos Sur',
-    capacity: '240 bolsas (5kg)',
+    capacity: '250 bolsas (5kg)',
     temperatureRange: '-22°C a -25°C',
     imageSrc: 'https://images.unsplash.com/photo-1595246007497-68ae3d6f44cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   },
@@ -69,7 +70,7 @@ export const mockAssets: Asset[] = [
     status: 'available',
     location: 'Almacén Principal',
     lastMaintenance: '12/03/2023',
-    capacity: '160 bolsas (5kg)',
+    capacity: '20 bolsas (5kg)',
     temperatureRange: '-18°C a -22°C',
     imageSrc: 'https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   },
@@ -80,7 +81,7 @@ export const mockAssets: Asset[] = [
     status: 'maintenance',
     location: 'Taller Norte',
     lastMaintenance: '01/04/2023',
-    capacity: '72 bolsas (5kg)',
+    capacity: '40 bolsas (5kg)',
     temperatureRange: '-15°C a -18°C',
     imageSrc: 'https://images.unsplash.com/photo-1588854337221-4cf9fa96059c?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   },
@@ -92,7 +93,7 @@ export const mockAssets: Asset[] = [
     location: 'Cliente: Hielos Centro',
     lastMaintenance: '18/02/2023',
     assignedTo: 'Hielos Centro',
-    capacity: '200 bolsas (5kg)',
+    capacity: '100 bolsas (5kg)',
     temperatureRange: '-18°C a -22°C',
     imageSrc: 'https://images.unsplash.com/photo-1575663620136-5ebbfcc2c597?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   }
