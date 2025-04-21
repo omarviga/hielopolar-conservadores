@@ -4,6 +4,7 @@ import { useAssets } from '@/hooks/useAssets';
 import LocationUploader from './LocationUploader';
 import MapboxTokenInput from './map/MapboxTokenInput';
 import MapContainer from './map/MapContainer';
+import { toast } from '@/hooks/use-toast';
 
 interface Location {
   address: string;
