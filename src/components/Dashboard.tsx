@@ -76,7 +76,7 @@ const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) =>
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <Calendar className="h-5 w-5 text-polar-600 mr-2" />
-              <h2 className="text-xl font-semibold">Próximos Manyventos</h2>
+              <h2 className="text-xl font-semibold">Próximos </h2>
             </div>
           </div>
           
