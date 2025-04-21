@@ -40,62 +40,197 @@ const MapContainer: React.FC<MapContainerProps> = ({ mapboxToken, assets, locati
     );
 
     map.current.on('load', () => {
-      assets.forEach((asset: Asset) => {
-        if (asset.coordinates) {
-          const status = asset.status;
-          let color = '#3B82F6';
-          if (status === 'in-use') color = '#10B981';
-          if (status === 'maintenance') color = '#EF4444';
+      if (!map.current) return;
 
-          const popup = new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`
-              <div class="p-2">
-                <h3 class="font-bold">${asset.model}</h3>
-                <p class="text-sm">${asset.location}</p>
-                <p class="text-sm">Capacidad: ${asset.capacity}</p>
-                ${asset.assignedTo ? `<p class="text-sm">Cliente: ${asset.assignedTo}</p>` : ''}
-              </div>
-            `);
+      // Add a source for asset points with clustering enabled
+      map.current.addSource('assets', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: assets.filter(asset => asset.coordinates).map(asset => ({
+            type: 'Feature',
+            properties: {
+              id: asset.id,
+              model: asset.model,
+              location: asset.location,
+              capacity: asset.capacity,
+              assignedTo: asset.assignedTo || '',
+              status: asset.status
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: asset.coordinates
+            }
+          }))
+        },
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50
+      });
 
-          const el = document.createElement('div');
-          el.className = 'marker';
-          el.style.backgroundColor = color;
-          el.style.width = '20px';
-          el.style.height = '20px';
-          el.style.borderRadius = '50%';
-          el.style.border = '2px solid white';
-          el.style.boxShadow = '0 0 0 2px ' + color;
-
-          new mapboxgl.Marker(el)
-            .setLngLat(asset.coordinates)
-            .setPopup(popup)
-            .addTo(map.current!);
+      // Add a layer for the clusters
+      map.current.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: 'assets',
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': '#3B82F6',
+          'circle-radius': [
+            'step',
+            ['get', 'point_count'],
+            20,
+            10,
+            30,
+            20,
+            40
+          ],
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#fff'
         }
       });
 
-      locations.forEach((location: Location) => {
-        if (location.coordinates) {
-          const popup = new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`
-              <div class="p-2">
-                <p class="text-sm">${location.address}</p>
-              </div>
-            `);
-
-          const el = document.createElement('div');
-          el.className = 'marker';
-          el.style.backgroundColor = '#6B7280';
-          el.style.width = '20px';
-          el.style.height = '20px';
-          el.style.borderRadius = '50%';
-          el.style.border = '2px solid white';
-          el.style.boxShadow = '0 0 0 2px #6B7280';
-
-          new mapboxgl.Marker(el)
-            .setLngLat(location.coordinates)
-            .setPopup(popup)
-            .addTo(map.current!);
+      // Add a layer for the cluster counts
+      map.current.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'assets',
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': '{point_count_abbreviated}',
+          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+          'text-size': 12
+        },
+        paint: {
+          'text-color': '#ffffff'
         }
+      });
+
+      // Add a layer for the individual assets (non-clustered points)
+      map.current.addLayer({
+        id: 'unclustered-point',
+        type: 'circle',
+        source: 'assets',
+        filter: ['!', ['has', 'point_count']],
+        paint: {
+          'circle-color': [
+            'match',
+            ['get', 'status'],
+            'available', '#3B82F6',
+            'in-use', '#10B981',
+            'maintenance', '#EF4444',
+            '#3B82F6'  // default color
+          ],
+          'circle-radius': 10,
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#fff'
+        }
+      });
+
+      // Add locations data as a separate source
+      map.current.addSource('locations', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: locations.filter(loc => loc.coordinates).map(loc => ({
+            type: 'Feature',
+            properties: {
+              address: loc.address
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: loc.coordinates
+            }
+          }))
+        }
+      });
+
+      // Add a layer for the locations
+      map.current.addLayer({
+        id: 'location-points',
+        type: 'circle',
+        source: 'locations',
+        paint: {
+          'circle-color': '#6B7280',
+          'circle-radius': 10,
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#fff'
+        }
+      });
+
+      // When a cluster is clicked, zoom in
+      map.current.on('click', 'clusters', (e) => {
+        const features = map.current?.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+        if (!features || features.length === 0 || !map.current) return;
+        
+        const clusterId = features[0].properties?.cluster_id;
+        const source = map.current.getSource('assets');
+        
+        if (clusterId && source && 'getClusterExpansionZoom' in source) {
+          source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err || !map.current) return;
+            
+            map.current.easeTo({
+              center: (features[0].geometry as GeoJSON.Point).coordinates as [number, number],
+              zoom: zoom || map.current.getZoom() + 2
+            });
+          });
+        }
+      });
+
+      // Change cursor on hover
+      map.current.on('mouseenter', 'clusters', () => {
+        if (map.current) map.current.getCanvas().style.cursor = 'pointer';
+      });
+      map.current.on('mouseleave', 'clusters', () => {
+        if (map.current) map.current.getCanvas().style.cursor = '';
+      });
+      
+      // Handle clicks on individual points
+      map.current.on('click', 'unclustered-point', (e) => {
+        if (!e.features || e.features.length === 0 || !map.current) return;
+        
+        const feature = e.features[0];
+        const coordinates = (feature.geometry as GeoJSON.Point).coordinates.slice() as [number, number];
+        const props = feature.properties;
+        
+        if (!props) return;
+        
+        const popupContent = `
+          <div class="p-2">
+            <h3 class="font-bold">${props.model}</h3>
+            <p class="text-sm">${props.location}</p>
+            <p class="text-sm">Capacidad: ${props.capacity}</p>
+            ${props.assignedTo ? `<p class="text-sm">Cliente: ${props.assignedTo}</p>` : ''}
+          </div>
+        `;
+        
+        new mapboxgl.Popup({ offset: 25 })
+          .setLngLat(coordinates)
+          .setHTML(popupContent)
+          .addTo(map.current);
+      });
+      
+      // Handle clicks on location points
+      map.current.on('click', 'location-points', (e) => {
+        if (!e.features || e.features.length === 0 || !map.current) return;
+        
+        const feature = e.features[0];
+        const coordinates = (feature.geometry as GeoJSON.Point).coordinates.slice() as [number, number];
+        const props = feature.properties;
+        
+        if (!props) return;
+        
+        const popupContent = `
+          <div class="p-2">
+            <p class="text-sm">${props.address}</p>
+          </div>
+        `;
+        
+        new mapboxgl.Popup({ offset: 25 })
+          .setLngLat(coordinates)
+          .setHTML(popupContent)
+          .addTo(map.current);
       });
     });
 
