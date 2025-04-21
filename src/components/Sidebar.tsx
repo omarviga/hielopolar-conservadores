@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, Calendar, Settings, BarChart3, Wrench, LogOut, MapPin } from 'lucide-react';
@@ -28,7 +27,7 @@ const menuItems = [
     path: '/assets',
     subItems: [
       { title: 'Lista de Conservadores', path: '/assets' },
-      { title: 'Mapa de Conservadores', path: '/assets/map' }
+      { title: 'Mapa de Conservadores', path: '/map' }
     ]
   }, 
   {

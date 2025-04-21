@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,8 +15,8 @@ import Calendar from "./pages/Calendar";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Map from "./pages/Map";
 
-// Create a query client instance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -44,6 +44,7 @@ const App = () => (
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/map" element={<Map />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
