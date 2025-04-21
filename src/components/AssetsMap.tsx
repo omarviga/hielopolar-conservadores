@@ -1,7 +1,7 @@
+
 import React, { useState } from 'react';
 import { useAssets } from '@/hooks/useAssets';
 import LocationUploader from './LocationUploader';
-import MapboxTokenInput from './map/MapboxTokenInput';
 import MapContainer from './map/MapContainer';
 import { toast } from '@/hooks/use-toast';
 
@@ -10,26 +10,15 @@ interface Location {
   coordinates?: [number, number];
 }
 
-const AssetsMap = () => {
+interface AssetsMapProps {
+  mapboxToken: string;
+}
+
+const AssetsMap: React.FC<AssetsMapProps> = ({ mapboxToken }) => {
   const { assets } = useAssets();
   const [locations, setLocations] = useState<Location[]>([]);
-  const [mapboxToken, setMapboxToken] = useState<string>(() => {
-    return import.meta.env.VITE_MAPBOX_API_TOKEN || '';
-  });
-  const [tokenSubmitted, setTokenSubmitted] = useState<boolean>(() => {
-    return !!import.meta.env.VITE_MAPBOX_API_TOKEN;
-  });
 
   const handleLocationsLoaded = async (newLocations: Location[]) => {
-    if (!tokenSubmitted) {
-      toast({
-        title: "Token requerido",
-        description: "Primero debes ingresar un token válido de Mapbox",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
       const geocodedLocations = await Promise.all(
         newLocations.map(async (loc) => {
@@ -73,18 +62,6 @@ const AssetsMap = () => {
     }
   };
 
-  const handleChangeToken = () => {
-    setTokenSubmitted(false);
-    setMapboxToken('');
-  };
-
-  if (!tokenSubmitted) {
-    return <MapboxTokenInput onTokenSubmit={(token) => {
-      setMapboxToken(token);
-      setTokenSubmitted(true);
-    }} />;
-  }
-
   return (
     <div className="space-y-4">
       <LocationUploader onLocationsLoaded={handleLocationsLoaded} mapboxToken={mapboxToken} />
@@ -92,7 +69,10 @@ const AssetsMap = () => {
         mapboxToken={mapboxToken}
         assets={assets}
         locations={locations}
-        onChangeToken={handleChangeToken}
+        onChangeToken={() => {
+          localStorage.removeItem('mapboxToken');
+          window.location.reload();
+        }}
       />
     </div>
   );
