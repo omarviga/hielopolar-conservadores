@@ -14,7 +14,7 @@ export const mockAssets: Asset[] = [
     lastMaintenance: '15/03/2023',
     capacity: '250 bolsas (5kg)',
     temperatureRange: '-18°C a -22°C',
-    imageSrc: 'https://images.unsplash.com/photo-1562184552-997c461abbe6?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
+    imageSrc: 'public/lovable-uploads/FT_FCC-200-2.jpg=crop&w=900&q=60',
     coordinates: [-100.7221, 20.0307] // Acámbaro
   },
   {
