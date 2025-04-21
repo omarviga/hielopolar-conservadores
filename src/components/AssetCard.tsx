@@ -21,7 +21,7 @@ export interface Asset {
   capacity: string;
   temperatureRange: string;
   imageSrc: string;
-  coordinates?: [number, number]; // Added coordinates property as optional
+  coordinates?: [number, number];
 }
 
 interface AssetCardProps {
@@ -61,7 +61,6 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, onUpdate, onSelect }) => {
 
   const handleManage = () => {
     if (onUpdate) {
-      // Si hay selección de activo, navegar a la página de mantenimiento será más útil
       navigate('/maintenance', { state: { assetId: asset.id } });
     } else {
       toast({
@@ -74,9 +73,10 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, onUpdate, onSelect }) => {
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden card-hover">
       <div className="relative h-40 bg-gray-200">
+        {/* Imagen local reemplazada aquí */}
         <img 
-          src={asset.imageSrc} 
-          alt={asset.model} 
+          src="/lovable-uploads/FT_FCC-100-2.jpg"  // Ruta desde la carpeta `public`
+          alt={asset.model}
           className="w-full h-full object-cover"
         />
         <span className={`status-badge ${statusClasses[asset.status]} absolute top-2 right-2`}>
