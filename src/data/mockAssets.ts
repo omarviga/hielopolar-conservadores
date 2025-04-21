@@ -14,7 +14,7 @@ export const mockAssets: Asset[] = [
     lastMaintenance: '15/03/2023',
     capacity: '250 bolsas (5kg)',
     temperatureRange: '-18°C a -22°C',
-    imageSrc: 'public/lovable-uploads/FT_FCC-200-2.jpg=crop&w=900&q=60',
+    imageSrc: 'public/lovable-uploads/FT_FCC-200-2.jpg?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
     coordinates: [-100.7221, 20.0307] // Acámbaro
   },
   {
@@ -27,7 +27,7 @@ export const mockAssets: Asset[] = [
     assignedTo: 'Pescados Norte',
     capacity: '100 bolsas (5kg)',
     temperatureRange: '-15°C a -18°C',
-    imageSrc: 'public/lovable-uploads/FT_FCC-100-2.jpg=crop&w=900&q=60',
+    imageSrc: 'public/lovable-uploads/FT_FCC-100-2.jpg?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
     coordinates: [-100.5233, 20.0033] // Tarandacuao
   },
   {
@@ -39,7 +39,7 @@ export const mockAssets: Asset[] = [
     lastMaintenance: '10/01/2023',
     capacity: '40 bolsas (5kg)',
     temperatureRange: '-20°C a -25°C',
-    imageSrc: 'public/lovable-uploads/FT_FCC-40-2.jpg=crop&w=900&q=60',
+    imageSrc: 'public/lovable-uploads/FT_FCC-40-2.jpg?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
     coordinates: [-100.4414, 19.8742] // Maravatío
   },
   {
@@ -51,7 +51,7 @@ export const mockAssets: Asset[] = [
     lastMaintenance: '20/04/2023',
     capacity: '60 bolsas (5kg)',
     temperatureRange: '-15°C a -18°C',
-    imageSrc: 'public/lovable-uploads/FT_FCC-60-2.jpg=crop&w=900&q=60',
+    imageSrc: 'public/lovable-uploads/FT_FCC-60-2.jpg?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
     coordinates: [-100.8297, 19.8569] // Zinapécuaro
   },
   {
@@ -87,7 +87,7 @@ export const mockAssets: Asset[] = [
     lastMaintenance: '01/04/2023',
     capacity: '40 bolsas (5kg)',
     temperatureRange: '-15°C a -18°C',
-    imageSrc: 'https://images.unsplash.com/photo-1588854337221-4cf9fa96059c?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
+    imageSrc: 'public/lovable-uploads/FT_FCC-40-2.jpg?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   },
   {
     id: 'CON-008',
@@ -99,6 +99,6 @@ export const mockAssets: Asset[] = [
     assignedTo: 'Hielos Centro',
     capacity: '100 bolsas (5kg)',
     temperatureRange: '-18°C a -22°C',
-    imageSrc: 'https://images.unsplash.com/photo-1575663620136-5ebbfcc2c597?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
+    imageSrc: 'public/lovable-uploads/FT_FCC-100-2.jpg?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
   }
 ];
