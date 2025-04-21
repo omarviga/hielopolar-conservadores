@@ -51,7 +51,7 @@ export const mockAssets: Asset[] = [
     lastMaintenance: '20/04/2023',
     capacity: '60 bolsas (5kg)',
     temperatureRange: '-15°C a -18°C',
-    imageSrc: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
+    imageSrc: 'public/lovable-uploads/FT_FCC-60-2.jpg=crop&w=900&q=60',
     coordinates: [-100.8297, 19.8569] // Zinapécuaro
   },
   {
