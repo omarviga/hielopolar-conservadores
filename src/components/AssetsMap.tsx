@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAssets } from '@/hooks/useAssets';
 import LocationUploader from './LocationUploader';
@@ -15,10 +14,10 @@ const AssetsMap = () => {
   const { assets } = useAssets();
   const [locations, setLocations] = useState<Location[]>([]);
   const [mapboxToken, setMapboxToken] = useState<string>(() => {
-    return localStorage.getItem('mapboxToken') || '';
+    return import.meta.env.VITE_MAPBOX_API_TOKEN || '';
   });
   const [tokenSubmitted, setTokenSubmitted] = useState<boolean>(() => {
-    return !!localStorage.getItem('mapboxToken');
+    return !!import.meta.env.VITE_MAPBOX_API_TOKEN;
   });
 
   const handleLocationsLoaded = async (newLocations: Location[]) => {
@@ -75,13 +74,15 @@ const AssetsMap = () => {
   };
 
   const handleChangeToken = () => {
-    localStorage.removeItem('mapboxToken');
     setTokenSubmitted(false);
     setMapboxToken('');
   };
 
   if (!tokenSubmitted) {
-    return <MapboxTokenInput onTokenSubmit={(token) => setMapboxToken(token)} />;
+    return <MapboxTokenInput onTokenSubmit={(token) => {
+      setMapboxToken(token);
+      setTokenSubmitted(true);
+    }} />;
   }
 
   return (
