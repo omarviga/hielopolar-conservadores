@@ -53,7 +53,7 @@ const MapPage: React.FC = () => {
       </div>
 
       {!tokenValid ? (
-        <MapboxTokenInput onTokenSubmit={handleTokenSubmit} />
+        <MapboxTokenInput onTokenSubmit={handleTokenSubmit} initialToken={mapboxToken} />
       ) : (
         <AssetsMap mapboxToken={mapboxToken} />
       )}

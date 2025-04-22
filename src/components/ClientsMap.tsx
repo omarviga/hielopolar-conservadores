@@ -6,21 +6,23 @@ import { useClients } from '@/hooks/useClients';
 import { Client } from '@/components/client/ClientInterface';
 import { toast } from '@/hooks/use-toast';
 
+interface ClientsMapProps {
+  mapboxToken: string;
+}
+
 // Componente para el mapa de clientes
-const ClientsMap: React.FC = () => {
+const ClientsMap: React.FC<ClientsMapProps> = ({ mapboxToken }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState<string>('');
-  const [showTokenInput, setShowTokenInput] = useState(true);
   const { clients } = useClients();
   const [mapInitialized, setMapInitialized] = useState(false);
 
   // Función para inicializar el mapa con el token de Mapbox
-  const initializeMap = (token: string) => {
-    if (!mapContainer.current || mapInitialized) return;
+  useEffect(() => {
+    if (!mapContainer.current || mapInitialized || !mapboxToken) return;
 
     try {
-      mapboxgl.accessToken = token;
+      mapboxgl.accessToken = mapboxToken;
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -74,8 +76,6 @@ const ClientsMap: React.FC = () => {
       });
 
       setMapInitialized(true);
-      localStorage.setItem('mapbox_token', token);
-      setShowTokenInput(false);
       
     } catch (error) {
       console.error('Error al inicializar el mapa:', error);
@@ -85,16 +85,7 @@ const ClientsMap: React.FC = () => {
         variant: 'destructive',
       });
     }
-  };
-
-  // Intentar cargar el token desde localStorage al inicio
-  useEffect(() => {
-    const savedToken = localStorage.getItem('mapbox_token');
-    if (savedToken) {
-      setMapboxToken(savedToken);
-      initializeMap(savedToken);
-    }
-  }, []);
+  }, [clients, mapboxToken, mapInitialized]);
 
   // Limpiar al desmontar
   useEffect(() => {
@@ -105,43 +96,8 @@ const ClientsMap: React.FC = () => {
     };
   }, []);
 
-  // Manejar envío del formulario del token
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (mapboxToken) {
-      initializeMap(mapboxToken);
-    }
-  };
-
   return (
     <div className="relative w-full h-[calc(100vh-140px)]">
-      {showTokenInput && (
-        <div className="absolute inset-0 flex items-center justify-center z-10 bg-white bg-opacity-90">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4">Configuración de Mapbox</h2>
-            <p className="text-gray-600 mb-4">
-              Para visualizar el mapa de clientes, necesitas proporcionar un token público de Mapbox.
-              Puedes obtenerlo registrándote en <a href="https://www.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-polar-600 hover:underline">mapbox.com</a>
-            </p>
-            <form onSubmit={handleTokenSubmit}>
-              <input
-                type="text"
-                value={mapboxToken}
-                onChange={(e) => setMapboxToken(e.target.value)}
-                placeholder="Ingresa tu token público de Mapbox"
-                className="w-full p-2 border rounded mb-4"
-                required
-              />
-              <button
-                type="submit"
-                className="w-full bg-polar-600 text-white py-2 rounded hover:bg-polar-700"
-              >
-                Guardar y Mostrar Mapa
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
       <div ref={mapContainer} className="w-full h-full rounded-lg shadow-md" />
       <style>
         {`

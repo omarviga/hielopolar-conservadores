@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MapboxTokenInputProps {
   onTokenSubmit: (token: string) => void;
@@ -14,7 +15,6 @@ const MapboxTokenInput: React.FC<MapboxTokenInputProps> = ({ onTokenSubmit, init
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const supabase = createClientComponentClient();
 
   const validateToken = (token: string): boolean => {
     return token.startsWith('pk.') && token.length > 30;
@@ -49,7 +49,10 @@ const MapboxTokenInput: React.FC<MapboxTokenInputProps> = ({ onTokenSubmit, init
 
       if (error) throw error;
 
-      setSuccess('Token guardado correctamente en Supabase');
+      // También guardar en localStorage para uso inmediato
+      localStorage.setItem('mapboxToken', mapboxToken);
+      
+      setSuccess('Token guardado correctamente');
       onTokenSubmit(mapboxToken);
     } catch (err) {
       setError('Error al guardar el token: ' + (err instanceof Error ? err.message : String(err)));
@@ -116,7 +119,7 @@ const MapboxTokenInput: React.FC<MapboxTokenInputProps> = ({ onTokenSubmit, init
         </Button>
 
         <div className="text-xs text-gray-500 mt-2">
-          <p>El token se almacenará de forma segura en Supabase y se usará para cargar los mapas.</p>
+          <p>El token se almacenará de forma segura y se usará para cargar los mapas.</p>
           <p className="mt-1">Scopes requeridos: <span className="font-mono">styles:read, fonts:read, tiles:read</span></p>
         </div>
       </div>
