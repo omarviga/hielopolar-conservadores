@@ -1,5 +1,7 @@
-
 import mapboxgl from 'mapbox-gl';
+import { createRoot } from 'react-dom/client';
+import { AssetPopupContent } from '@/components/map/AssetPopupContent';
+import { LocationPopupContent } from '@/components/map/LocationPopupContent';
 
 export const useMapEvents = () => {
   const handleClusterClick = (e: mapboxgl.MapMouseEvent & { features?: mapboxgl.MapboxGeoJSONFeature[] }) => {
@@ -27,16 +29,20 @@ export const useMapEvents = () => {
     const coordinates = (e.features[0].geometry as GeoJSON.Point).coordinates.slice() as [number, number];
     const props = e.features[0].properties;
     
+    const popupNode = document.createElement('div');
+    const root = createRoot(popupNode);
+    root.render(
+      <AssetPopupContent
+        model={props.model}
+        location={props.location}
+        capacity={props.capacity}
+        assignedTo={props.assignedTo}
+      />
+    );
+
     new mapboxgl.Popup({ offset: 25 })
       .setLngLat(coordinates)
-      .setHTML(`
-        <div class="p-2">
-          <h3 class="font-bold">${props.model}</h3>
-          <p class="text-sm">${props.location}</p>
-          <p class="text-sm">Capacidad: ${props.capacity}</p>
-          ${props.assignedTo ? `<p class="text-sm">Cliente: ${props.assignedTo}</p>` : ''}
-        </div>
-      `)
+      .setDOMContent(popupNode)
       .addTo(e.target as mapboxgl.Map);
   };
 
@@ -46,13 +52,15 @@ export const useMapEvents = () => {
     const coordinates = (e.features[0].geometry as GeoJSON.Point).coordinates.slice() as [number, number];
     const props = e.features[0].properties;
     
+    const popupNode = document.createElement('div');
+    const root = createRoot(popupNode);
+    root.render(
+      <LocationPopupContent address={props.address} />
+    );
+
     new mapboxgl.Popup({ offset: 25 })
       .setLngLat(coordinates)
-      .setHTML(`
-        <div class="p-2">
-          <p class="text-sm">${props.address}</p>
-        </div>
-      `)
+      .setDOMContent(popupNode)
       .addTo(e.target as mapboxgl.Map);
   };
 
