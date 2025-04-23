@@ -32,15 +32,36 @@ const Repairs = () => {
       console.error('No asset ID provided for repair');
       return;
     }
-    
+
     console.log('Submitting repair with data:', { ...data, asset_id: assetId });
-    
+
     await createRepair({
       asset_id: assetId,
       ...data,
     });
-    
+
     setIsFormOpen(false);
+  };
+
+  const handleSubmit = async (data: FormattedRepairData) => {
+    if (!assetId) {
+      console.error('No asset ID provided for repair');
+      return;
+    }
+
+    try {
+      console.log('Submitting repair with data:', { ...data, asset_id: assetId });
+
+      await createRepair({
+        asset_id: assetId,
+        ...data,
+      });
+
+      setIsFormOpen(false);
+    } catch (error) {
+      console.error('Error al crear la reparación:', error);
+      // Mostrar un mensaje al usuario (puedes usar un toast o similar)
+    }
   };
 
   return (
