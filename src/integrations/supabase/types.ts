@@ -30,6 +30,51 @@ export type Database = {
         }
         Relationships: []
       }
+      repairs: {
+        Row: {
+          actual_completion_date: string | null
+          asset_id: string
+          cost: number | null
+          created_at: string | null
+          description: string
+          estimated_completion: string | null
+          id: string
+          notes: string | null
+          parts_used: string[] | null
+          status: string
+          technician: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          actual_completion_date?: string | null
+          asset_id: string
+          cost?: number | null
+          created_at?: string | null
+          description: string
+          estimated_completion?: string | null
+          id?: string
+          notes?: string | null
+          parts_used?: string[] | null
+          status?: string
+          technician?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          actual_completion_date?: string | null
+          asset_id?: string
+          cost?: number | null
+          created_at?: string | null
+          description?: string
+          estimated_completion?: string | null
+          id?: string
+          notes?: string | null
+          parts_used?: string[] | null
+          status?: string
+          technician?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -16,6 +16,7 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Map from "./pages/Map";
+import Repairs from "./pages/Repairs";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/reports" element={<Reports />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/repairs" element={<Repairs />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -58,6 +58,11 @@ const menuItems = [
     title: 'Configuración',
     icon: <Settings className="h-5 w-5" />,
     path: '/settings'
+  },
+  {
+    title: 'Reparaciones',
+    icon: <Wrench className="h-5 w-5" />,
+    path: '/repairs'
   }
 ];
 
