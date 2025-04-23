@@ -30,6 +30,27 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
       repairs: {
         Row: {
           actual_completion_date: string | null
@@ -37,10 +58,14 @@ export type Database = {
           cost: number | null
           created_at: string | null
           description: string
+          diagnosis: string | null
           estimated_completion: string | null
           id: string
           notes: string | null
           parts_used: string[] | null
+          priority: string | null
+          repair_number: string | null
+          repair_type: string | null
           status: string
           technician: string | null
           updated_at: string | null
@@ -51,10 +76,14 @@ export type Database = {
           cost?: number | null
           created_at?: string | null
           description: string
+          diagnosis?: string | null
           estimated_completion?: string | null
           id?: string
           notes?: string | null
           parts_used?: string[] | null
+          priority?: string | null
+          repair_number?: string | null
+          repair_type?: string | null
           status?: string
           technician?: string | null
           updated_at?: string | null
@@ -65,10 +94,14 @@ export type Database = {
           cost?: number | null
           created_at?: string | null
           description?: string
+          diagnosis?: string | null
           estimated_completion?: string | null
           id?: string
           notes?: string | null
           parts_used?: string[] | null
+          priority?: string | null
+          repair_number?: string | null
+          repair_type?: string | null
           status?: string
           technician?: string | null
           updated_at?: string | null

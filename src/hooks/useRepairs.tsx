@@ -7,7 +7,11 @@ import { toast } from '@/hooks/use-toast';
 interface Repair {
   id: string;
   asset_id: string;
+  repair_number: string | null;
   description: string;
+  diagnosis: string | null;
+  repair_type: 'corrective' | 'preventive';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   technician: string | null;
   cost: number | null;
@@ -21,7 +25,11 @@ interface Repair {
 
 interface NewRepair {
   asset_id: string;
+  repair_number?: string;
   description: string;
+  diagnosis?: string;
+  repair_type?: 'corrective' | 'preventive';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
   technician?: string;
   cost?: number;
   estimated_completion?: string;
@@ -58,9 +66,10 @@ export const useRepairs = (assetId?: string) => {
 
   const createRepairMutation = useMutation({
     mutationFn: async (newRepair: NewRepair) => {
-      // Format the date to string if it exists
       const formattedRepair = {
         ...newRepair,
+        repair_type: newRepair.repair_type || 'corrective',
+        priority: newRepair.priority || 'medium',
         estimated_completion: newRepair.estimated_completion 
           ? new Date(newRepair.estimated_completion).toISOString().split('T')[0]
           : null,

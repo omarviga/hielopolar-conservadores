@@ -16,6 +16,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -26,7 +33,11 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const repairFormSchema = z.object({
+  repair_number: z.string().optional(),
   description: z.string().min(1, 'La descripción es requerida'),
+  diagnosis: z.string().optional(),
+  repair_type: z.enum(['corrective', 'preventive']),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']),
   technician: z.string().optional(),
   cost: z.string().optional(),
   estimated_completion: z.date().optional(),
@@ -46,6 +57,8 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
   const form = useForm<RepairFormData>({
     resolver: zodResolver(repairFormSchema),
     defaultValues: {
+      repair_type: 'corrective',
+      priority: 'medium',
       description: '',
       technician: '',
       cost: '',
@@ -55,12 +68,77 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
   });
 
   const handleSubmit = (data: RepairFormData) => {
-    onSubmit(data);
+    const formattedData = {
+      ...data,
+      cost: data.cost ? parseFloat(data.cost) : undefined,
+      parts_used: data.parts_used ? data.parts_used.split(',').map(part => part.trim()) : undefined,
+    };
+    onSubmit(formattedData);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="repair_number"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Número de Reparación</FormLabel>
+              <FormControl>
+                <Input placeholder="REP-001" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="repair_type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tipo de Reparación</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona el tipo" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="corrective">Correctiva</SelectItem>
+                  <SelectItem value="preventive">Preventiva</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="priority"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Prioridad</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona la prioridad" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="low">Baja</SelectItem>
+                  <SelectItem value="medium">Media</SelectItem>
+                  <SelectItem value="high">Alta</SelectItem>
+                  <SelectItem value="urgent">Urgente</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="description"
@@ -70,6 +148,23 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
               <FormControl>
                 <Textarea 
                   placeholder="Describe el problema o la reparación necesaria"
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="diagnosis"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Diagnóstico</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Diagnóstico técnico del problema"
                   {...field} 
                 />
               </FormControl>
@@ -160,7 +255,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
               <FormLabel>Repuestos Necesarios</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Lista de repuestos necesarios"
+                  placeholder="Lista de repuestos separados por comas"
                   {...field} 
                 />
               </FormControl>
