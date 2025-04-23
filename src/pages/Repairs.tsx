@@ -27,8 +27,8 @@ const Repairs = () => {
   const { repairs, isLoading, createRepair } = useRepairs(assetId);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
 
-  const handleSubmit = async (data: FormattedRepairData) => {
-    if (!assetId) {
+  const  = async (data: FormattedRepairData) => {
+    if (!assethandleSubmitId) {
       console.error('No asset ID provided for repair');
       return;
     }
