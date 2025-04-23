@@ -74,6 +74,8 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
   });
 
   const handleSubmit = (data: RepairFormData) => {
+    console.log('Form data before formatting:', data);
+    
     const formattedData: FormattedRepairData = {
       ...data,
       cost: data.cost ? parseFloat(data.cost) : undefined, // Convert string to number
@@ -82,12 +84,13 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
         : undefined,
     };
     
+    console.log('Formatted data to submit:', formattedData);
     onSubmit(formattedData);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 py-4">
         <FormField
           control={form.control}
           name="repair_number"
@@ -95,7 +98,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
             <FormItem>
               <FormLabel>Número de Reparación</FormLabel>
               <FormControl>
-                <Input placeholder="REP-001" {...field} />
+                <Input placeholder="REP-001" {...field} value={field.value || ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -175,6 +178,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
                 <Textarea 
                   placeholder="Diagnóstico técnico del problema"
                   {...field} 
+                  value={field.value || ''}
                 />
               </FormControl>
               <FormMessage />
@@ -189,7 +193,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
             <FormItem>
               <FormLabel>Técnico Asignado</FormLabel>
               <FormControl>
-                <Input placeholder="Nombre del técnico" {...field} />
+                <Input placeholder="Nombre del técnico" {...field} value={field.value || ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -207,6 +211,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
                   type="number" 
                   placeholder="0.00" 
                   {...field} 
+                  value={field.value || ''}
                 />
               </FormControl>
               <FormMessage />
@@ -244,9 +249,6 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date < new Date()
-                    }
                     initialFocus
                   />
                 </PopoverContent>
@@ -266,6 +268,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
                 <Textarea 
                   placeholder="Lista de repuestos separados por comas"
                   {...field} 
+                  value={field.value || ''}
                 />
               </FormControl>
               <FormMessage />
@@ -283,6 +286,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
                 <Textarea 
                   placeholder="Notas o comentarios adicionales"
                   {...field} 
+                  value={field.value || ''}
                 />
               </FormControl>
               <FormMessage />

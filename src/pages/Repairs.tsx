@@ -28,7 +28,12 @@ const Repairs = () => {
   const [isFormOpen, setIsFormOpen] = React.useState(false);
 
   const handleSubmit = async (data: FormattedRepairData) => {
-    if (!assetId) return;
+    if (!assetId) {
+      console.error('No asset ID provided for repair');
+      return;
+    }
+    
+    console.log('Submitting repair with data:', { ...data, asset_id: assetId });
     
     await createRepair({
       asset_id: assetId,
@@ -53,18 +58,29 @@ const Repairs = () => {
             <SheetHeader>
               <SheetTitle>Registrar Nueva Reparación</SheetTitle>
             </SheetHeader>
-            {assetId && (
+            {assetId ? (
               <RepairForm
                 assetId={assetId}
                 onSubmit={handleSubmit}
+                isLoading={isLoading}
               />
+            ) : (
+              <div className="p-4 text-center text-red-500">
+                No se ha seleccionado un activo para la reparación.
+              </div>
             )}
           </SheetContent>
         </Sheet>
       </div>
 
       <div className="mt-6">
-        <RepairsList repairs={repairs} />
+        {assetId ? (
+          <RepairsList repairs={repairs} />
+        ) : (
+          <div className="text-center p-8 border rounded-md bg-gray-50">
+            Seleccione un activo para ver sus reparaciones.
+          </div>
+        )}
       </div>
     </div>
   );

@@ -53,6 +53,7 @@ export const useRepairs = (assetId?: string) => {
     const { data, error } = await query;
 
     if (error) {
+      console.error('Error fetching repairs:', error);
       throw error;
     }
 
@@ -66,6 +67,8 @@ export const useRepairs = (assetId?: string) => {
 
   const createRepairMutation = useMutation({
     mutationFn: async (newRepair: NewRepair) => {
+      console.log('Creating repair with data:', newRepair);
+      
       const formattedRepair = {
         ...newRepair,
         repair_type: newRepair.repair_type || 'corrective',
@@ -76,13 +79,20 @@ export const useRepairs = (assetId?: string) => {
         parts_used: newRepair.parts_used || null
       };
 
+      console.log('Formatted repair data:', formattedRepair);
+
       const { data, error } = await supabase
         .from('repairs')
         .insert(formattedRepair)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error creating repair:', error);
+        throw error;
+      }
+      
+      console.log('Repair created successfully:', data);
       return data;
     },
     onSuccess: () => {
