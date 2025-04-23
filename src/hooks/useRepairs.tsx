@@ -24,9 +24,9 @@ interface NewRepair {
   description: string;
   technician?: string;
   cost?: number;
-  estimated_completion?: Date;
+  estimated_completion?: string;
   notes?: string;
-  parts_used?: string;
+  parts_used?: string[];
 }
 
 export const useRepairs = (assetId?: string) => {
@@ -58,12 +58,18 @@ export const useRepairs = (assetId?: string) => {
 
   const createRepairMutation = useMutation({
     mutationFn: async (newRepair: NewRepair) => {
+      // Format the date to string if it exists
+      const formattedRepair = {
+        ...newRepair,
+        estimated_completion: newRepair.estimated_completion 
+          ? new Date(newRepair.estimated_completion).toISOString().split('T')[0]
+          : null,
+        parts_used: newRepair.parts_used || null
+      };
+
       const { data, error } = await supabase
         .from('repairs')
-        .insert([{
-          ...newRepair,
-          parts_used: newRepair.parts_used ? [newRepair.parts_used] : null,
-        }])
+        .insert(formattedRepair)
         .select()
         .single();
 
