@@ -39,7 +39,7 @@ const repairFormSchema = z.object({
   repair_type: z.enum(['corrective', 'preventive']),
   priority: z.enum(['low', 'medium', 'high', 'urgent']),
   technician: z.string().optional(),
-  cost: z.string().optional(),
+  cost: z.string().optional(), // Keep this as string to match form input
   estimated_completion: z.date().optional(),
   notes: z.string().optional(),
   parts_used: z.string().optional(),
@@ -49,7 +49,10 @@ type RepairFormData = z.infer<typeof repairFormSchema>;
 
 interface RepairFormProps {
   assetId: string;
-  onSubmit: (data: RepairFormData) => void;
+  onSubmit: (data: RepairFormData & { 
+    cost?: number; 
+    parts_used?: string[] 
+  }) => void;
   isLoading?: boolean;
 }
 
@@ -70,9 +73,12 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
   const handleSubmit = (data: RepairFormData) => {
     const formattedData = {
       ...data,
-      cost: data.cost ? parseFloat(data.cost) : undefined,
-      parts_used: data.parts_used ? data.parts_used.split(',').map(part => part.trim()) : undefined,
+      cost: data.cost ? parseFloat(data.cost) : undefined, // Convert string to number
+      parts_used: data.parts_used 
+        ? data.parts_used.split(',').map(part => part.trim()).filter(part => part !== '') 
+        : undefined,
     };
+    
     onSubmit(formattedData);
   };
 
