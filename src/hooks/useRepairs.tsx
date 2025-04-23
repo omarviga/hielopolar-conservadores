@@ -32,7 +32,7 @@ interface NewRepair {
   priority?: 'low' | 'medium' | 'high' | 'urgent';
   technician?: string;
   cost?: number;
-  estimated_completion?: string;
+  estimated_completion?: Date | string;
   notes?: string;
   parts_used?: string[];
 }

@@ -8,13 +8,26 @@ import RepairsList from '@/components/repairs/RepairsList';
 import { useRepairs } from '@/hooks/useRepairs';
 import { Plus } from 'lucide-react';
 
+interface FormattedRepairData {
+  repair_number?: string;
+  description: string;
+  diagnosis?: string;
+  repair_type?: 'corrective' | 'preventive';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  technician?: string;
+  cost?: number;
+  estimated_completion?: Date;
+  notes?: string;
+  parts_used?: string[];
+}
+
 const Repairs = () => {
   const location = useLocation();
   const assetId = location.state?.assetId;
   const { repairs, isLoading, createRepair } = useRepairs(assetId);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: FormattedRepairData) => {
     if (!assetId) return;
     
     await createRepair({

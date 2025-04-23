@@ -47,12 +47,15 @@ const repairFormSchema = z.object({
 
 type RepairFormData = z.infer<typeof repairFormSchema>;
 
+// Define la forma exacta en que los datos serán enviados después de la transformación
+interface FormattedRepairData extends Omit<RepairFormData, 'cost' | 'parts_used'> {
+  cost?: number;
+  parts_used?: string[];
+}
+
 interface RepairFormProps {
   assetId: string;
-  onSubmit: (data: RepairFormData & { 
-    cost?: number; 
-    parts_used?: string[] 
-  }) => void;
+  onSubmit: (data: FormattedRepairData) => void;
   isLoading?: boolean;
 }
 
@@ -71,7 +74,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
   });
 
   const handleSubmit = (data: RepairFormData) => {
-    const formattedData = {
+    const formattedData: FormattedRepairData = {
       ...data,
       cost: data.cost ? parseFloat(data.cost) : undefined, // Convert string to number
       parts_used: data.parts_used 
