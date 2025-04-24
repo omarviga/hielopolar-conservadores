@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
@@ -7,6 +8,8 @@ import { toast } from '@/hooks/use-toast';
 import { CalendarHeader, DayHeader } from '@/components/calendar/CalendarHeader';
 import { EventList } from '@/components/calendar/EventList';
 import { EventDialog } from '@/components/calendar/EventDialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { NewEventForm } from '@/components/calendar/NewEventForm';
 import { CalendarEvent } from '@/types/calendar';
 
 const events: CalendarEvent[] = [
@@ -48,9 +51,11 @@ const events: CalendarEvent[] = [
 const CalendarPage: React.FC = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [isNewEventOpen, setIsNewEventOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [localEvents, setLocalEvents] = useState<CalendarEvent[]>(events);
 
-  const selectedDateEvents = date ? events.filter(
+  const selectedDateEvents = date ? localEvents.filter(
     event => {
       const eventDate = format(event.date, 'yyyy-MM-dd');
       const selectedDate = format(date, 'yyyy-MM-dd');
@@ -70,9 +75,15 @@ const CalendarPage: React.FC = () => {
   };
 
   const handleNewEvent = () => {
+    setIsNewEventOpen(true);
+  };
+
+  const handleEventSubmit = (eventData: CalendarEvent) => {
+    setLocalEvents(prev => [...prev, eventData]);
+    setIsNewEventOpen(false);
     toast({
-      title: "Función en desarrollo",
-      description: "La creación de nuevos eventos estará disponible próximamente."
+      title: "Evento creado",
+      description: "El evento se ha creado exitosamente.",
     });
   };
 
@@ -123,6 +134,20 @@ const CalendarPage: React.FC = () => {
         isOpen={isEventDialogOpen}
         onOpenChange={setIsEventDialogOpen}
       />
+
+      <Sheet open={isNewEventOpen} onOpenChange={setIsNewEventOpen}>
+        <SheetContent className="w-full sm:max-w-[540px]">
+          <SheetHeader>
+            <SheetTitle>Crear Nuevo Evento</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6">
+            <NewEventForm
+              onSubmit={handleEventSubmit}
+              onCancel={() => setIsNewEventOpen(false)}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
