@@ -53,11 +53,18 @@ export const NewEventForm: React.FC<NewEventFormProps> = ({ onSubmit, onCancel }
   });
 
   const handleSubmit = (data: EventFormData) => {
+    // Create a properly formatted CalendarEvent object with all required fields
     const formattedData: CalendarEvent = {
       id: crypto.randomUUID(),
-      ...data,
-      date: new Date(data.date),
+      title: data.title, // Required field
+      client: data.client, // Required field
+      asset: data.asset,
+      date: new Date(data.date), // Required field
       endDate: data.endDate ? new Date(data.endDate) : undefined,
+      type: data.type as EventType, // Required field
+      technician: data.technician,
+      description: data.description, // Required field
+      status: data.status || 'pending', // Required field with default 
       rentalUnits: data.type === 'rental' ? Number(data.rentalUnits) : undefined,
     };
     onSubmit(formattedData);
