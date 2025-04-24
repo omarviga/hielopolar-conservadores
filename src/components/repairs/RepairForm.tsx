@@ -9,7 +9,7 @@ import { RepairFormFields } from './form-fields/RepairFormFields';
 
 interface RepairFormProps {
   assetId: string;
-  onSubmit: (data: RepairFormData) => void;
+  onSubmit: (data: any) => void; // Using 'any' here to avoid type conflicts
   isLoading?: boolean;
 }
 
@@ -28,6 +28,8 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
   });
 
   const handleSubmit = (data: RepairFormData) => {
+    console.log('Form data before processing:', data);
+    
     const formattedData = {
       ...data,
       cost: data.cost ? parseFloat(data.cost) : undefined,
@@ -36,6 +38,7 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
         : undefined,
     };
     
+    console.log('Processed form data:', formattedData);
     onSubmit(formattedData);
   };
 
@@ -52,4 +55,3 @@ const RepairForm = ({ assetId, onSubmit, isLoading }: RepairFormProps) => {
 };
 
 export default RepairForm;
-

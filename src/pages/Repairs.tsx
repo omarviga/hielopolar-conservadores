@@ -8,6 +8,7 @@ import RepairsList from '@/components/repairs/RepairsList';
 import { useRepairs } from '@/hooks/useRepairs';
 import { Plus } from 'lucide-react';
 
+// This interface defines the data structure expected by the form submission handler
 interface FormattedRepairData {
   repair_number?: string;
   description: string;
@@ -26,22 +27,6 @@ const Repairs = () => {
   const assetId = location.state?.assetId;
   const { repairs, isLoading, createRepair } = useRepairs(assetId);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
-
-  const  = async (data: FormattedRepairData) => {
-    if (!assethandleSubmitId) {
-      console.error('No asset ID provided for repair');
-      return;
-    }
-
-    console.log('Submitting repair with data:', { ...data, asset_id: assetId });
-
-    await createRepair({
-      asset_id: assetId,
-      ...data,
-    });
-
-    setIsFormOpen(false);
-  };
 
   const handleSubmit = async (data: FormattedRepairData) => {
     if (!assetId) {
