@@ -1,119 +1,32 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar as CalendarIcon, Wrench, ClipboardCheck, AlertTriangle, Clock, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { toast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import ScheduleMaintenanceForm, { MaintenanceFormData } from '@/components/ScheduleMaintenanceForm';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-
-// Interfaz para los datos de mantenimiento
-interface MaintenanceData {
-  id: string;
-  title: string;
-  client: string;
-  asset: string;
-  assetId?: string;
-  date: string;
-  status: 'active' | 'scheduled' | 'completed' | 'delayed';
-  technician: string;
-  type?: string;
-  notes?: string;
-}
+import { useMaintenance, Maintenance as MaintenanceData } from '@/hooks/useMaintenance';
 
 const Maintenance: React.FC = () => {
+  const { maintenances, updateMaintenance, createMaintenance } = useMaintenance();
   const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceData | null>(null);
   const [showMaintenanceForm, setShowMaintenanceForm] = useState(false);
-  const [maintenances, setMaintenances] = useState<MaintenanceData[]>([
-    {
-      id: "001",
-      title: "Mantenimiento #001",
-      client: "Pescados Norte",
-      asset: "Conservador #101",
-      date: "12/06/2023",
-      status: "active",
-      technician: "Carlos Méndez"
-    },
-    {
-      id: "002",
-      title: "Mantenimiento #002",
-      client: "Pescados Norte",
-      asset: "Conservador #102",
-      date: "12/06/2023",
-      status: "active",
-      technician: "Carlos Méndez"
-    },
-    {
-      id: "003",
-      title: "Mantenimiento #003",
-      client: "Pescados Norte",
-      asset: "Conservador #103",
-      date: "12/06/2023",
-      status: "active",
-      technician: "Carlos Méndez"
-    },
-    {
-      id: "004",
-      title: "Mantenimiento #004",
-      client: "Mariscos Sur",
-      asset: "Conservador #104",
-      date: "15/06/2023",
-      status: "scheduled",
-      technician: "Andrea Gómez"
-    },
-    {
-      id: "005",
-      title: "Mantenimiento #005",
-      client: "Mariscos Sur",
-      asset: "Conservador #105",
-      date: "15/06/2023",
-      status: "scheduled",
-      technician: "Andrea Gómez"
-    },
-    {
-      id: "006",
-      title: "Mantenimiento #006",
-      client: "Hielos Centro",
-      asset: "Conservador #106",
-      date: "10/06/2023",
-      status: "completed",
-      technician: "Pedro Soto"
-    },
-    {
-      id: "007",
-      title: "Mantenimiento #007",
-      client: "Hielos Centro",
-      asset: "Conservador #107",
-      date: "10/06/2023",
-      status: "completed",
-      technician: "Pedro Soto"
-    },
-    {
-      id: "008",
-      title: "Mantenimiento #008",
-      client: "Hielos Centro",
-      asset: "Conservador #108",
-      date: "10/06/2023",
-      status: "completed",
-      technician: "Pedro Soto"
-    },
-    {
-      id: "009",
-      title: "Mantenimiento #009",
-      client: "Distribuidora Pacífico",
-      asset: "Conservador #109",
-      date: "01/06/2023",
-      status: "delayed",
-      technician: "José Flores"
-    }
-  ]);
 
   const handleShowDetails = (maintenance: MaintenanceData) => {
     setSelectedMaintenance(maintenance);
+  };
+
+  const handleStatusUpdate = (status: 'active' | 'scheduled' | 'completed' | 'delayed') => {
+    if (selectedMaintenance && selectedMaintenance.id) {
+      updateMaintenance({ 
+        id: selectedMaintenance.id, 
+        status 
+      });
+      setSelectedMaintenance(null);
+    }
   };
 
   const handleScheduleMaintenance = () => {
@@ -124,33 +37,23 @@ const Maintenance: React.FC = () => {
     setShowMaintenanceForm(false);
     
     if (data) {
-      // Generar un ID para el nuevo mantenimiento
-      const newId = String(maintenances.length + 1).padStart(3, '0');
-      
-      // Crear un nuevo mantenimiento con los datos del formulario
       const newMaintenance: MaintenanceData = {
-        id: newId,
-        title: `Mantenimiento #${newId}`,
-        client: "Cliente Pendiente", // En un caso real, esto vendría del activo o se seleccionaría
+        title: `Mantenimiento #${maintenances.length + 1}`,
+        client: "Cliente Pendiente",
         asset: data.assetModel,
-        assetId: data.assetId,
-        date: format(data.date, 'dd/MM/yyyy'),
+        date: format(data.date, 'yyyy-MM-dd'),
         status: "scheduled",
         technician: data.technician,
         type: data.type,
         notes: data.notes
       };
       
-      // Añadir el nuevo mantenimiento a la lista
-      setMaintenances(prev => [...prev, newMaintenance]);
+      createMaintenance(newMaintenance);
     }
   };
 
-  // Filtrar mantenimientos por estado para cada pestaña
-  const activeMaintenances = maintenances.filter(m => m.status === "active");
-  const scheduledMaintenances = maintenances.filter(m => m.status === "scheduled");
-  const completedMaintenances = maintenances.filter(m => m.status === "completed");
-  const delayedMaintenances = maintenances.filter(m => m.status === "delayed");
+  const filterMaintenances = (status: string) => 
+    maintenances.filter(m => m.status === status);
 
   return (
     <div className="space-y-6">
@@ -174,56 +77,21 @@ const Maintenance: React.FC = () => {
           <TabsTrigger value="delayed">Atrasados</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="active" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {activeMaintenances.map(maintenance => (
-              <MaintenanceCard 
-                key={maintenance.id}
-                maintenance={maintenance}
-                onViewDetails={handleShowDetails}
-              />
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="scheduled" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {scheduledMaintenances.map(maintenance => (
-              <MaintenanceCard 
-                key={maintenance.id}
-                maintenance={maintenance}
-                onViewDetails={handleShowDetails}
-              />
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="completed" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {completedMaintenances.map(maintenance => (
-              <MaintenanceCard 
-                key={maintenance.id}
-                maintenance={maintenance}
-                onViewDetails={handleShowDetails}
-              />
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="delayed" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {delayedMaintenances.map(maintenance => (
-              <MaintenanceCard 
-                key={maintenance.id}
-                maintenance={maintenance}
-                onViewDetails={handleShowDetails}
-              />
-            ))}
-          </div>
-        </TabsContent>
+        {['active', 'scheduled', 'completed', 'delayed'].map(status => (
+          <TabsContent key={status} value={status} className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filterMaintenances(status).map(maintenance => (
+                <MaintenanceCard 
+                  key={maintenance.id}
+                  maintenance={maintenance}
+                  onViewDetails={handleShowDetails}
+                />
+              ))}
+            </div>
+          </TabsContent>
+        ))}
       </Tabs>
 
-      {/* Dialog para mostrar detalles del mantenimiento */}
       <Dialog open={!!selectedMaintenance} onOpenChange={() => setSelectedMaintenance(null)}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -288,10 +156,34 @@ const Maintenance: React.FC = () => {
                 </div>
               )}
 
-              <div className="pt-4 flex justify-end border-t">
-                <Button 
-                  onClick={() => setSelectedMaintenance(null)}
-                >
+              <div className="pt-4 flex justify-between border-t">
+                <div className="space-x-2">
+                  {selectedMaintenance.status !== 'active' && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleStatusUpdate('active')}
+                    >
+                      Activar
+                    </Button>
+                  )}
+                  {selectedMaintenance.status !== 'completed' && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleStatusUpdate('completed')}
+                    >
+                      Completar
+                    </Button>
+                  )}
+                  {selectedMaintenance.status !== 'delayed' && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleStatusUpdate('delayed')}
+                    >
+                      Atrasar
+                    </Button>
+                  )}
+                </div>
+                <Button onClick={() => setSelectedMaintenance(null)}>
                   Cerrar
                 </Button>
               </div>
@@ -300,7 +192,6 @@ const Maintenance: React.FC = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Sheet para programar mantenimiento */}
       <Sheet open={showMaintenanceForm} onOpenChange={setShowMaintenanceForm}>
         <SheetContent>
           <SheetHeader>

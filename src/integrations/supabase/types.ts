@@ -51,6 +51,48 @@ export type Database = {
         }
         Relationships: []
       }
+      maintenances: {
+        Row: {
+          asset: string
+          client: string
+          created_at: string | null
+          date: string
+          id: string
+          notes: string | null
+          status: string
+          technician: string
+          title: string
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          asset: string
+          client: string
+          created_at?: string | null
+          date: string
+          id?: string
+          notes?: string | null
+          status: string
+          technician: string
+          title: string
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          asset?: string
+          client?: string
+          created_at?: string | null
+          date?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          technician?: string
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       repairs: {
         Row: {
           actual_completion_date: string | null
