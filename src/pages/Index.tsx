@@ -5,8 +5,8 @@ import { useAssets } from '@/hooks/useAssets';
 import { useClients } from '@/hooks/useClients';
 
 const Index: React.FC = () => {
-  const { assets, isLoading: assetsLoading } = useAssets();
-  const { clients, isLoading: clientsLoading } = useClients();
+  const { assets, loading: assetsLoading } = useAssets();
+  const { clients, loading: clientsLoading } = useClients();
   
   // Get the most recent assets and clients for the dashboard
   const recentAssets = assets?.slice(0, 3) || [];
