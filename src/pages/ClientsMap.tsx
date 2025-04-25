@@ -11,8 +11,10 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImduZ3ZpbXR6dWtzb3RpdHV6dWd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUyNTg4MzksImV4cCI6MjA2MDgzNDgzOX0.GChTxPMJwH41swqIBDhUpvRAnW1ezqzUbIbN_cvOyZQ' // Reemplaza con tu clave pública (anon key)
 );
 
+const DEFAULT_MAPBOX_TOKEN = 'pk.eyJ1Ijoib3ZpZXlyYTIxIiwiYSI6ImNtOXU1c3loeTA2OWsya29vOHhlMDlodWEifQ.w85cm5P-bgwSaVMqVjgSJg';
+
 const ClientsMapPage: React.FC = () => {
-  const [mapboxToken, setMapboxToken] = useState<string>('');
+  const [mapboxToken, setMapboxToken] = useState<string>(DEFAULT_MAPBOX_TOKEN);
   const [tokenValid, setTokenValid] = useState<boolean>(false);
 
   // Función para obtener el token desde Supabase
@@ -33,10 +35,10 @@ const ClientsMapPage: React.FC = () => {
         return null;
       }
 
-      return data?.mapbox_token || '';
+      return data?.mapbox_token || DEFAULT_MAPBOX_TOKEN;
     } catch (err) {
       console.error('Unexpected error fetching Mapbox token:', err);
-      return null;
+      return DEFAULT_MAPBOX_TOKEN;
     }
   };
 
