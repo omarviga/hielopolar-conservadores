@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Stats from './Stats';
 import { 
@@ -120,28 +121,32 @@ const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) =>
           </div>
           
           <div className="space-y-3">
-            {recentAssets.slice(0, 3).map((asset) => (
-              <div key={asset.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-lg overflow-hidden">
-                  <img src={asset.imageSrc} alt={asset.model} className="w-full h-full object-cover" />
-                </div>
-                <div className="ml-3">
-                  <p className="font-medium">{asset.model}</p>
-                  <p className="text-sm text-gray-500">ID: {asset.id}</p>
-                </div>
-                <div className="ml-auto">
-                  <span className={`status-badge ${asset.status === 'available' ? 'status-badge-available' : 
+            {recentAssets && recentAssets.length > 0 ? (
+              recentAssets.map((asset) => (
+                <div key={asset.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                  <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-lg overflow-hidden">
+                    <img src={asset.imageSrc} alt={asset.model} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="font-medium">{asset.model}</p>
+                    <p className="text-sm text-gray-500">ID: {asset.id}</p>
+                  </div>
+                  <div className="ml-auto">
+                    <span className={`status-badge ${asset.status === 'available' ? 'status-badge-available' : 
                                    asset.status === 'in-use' ? 'status-badge-in-use' : 
                                    asset.status === 'maintenance' ? 'status-badge-maintenance' : 
                                    'status-badge-retired'}`}>
-                    {asset.status === 'available' ? 'Disponible' : 
-                     asset.status === 'in-use' ? 'En Uso' : 
-                     asset.status === 'maintenance' ? 'Mantenimiento' : 
-                     'Retirado'}
-                  </span>
+                      {asset.status === 'available' ? 'Disponible' : 
+                       asset.status === 'in-use' ? 'En Uso' : 
+                       asset.status === 'maintenance' ? 'Mantenimiento' : 
+                       'Retirado'}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="p-4 text-center text-gray-500">No hay conservadores registrados</div>
+            )}
           </div>
         </div>
         
@@ -155,20 +160,24 @@ const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) =>
           </div>
           
           <div className="space-y-3">
-            {recentClients.slice(0, 3).map((client) => (
-              <div key={client.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-full overflow-hidden">
-                  <img src={client.imageSrc} alt={client.name} className="w-full h-full object-cover" />
+            {recentClients && recentClients.length > 0 ? (
+              recentClients.map((client) => (
+                <div key={client.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                  <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-full overflow-hidden">
+                    <img src={client.imageSrc} alt={client.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="font-medium">{client.name}</p>
+                    <p className="text-sm text-gray-500">{client.assetsAssigned} conservadores</p>
+                  </div>
+                  <div className="ml-auto">
+                    <Button size="sm" variant="outline">Ver Detalle</Button>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <p className="font-medium">{client.name}</p>
-                  <p className="text-sm text-gray-500">{client.assetsAssigned} conservadores</p>
-                </div>
-                <div className="ml-auto">
-                  <Button size="sm" variant="outline">Ver Detalle</Button>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="p-4 text-center text-gray-500">No hay clientes registrados</div>
+            )}
           </div>
         </div>
       </div>
