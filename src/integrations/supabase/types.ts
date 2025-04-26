@@ -150,6 +150,21 @@ export type Database = {
         }
         Relationships: []
       }
+      settings: {
+        Row: {
+          id: number
+          mapbox_token: string
+        }
+        Insert: {
+          id?: number
+          mapbox_token: string
+        }
+        Update: {
+          id?: number
+          mapbox_token?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
