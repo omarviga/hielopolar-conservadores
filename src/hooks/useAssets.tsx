@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -58,7 +59,9 @@ export const useAssets = () => {
           temperature_range: asset.temperatureRange,
           image_src: asset.imageSrc,
           coordinates: asset.coordinates ? JSON.stringify(asset.coordinates) : null,
-          assigned_to: asset.assignedTo || null
+          assigned_to: asset.assignedTo || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })));
 
       if (error) {
@@ -96,7 +99,7 @@ export const useAssets = () => {
   // Mutation para agregar un nuevo asset
   const addAssetMutation = useMutation({
     mutationFn: async (asset: Asset) => {
-      const formattedAsset: Tables<'assets'> = {
+      const formattedAsset = {
         id: asset.id,
         model: asset.model,
         serial_number: asset.serialNumber,
@@ -107,7 +110,9 @@ export const useAssets = () => {
         temperature_range: asset.temperatureRange,
         image_src: asset.imageSrc,
         coordinates: asset.coordinates ? JSON.stringify(asset.coordinates) : null,
-        assigned_to: asset.assignedTo || null
+        assigned_to: asset.assignedTo || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
 
       const { data, error } = await supabase
@@ -143,7 +148,9 @@ export const useAssets = () => {
   // Mutation para actualizar un asset existente
   const updateAssetMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Asset> & { id: string }) => {
-      const formattedUpdates: any = {};
+      const formattedUpdates: any = {
+        updated_at: new Date().toISOString()
+      };
       
       if (updates.model) formattedUpdates.model = updates.model;
       if (updates.serialNumber) formattedUpdates.serial_number = updates.serialNumber;

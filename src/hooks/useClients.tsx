@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -20,7 +19,7 @@ const initialClients: Client[] = [
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/men/1.jpg',
     coordinates: [-105.2333, 20.6167], // Puerto Vallarta
-    channelType: 'distributor',
+    channelType: 'tradicional', // Cambiado de distributor a tradicional
     conserverProductivity: 85,
   },
   {
@@ -36,7 +35,7 @@ const initialClients: Client[] = [
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/women/2.jpg',
     coordinates: [-99.8235, 16.8531], // Acapulco
-    channelType: 'retail',
+    channelType: 'moderno', // Cambiado de retail a moderno
     conserverProductivity: 92,
   },
   {
@@ -52,7 +51,7 @@ const initialClients: Client[] = [
     status: 'inactive',
     imageSrc: 'https://randomuser.me/api/portraits/men/3.jpg',
     coordinates: [-99.1332, 19.4326], // CDMX
-    channelType: 'wholesale',
+    channelType: 'industrial', // Cambiado de wholesale a industrial
     conserverProductivity: 78,
   },
 ];
