@@ -1,195 +1,293 @@
 
-import { useState, useEffect } from 'react';
-import { Client } from '@/components/client/ClientInterface';
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
+import { Client } from '@/components/client/ClientInterface';
 
-// Simulated data
-const mockClients: Client[] = [
+// Datos iniciales para cuando no hay clientes
+const initialClients: Client[] = [
   {
-    id: 'CL-001',
+    id: 'CL-101',
     name: 'Pescados Norte',
     contactPerson: 'Juan Pérez',
-    phone: '+56 9 1234 5678',
-    email: 'juan@pescadosnorte.cl',
-    address: 'Av. Marina 456, Antofagasta',
+    phone: '555-123-4567',
+    email: 'contacto@pescadosnorte.mx',
+    address: 'Av. Marina 123, Puerto Vallarta',
     assetsAssigned: 3,
     maxCredit: 5,
     activeCredit: 3,
     status: 'active',
     imageSrc: 'https://randomuser.me/api/portraits/men/1.jpg',
-    coordinates: [-70.4001, -23.6509], // Antofagasta
-    channelType: 'tradicional',
-    conserverProductivity: 85
+    coordinates: [-105.2333, 20.6167], // Puerto Vallarta
+    channelType: 'distributor',
+    conserverProductivity: 85,
   },
   {
-    id: 'CL-002',
+    id: 'CL-102',
     name: 'Mariscos Sur',
-    contactPerson: 'María González',
-    phone: '+56 9 9876 5432',
-    email: 'maria@mariscossur.cl',
-    address: 'Calle Puerto 789, Puerto Montt',
-    assetsAssigned: 5,
-    maxCredit: 8,
-    activeCredit: 5,
-    status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/women/2.jpg',
-    coordinates: [-72.9392, -41.4718], // Puerto Montt
-    channelType: 'moderno',
-    conserverProductivity: 92
-  },
-  {
-    id: 'CL-003',
-    name: 'Hielos Centro',
-    contactPerson: 'Carlos Rodríguez',
-    phone: '+56 9 5555 6666',
-    email: 'carlos@hieloscentro.cl',
-    address: 'Av. Providencia, Santiago',
+    contactPerson: 'Ana González',
+    phone: '555-765-4321',
+    email: 'ana@mariscossur.mx',
+    address: 'Calle Oceano 456, Acapulco',
     assetsAssigned: 2,
-    maxCredit: 4,
+    maxCredit: 3,
     activeCredit: 2,
     status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/men/3.jpg',
-    coordinates: [-70.6506, -33.4372], // Santiago
-    channelType: 'industrial',
-    conserverProductivity: 78
+    imageSrc: 'https://randomuser.me/api/portraits/women/2.jpg',
+    coordinates: [-99.8235, 16.8531], // Acapulco
+    channelType: 'retail',
+    conserverProductivity: 92,
   },
   {
-    id: 'CL-004',
-    name: 'Alimentos Frescos',
-    contactPerson: 'Ana Martínez',
-    phone: '+56 9 7777 8888',
-    email: 'ana@alimentosfrescos.cl',
-    address: 'Calle Comercio 123, Valparaíso',
-    assetsAssigned: 0,
-    maxCredit: 3,
-    activeCredit: 0,
+    id: 'CL-103',
+    name: 'Hielos Centro',
+    contactPerson: 'Carlos Rodríguez',
+    phone: '555-987-6543',
+    email: 'carlos@hieloscentro.mx',
+    address: 'Av. Revolución 789, Ciudad de México',
+    assetsAssigned: 1,
+    maxCredit: 2,
+    activeCredit: 1,
     status: 'inactive',
-    imageSrc: 'https://randomuser.me/api/portraits/women/4.jpg',
-    coordinates: [-71.6188, -33.0472], // Valparaiso
-    channelType: 'moderno',
-    conserverProductivity: 65
+    imageSrc: 'https://randomuser.me/api/portraits/men/3.jpg',
+    coordinates: [-99.1332, 19.4326], // CDMX
+    channelType: 'wholesale',
+    conserverProductivity: 78,
   },
-  {
-    id: 'CL-005',
-    name: 'Distribuidora Pacífico',
-    contactPerson: 'Roberto Silva',
-    phone: '+56 9 3333 4444',
-    email: 'roberto@pacifico.cl',
-    address: 'Av. Costanera 567, Iquique',
-    assetsAssigned: 4,
-    maxCredit: 6,
-    activeCredit: 4,
-    status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/men/5.jpg',
-    coordinates: [-70.1435, -20.2307], // Iquique
-    channelType: 'tradicional',
-    conserverProductivity: 88
-  },
-  {
-    id: 'CL-006',
-    name: 'Mercado Central',
-    contactPerson: 'Sofía López',
-    phone: '+56 9 2222 1111',
-    email: 'sofia@mercadocentral.cl',
-    address: 'Av. 21 de Mayo 890, Santiago',
-    assetsAssigned: 6,
-    maxCredit: 6,
-    activeCredit: 6,
-    status: 'active',
-    imageSrc: 'https://randomuser.me/api/portraits/women/6.jpg',
-    coordinates: [-70.6523, -33.4372], // Santiago (ligeramente diferente para distinguir en el mapa)
-    channelType: 'industrial',
-    conserverProductivity: 95
-  }
 ];
 
 export const useClients = () => {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // Simulate API call
-    const fetchClients = async () => {
-      try {
-        // Try to get clients from localStorage first
-        const savedClients = localStorage.getItem('clients');
-        setLoading(true);
+  // Función para cargar clientes desde Supabase
+  const fetchClients = async () => {
+    const { data, error } = await supabase
+      .from('clients_extended')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching clients:', error);
+      throw error;
+    }
+
+    // Si no hay datos, inicializamos con los datos mock una vez
+    if (!data || data.length === 0) {
+      console.log('No hay datos de clientes en Supabase, inicializando con datos de ejemplo...');
+      await initializeClients();
+      
+      const { data: initialData, error: initialError } = await supabase
+        .from('clients_extended')
+        .select('*')
+        .order('created_at', { ascending: false });
         
-        if (savedClients) {
-          console.log('Datos cargados desde localStorage:', savedClients);
-          setClients(JSON.parse(savedClients));
-        } else {
-          // If no saved clients, use mock data
-          // Simulate network delay
-          await new Promise(resolve => setTimeout(resolve, 500));
-          setClients(mockClients);
-          // Save initial data to localStorage
-          localStorage.setItem('clients', JSON.stringify(mockClients));
-          console.log('Datos iniciales guardados en localStorage');
-        }
-        
-        setError(null);
-      } catch (err) {
-        setError('Error al cargar los clientes');
-        console.error(err);
-      } finally {
-        setLoading(false);
+      if (initialError) {
+        console.error('Error fetching initial clients:', initialError);
+        throw initialError;
       }
-    };
+      
+      return initialData;
+    }
 
-    fetchClients();
-  }, []);
+    return data;
+  };
 
-  // Helper function to save clients to localStorage
-  const saveToLocalStorage = (updatedClients: Client[]) => {
+  // Inicializar con datos mock si no hay datos
+  const initializeClients = async () => {
     try {
-      localStorage.setItem('clients', JSON.stringify(updatedClients));
-      console.log('Guardando datos en localStorage:', updatedClients);
+      const { error } = await supabase
+        .from('clients_extended')
+        .insert(initialClients.map(client => ({
+          id: client.id,
+          name: client.name,
+          contact_person: client.contactPerson,
+          phone: client.phone,
+          email: client.email,
+          address: client.address,
+          assets_assigned: client.assetsAssigned,
+          max_credit: client.maxCredit,
+          active_credit: client.activeCredit,
+          status: client.status,
+          image_src: client.imageSrc,
+          coordinates: client.coordinates ? JSON.stringify(client.coordinates) : null,
+          channel_type: client.channelType,
+          conserver_productivity: client.conserverProductivity
+        })));
+
+      if (error) {
+        console.error('Error initializing clients:', error);
+        throw error;
+      }
     } catch (err) {
-      console.error('Error al guardar en localStorage:', err);
+      console.error('Error in initializeClients:', err);
+      throw err;
     }
   };
 
-  const addClient = (client: Client) => {
-    const updatedClients = [...clients, client];
-    setClients(updatedClients);
-    saveToLocalStorage(updatedClients);
-    toast({
-      title: 'Cliente agregado',
-      description: `El cliente "${client.name}" ha sido añadido exitosamente.`,
-    });
-  };
+  // Query para obtener los clientes
+  const { data: clients = [], isLoading, error } = useQuery({
+    queryKey: ['clients'],
+    queryFn: fetchClients,
+    retry: 1,
+  });
 
-  const updateClient = (id: string, updates: Partial<Client>) => {
-    const updatedClients = clients.map(client => 
-      client.id === id ? { ...client, ...updates } : client
-    );
-    setClients(updatedClients);
-    saveToLocalStorage(updatedClients);
-    toast({
-      title: 'Cliente actualizado',
-      description: 'Los cambios han sido guardados correctamente',
-    });
-  };
+  // Mutation para agregar un nuevo cliente
+  const addClientMutation = useMutation({
+    mutationFn: async (client: Client) => {
+      const formattedClient = {
+        id: client.id,
+        name: client.name,
+        contact_person: client.contactPerson,
+        phone: client.phone,
+        email: client.email,
+        address: client.address,
+        assets_assigned: client.assetsAssigned,
+        max_credit: client.maxCredit,
+        active_credit: client.activeCredit,
+        status: client.status,
+        image_src: client.imageSrc,
+        coordinates: client.coordinates ? JSON.stringify(client.coordinates) : null,
+        channel_type: client.channelType,
+        conserver_productivity: client.conserverProductivity
+      };
 
-  const deleteClient = (id: string) => {
-    const updatedClients = clients.filter(client => client.id !== id);
-    setClients(updatedClients);
-    saveToLocalStorage(updatedClients);
-    toast({
-      title: 'Cliente eliminado',
-      description: 'El cliente ha sido eliminado correctamente',
-      variant: 'destructive',
-    });
-  };
+      const { data, error } = await supabase
+        .from('clients_extended')
+        .insert(formattedClient)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating client:', error);
+        throw error;
+      }
+      
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast({
+        title: "Cliente añadido",
+        description: "El cliente ha sido añadido con éxito.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error al añadir cliente:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo añadir el cliente. Por favor, intenta nuevamente.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation para actualizar un cliente existente
+  const updateClientMutation = useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<Client> & { id: string }) => {
+      const formattedUpdates: any = {};
+      
+      if (updates.name) formattedUpdates.name = updates.name;
+      if (updates.contactPerson) formattedUpdates.contact_person = updates.contactPerson;
+      if (updates.phone) formattedUpdates.phone = updates.phone;
+      if (updates.email) formattedUpdates.email = updates.email;
+      if (updates.address) formattedUpdates.address = updates.address;
+      if ('assetsAssigned' in updates) formattedUpdates.assets_assigned = updates.assetsAssigned;
+      if ('maxCredit' in updates) formattedUpdates.max_credit = updates.maxCredit;
+      if ('activeCredit' in updates) formattedUpdates.active_credit = updates.activeCredit;
+      if (updates.status) formattedUpdates.status = updates.status;
+      if (updates.imageSrc) formattedUpdates.image_src = updates.imageSrc;
+      if (updates.coordinates) formattedUpdates.coordinates = JSON.stringify(updates.coordinates);
+      if (updates.channelType) formattedUpdates.channel_type = updates.channelType;
+      if ('conserverProductivity' in updates) formattedUpdates.conserver_productivity = updates.conserverProductivity;
+
+      const { data, error } = await supabase
+        .from('clients_extended')
+        .update(formattedUpdates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating client:', error);
+        throw error;
+      }
+      
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast({
+        title: "Cliente actualizado",
+        description: "La información del cliente ha sido actualizada.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error al actualizar cliente:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el cliente. Por favor, intenta nuevamente.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation para eliminar un cliente
+  const deleteClientMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('clients_extended')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting client:', error);
+        throw error;
+      }
+      
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast({
+        title: "Cliente eliminado",
+        description: "El cliente ha sido eliminado de la base de datos.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error al eliminar cliente:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el cliente. Por favor, intenta nuevamente.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Transformar los datos de Supabase al formato de la interfaz Client
+  const transformedClients = clients.map((client: any) => ({
+    id: client.id,
+    name: client.name,
+    contactPerson: client.contact_person,
+    phone: client.phone,
+    email: client.email,
+    address: client.address,
+    assetsAssigned: client.assets_assigned,
+    maxCredit: client.max_credit,
+    activeCredit: client.active_credit,
+    status: client.status,
+    imageSrc: client.image_src,
+    coordinates: client.coordinates ? JSON.parse(client.coordinates) : null,
+    channelType: client.channel_type,
+    conserverProductivity: client.conserver_productivity
+  }));
 
   return {
-    clients,
-    loading,
-    error,
-    addClient,
-    updateClient,
-    deleteClient
+    clients: transformedClients,
+    loading: isLoading,
+    error: error ? (error as Error).message : null,
+    addClient: (client: Client) => addClientMutation.mutate(client),
+    updateClient: (id: string, updates: Partial<Client>) => updateClientMutation.mutate({ id, ...updates }),
+    deleteClient: (id: string) => deleteClientMutation.mutate(id)
   };
 };

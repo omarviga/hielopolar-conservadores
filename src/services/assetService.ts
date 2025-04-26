@@ -1,31 +1,21 @@
 
+// Esta implementación está mantenida por compatibilidad con funciones existentes
+// Pero ahora utilizamos Supabase para todo el manejo de datos
+
 import { Asset } from '@/components/AssetCard';
-import { saveToLocalStorage } from '@/utils/localStorage';
-import { ASSETS_STORAGE_KEY } from '@/data/mockAssets';
+import { saveToLocalStorage } from '../utils/localStorage';
+import { ASSETS_STORAGE_KEY } from '../data/mockAssets';
 
-/**
- * Service for handling asset operations
- */
-
-/**
- * Generate a unique ID for a new asset based on existing assets
- */
+// Generar un ID único para un conservador
 export const generateUniqueAssetId = (assets: Asset[]): string => {
-  const existingIds = assets.map(asset => asset.id);
-  let newId = '';
-  let counter = assets.length + 1;
+  const lastId = assets.length > 0 
+    ? parseInt(assets[assets.length - 1].id.replace('CON-', '')) 
+    : 0;
   
-  do {
-    newId = `CON-${String(counter).padStart(3, '0')}`;
-    counter++;
-  } while (existingIds.includes(newId));
-  
-  return newId;
+  return `CON-${String(lastId + 1).padStart(3, '0')}`;
 };
 
-/**
- * Save assets to localStorage
- */
-export const saveAssets = (assets: Asset[]): boolean => {
-  return saveToLocalStorage(ASSETS_STORAGE_KEY, assets);
+// Guardar assets en localStorage (mantenido por compatibilidad)
+export const saveAssets = (assets: Asset[]): void => {
+  saveToLocalStorage(ASSETS_STORAGE_KEY, assets);
 };

@@ -4,6 +4,7 @@ import Dashboard from '@/components/Dashboard';
 import { useAssets } from '@/hooks/useAssets';
 import { useClients } from '@/hooks/useClients';
 import { useMaintenance } from '@/hooks/useMaintenance';
+import { Loader2 } from 'lucide-react';
 
 const Index: React.FC = () => {
   const { assets, loading: assetsLoading } = useAssets();
@@ -21,9 +22,14 @@ const Index: React.FC = () => {
     .slice(0, 3) || [];
 
   if (assetsLoading || clientsLoading || maintenanceLoading) {
-    return <div className="flex items-center justify-center h-64">
-      <div className="text-lg">Cargando datos del dashboard...</div>
-    </div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-polar-600 mx-auto mb-2" />
+          <div className="text-lg">Cargando datos del dashboard...</div>
+        </div>
+      </div>
+    );
   }
 
   return (

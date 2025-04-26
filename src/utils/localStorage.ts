@@ -1,42 +1,22 @@
 
-/**
- * Utility functions for working with localStorage
- */
-
-/**
- * Save data to localStorage
- * @param key The key to store data under
- * @param data The data to store
- * @returns boolean indicating success
- */
-export const saveToLocalStorage = <T>(key: string, data: T): boolean => {
+// Esta función está mantenida por compatibilidad, pero ahora usamos Supabase
+// para la persistencia de datos
+export const loadFromLocalStorage = <T>(key: string): T | null => {
   try {
-    localStorage.setItem(key, JSON.stringify(data));
-    console.log(`Guardando datos en localStorage (${key}):`, data);
-    return true;
-  } catch (err) {
-    console.error(`Error al guardar datos en localStorage (${key}):`, err);
-    return false;
+    const serializedData = localStorage.getItem(key);
+    if (!serializedData) return null;
+    return JSON.parse(serializedData);
+  } catch (error) {
+    console.error(`Error loading data from localStorage (${key}):`, error);
+    return null;
   }
 };
 
-/**
- * Load data from localStorage
- * @param key The key to load data from
- * @returns The data if found, null otherwise
- */
-export const loadFromLocalStorage = <T>(key: string): T | null => {
+export const saveToLocalStorage = <T>(key: string, data: T): void => {
   try {
-    const savedData = localStorage.getItem(key);
-    if (!savedData) {
-      console.log(`No hay datos en localStorage (${key})`);
-      return null;
-    }
-    const parsedData = JSON.parse(savedData) as T;
-    console.log(`Datos cargados desde localStorage (${key}):`, parsedData);
-    return parsedData;
-  } catch (err) {
-    console.error(`Error al cargar datos desde localStorage (${key}):`, err);
-    return null;
+    const serializedData = JSON.stringify(data);
+    localStorage.setItem(key, serializedData);
+  } catch (error) {
+    console.error(`Error saving data to localStorage (${key}):`, error);
   }
 };
