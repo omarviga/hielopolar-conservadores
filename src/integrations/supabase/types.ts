@@ -30,6 +30,54 @@ export type Database = {
         }
         Relationships: []
       }
+      assets: {
+        Row: {
+          assigned_to: string | null
+          capacity: string | null
+          coordinates: string | null
+          created_at: string | null
+          id: string
+          image_src: string | null
+          last_maintenance: string | null
+          location: string | null
+          model: string
+          serial_number: string | null
+          status: string
+          temperature_range: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          capacity?: string | null
+          coordinates?: string | null
+          created_at?: string | null
+          id: string
+          image_src?: string | null
+          last_maintenance?: string | null
+          location?: string | null
+          model: string
+          serial_number?: string | null
+          status?: string
+          temperature_range?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          capacity?: string | null
+          coordinates?: string | null
+          created_at?: string | null
+          id?: string
+          image_src?: string | null
+          last_maintenance?: string | null
+          location?: string | null
+          model?: string
+          serial_number?: string | null
+          status?: string
+          temperature_range?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           created_at: string | null
@@ -48,6 +96,63 @@ export type Database = {
           email?: string
           id?: string | null
           name?: string
+        }
+        Relationships: []
+      }
+      clients_extended: {
+        Row: {
+          active_credit: number | null
+          address: string | null
+          assets_assigned: number | null
+          channel_type: string | null
+          conserver_productivity: number | null
+          contact_person: string | null
+          coordinates: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          image_src: string | null
+          max_credit: number | null
+          name: string
+          phone: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_credit?: number | null
+          address?: string | null
+          assets_assigned?: number | null
+          channel_type?: string | null
+          conserver_productivity?: number | null
+          contact_person?: string | null
+          coordinates?: string | null
+          created_at?: string | null
+          email?: string | null
+          id: string
+          image_src?: string | null
+          max_credit?: number | null
+          name: string
+          phone?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_credit?: number | null
+          address?: string | null
+          assets_assigned?: number | null
+          channel_type?: string | null
+          conserver_productivity?: number | null
+          contact_person?: string | null
+          coordinates?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          image_src?: string | null
+          max_credit?: number | null
+          name?: string
+          phone?: string | null
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }

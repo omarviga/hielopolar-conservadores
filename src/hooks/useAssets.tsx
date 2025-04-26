@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { Asset } from '@/components/AssetCard';
 import { mockAssets } from '@/data/mockAssets';
+import { Tables } from '@/integrations/supabase/types';
 
 export const useAssets = () => {
   const queryClient = useQueryClient();
@@ -36,10 +36,10 @@ export const useAssets = () => {
         throw initialError;
       }
       
-      return initialData as Asset[];
+      return initialData as Tables<'assets'>[];
     }
 
-    return data as Asset[];
+    return data as Tables<'assets'>[];
   };
 
   // Inicializar con datos mock si no hay datos
@@ -78,10 +78,25 @@ export const useAssets = () => {
     retry: 1,
   });
 
+  // Transformar los datos de Supabase al formato de la interfaz Asset
+  const transformedAssets = assets.map((asset): Asset => ({
+    id: asset.id,
+    model: asset.model,
+    serialNumber: asset.serial_number || '',
+    status: asset.status as Asset['status'],
+    location: asset.location || '',
+    lastMaintenance: asset.last_maintenance || '',
+    capacity: asset.capacity || '',
+    temperatureRange: asset.temperature_range || '',
+    imageSrc: asset.image_src || '',
+    coordinates: asset.coordinates ? JSON.parse(asset.coordinates) : null,
+    assignedTo: asset.assigned_to || null
+  }));
+
   // Mutation para agregar un nuevo asset
   const addAssetMutation = useMutation({
     mutationFn: async (asset: Asset) => {
-      const formattedAsset = {
+      const formattedAsset: Tables<'assets'> = {
         id: asset.id,
         model: asset.model,
         serial_number: asset.serialNumber,
@@ -203,20 +218,6 @@ export const useAssets = () => {
       });
     },
   });
-
-  const transformedAssets = assets.map((asset: any) => ({
-    id: asset.id,
-    model: asset.model,
-    serialNumber: asset.serial_number,
-    status: asset.status,
-    location: asset.location,
-    lastMaintenance: asset.last_maintenance,
-    capacity: asset.capacity,
-    temperatureRange: asset.temperature_range,
-    imageSrc: asset.image_src,
-    coordinates: asset.coordinates ? JSON.parse(asset.coordinates) : null,
-    assignedTo: asset.assigned_to
-  }));
 
   return {
     assets: transformedAssets,
