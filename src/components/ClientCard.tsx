@@ -13,6 +13,8 @@ import DetailLocationInfo from './client/DetailLocationInfo';
 import DetailBusinessInfo from './client/DetailBusinessInfo';
 import DetailCreditInfo from './client/DetailCreditInfo';
 import ClientDetailActions from './client/ClientDetailActions';
+import EditClientForm from './client/EditClientForm';
+import { ClientFormValues } from './client/ClientFormSchema';
 
 interface ClientCardProps {
   client: Client;
@@ -20,12 +22,42 @@ interface ClientCardProps {
 
 const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
   const { updateClient } = useClients();
   
   const toggleClientStatus = () => {
     const newStatus = client.status === 'active' ? 'inactive' : 'active';
     updateClient(client.id, { status: newStatus });
   };
+
+  const handleEditSubmit = (values: ClientFormValues) => {
+    updateClient(client.id, {
+      ...values,
+      maxCredit: client.maxCredit,
+      activeCredit: client.activeCredit,
+      assetsAssigned: client.assetsAssigned,
+      imageSrc: client.imageSrc,
+      coordinates: client.coordinates,
+    });
+    setShowEditForm(false);
+  };
+
+  if (showEditForm) {
+    return (
+      <Dialog open={showEditForm} onOpenChange={setShowEditForm}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Editar Cliente</DialogTitle>
+          </DialogHeader>
+          <EditClientForm
+            client={client}
+            onSubmit={handleEditSubmit}
+            onCancel={() => setShowEditForm(false)}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <>
@@ -37,7 +69,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
         <div className="p-4">
           <ContactInfo client={client} />
           <CreditProgress client={client} />
-          <ClientActions onShowDetails={() => setShowDetails(true)} client={client} />
+          <ClientActions 
+            onShowDetails={() => setShowDetails(true)} 
+            onEdit={() => setShowEditForm(true)}
+            client={client} 
+          />
         </div>
       </div>
 
@@ -59,7 +95,14 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
             <DetailCreditInfo client={client} />
           </div>
           
-          <ClientDetailActions onClose={() => setShowDetails(false)} client={client} />
+          <ClientDetailActions 
+            onClose={() => setShowDetails(false)} 
+            onEdit={() => {
+              setShowDetails(false);
+              setShowEditForm(true);
+            }}
+            client={client} 
+          />
         </DialogContent>
       </Dialog>
     </>
