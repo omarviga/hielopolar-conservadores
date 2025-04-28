@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useClients } from '@/hooks/useClients';
@@ -24,7 +23,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const { updateClient } = useClients();
-  
+
   const toggleClientStatus = () => {
     const newStatus = client.status === 'active' ? 'inactive' : 'active';
     updateClient(client.id, { status: newStatus });
@@ -38,6 +37,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
       assetsAssigned: client.assetsAssigned,
       imageSrc: client.imageSrc,
       coordinates: client.coordinates,
+      conserver: values.conserver, // Guardar el conservador asignado
     });
     setShowEditForm(false);
   };
@@ -65,14 +65,17 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
         <div className="p-4 border-b">
           <ClientHeader client={client} />
         </div>
-        
+
         <div className="p-4">
           <ContactInfo client={client} />
           <CreditProgress client={client} />
-          <ClientActions 
-            onShowDetails={() => setShowDetails(true)} 
+          <div className="text-sm text-gray-500 mb-2">
+            <strong>Conservador asignado:</strong> {client.conserver || 'No asignado'}
+          </div>
+          <ClientActions
+            onShowDetails={() => setShowDetails(true)}
             onEdit={() => setShowEditForm(true)}
-            client={client} 
+            client={client}
           />
         </div>
       </div>
@@ -82,7 +85,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
           <DialogHeader>
             <DialogTitle>Detalles del Cliente</DialogTitle>
           </DialogHeader>
-          
+
           <ClientDetailHeader client={client} onToggleStatus={toggleClientStatus} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -94,14 +97,14 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
             <DetailBusinessInfo client={client} />
             <DetailCreditInfo client={client} />
           </div>
-          
-          <ClientDetailActions 
-            onClose={() => setShowDetails(false)} 
+
+          <ClientDetailActions
+            onClose={() => setShowDetails(false)}
             onEdit={() => {
               setShowDetails(false);
               setShowEditForm(true);
             }}
-            client={client} 
+            client={client}
           />
         </DialogContent>
       </Dialog>
