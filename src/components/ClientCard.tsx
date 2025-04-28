@@ -32,12 +32,6 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const handleEditSubmit = (values: ClientFormValues) => {
     updateClient(client.id, {
       ...values,
-      maxCredit: client.maxCredit,
-      activeCredit: client.activeCredit,
-      assetsAssigned: client.assetsAssigned,
-      imageSrc: client.imageSrc,
-      coordinates: client.coordinates,
-      conserver: values.conserver, // Guardar el conservador asignado
     });
     setShowEditForm(false);
   };

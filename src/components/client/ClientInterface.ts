@@ -14,4 +14,6 @@ export interface Client {
   coordinates?: [number, number]; // Longitud, Latitud
   channelType: 'tradicional' | 'moderno' | 'industrial';
   conserverProductivity: number;
+  conserver?: string; // Conservador asignado
+  createdAt?: string; // Fecha de creación
 }

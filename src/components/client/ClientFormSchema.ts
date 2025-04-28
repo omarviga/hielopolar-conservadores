@@ -14,15 +14,6 @@ export const clientFormSchema = z.object({
   status: z.enum(['active', 'inactive']).default('active'),
 });
 
-export type ClientFormValues = z.infer<typeof clientFormSchema>;
+export type ClientFormValues = z.infer<typeof clientFormSchema>;  
 
-export const defaultValues: ClientFormValues = {
-  name: '',
-  contactPerson: '',
-  phone: '',
-  email: '',
-  address: '',
-  channelType: 'tradicional',
-  conserverProductivity: 0,
-  status: 'active',
-};
+// Removed duplicate interface declaration to avoid identifier conflict.

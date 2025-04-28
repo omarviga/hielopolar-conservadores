@@ -20,10 +20,10 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
-  
+
   const filteredClients = clients
     .filter(client => filter === 'all' || client.status === filter)
-    .filter(client => 
+    .filter(client =>
       client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client.contactPerson.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -33,7 +33,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
 
   const activeCount = clients.filter(client => client.status === 'active').length;
   const inactiveCount = clients.filter(client => client.status === 'inactive').length;
-  
+
   const handleNewClientSubmit = () => {
     console.log('Client form submitted, closing dialog');
     setIsDialogOpen(false);
@@ -44,7 +44,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
       // Export all clients or just the filtered ones based on current view
       const clientsToExport = filteredClients.length > 0 ? filteredClients : clients;
       exportClientsToCSV(clientsToExport);
-      
+
       toast({
         title: "Exportación exitosa",
         description: `Se exportaron ${clientsToExport.length} clientes a CSV.`,
@@ -62,47 +62,47 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-2xl font-bold">Clientes ({filteredClients.length})</h2>
-        
+
         <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-            <Input 
-              type="text" 
-              placeholder="Buscar clientes..." 
+            <Input
+              type="text"
+              placeholder="Buscar clientes..."
               className="pl-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
+
           <div className="flex items-center bg-white border rounded-lg overflow-hidden">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className={`px-3 rounded-none ${filter === 'all' ? 'bg-polar-600 text-white' : ''}`}
               onClick={() => setFilter('all')}
             >
               Todos ({clients.length})
             </Button>
-            <Button 
+            <Button
               variant="ghost"
-              size="sm" 
+              size="sm"
               className={`px-3 rounded-none ${filter === 'active' ? 'bg-polar-600 text-white' : ''}`}
               onClick={() => setFilter('active')}
             >
               Activos ({activeCount})
             </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className={`px-3 rounded-none ${filter === 'inactive' ? 'bg-polar-600 text-white' : ''}`}
               onClick={() => setFilter('inactive')}
             >
               Inactivos ({inactiveCount})
             </Button>
           </div>
-          
-          <Button 
+
+          <Button
             className="bg-polar-600 hover:bg-polar-700"
             onClick={() => setIsDialogOpen(true)}
           >
@@ -111,17 +111,17 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
           </Button>
 
           <div className="hidden md:flex gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
+            <Button
+              variant="outline"
+              size="icon"
               title="Importar clientes"
               onClick={() => setIsImportDialogOpen(true)}
             >
               <Upload className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
+            <Button
+              variant="outline"
+              size="icon"
               title="Exportar clientes"
               onClick={handleExportClients}
             >
@@ -130,19 +130,18 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
           </div>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredClients.map((client, index) => (
-          <div 
-            key={client.id} 
-            className="animate-slide-in" 
-            style={{ animationDelay: `${index * 0.05}s` }}
+          <div
+            key={client.id}
+            className={`animate-slide-in delay-${index}`}
           >
             <ClientCard client={client} />
           </div>
         ))}
       </div>
-      
+
       {filteredClients.length === 0 && (
         <div className="text-center py-10">
           <p className="text-gray-500">No hay clientes que coincidan con el filtro o búsqueda.</p>
@@ -158,7 +157,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
         </DialogContent>
       </Dialog>
 
-      <ImportClientsDialog 
+      <ImportClientsDialog
         open={isImportDialogOpen}
         onOpenChange={setIsImportDialogOpen}
       />
