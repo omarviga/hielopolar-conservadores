@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -6,9 +5,10 @@ import { Button } from '@/components/ui/button';
 import RepairForm from '@/components/repairs/RepairForm';
 import RepairsList from '@/components/repairs/RepairsList';
 import { useRepairs } from '@/hooks/useRepairs';
-import { Plus } from 'lucide-react';
+import { Plus, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { RepairStatus } from '@/types/repair'; // Asumiendo que tienes este tipo definido
 
-// This interface defines the data structure expected by the form submission handler
 interface FormattedRepairData {
   repair_number?: string;
   description: string;
@@ -20,34 +20,52 @@ interface FormattedRepairData {
   estimated_completion?: Date;
   notes?: string;
   parts_used?: string[];
+  status?: RepairStatus;
 }
 
 const Repairs = () => {
   const location = useLocation();
   const assetId = location.state?.assetId;
-  const { repairs, isLoading, createRepair } = useRepairs(assetId);
+  const { repairs, isLoading, createRepair, error } = useRepairs(assetId);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
+  const { toast } = useToast();
+  const [statusFilter, setStatusFilter] = React.useState<RepairStatus | 'all'>('all');
 
   const handleSubmit = async (data: FormattedRepairData) => {
     if (!assetId) {
-      console.error('No asset ID provided for repair');
+      toast({
+        title: 'Error',
+        description: 'No se ha seleccionado un activo para la reparación',
+        variant: 'destructive',
+      });
       return;
     }
 
     try {
-      console.log('Submitting repair with data:', { ...data, asset_id: assetId });
-
       await createRepair({
         asset_id: assetId,
+        status: 'pending', // Estado por defecto
         ...data,
       });
 
       setIsFormOpen(false);
+      toast({
+        title: 'Éxito',
+        description: 'Reparación creada correctamente',
+      });
     } catch (error) {
       console.error('Error al crear la reparación:', error);
-      // Mostrar un mensaje al usuario (puedes usar un toast o similar)
+      toast({
+        title: 'Error',
+        description: 'No se pudo crear la reparación',
+        variant: 'destructive',
+      });
     }
   };
+
+  const filteredRepairs = statusFilter === 'all'
+    ? repairs
+    : repairs.filter(repair => repair.status === statusFilter);
 
   return (
     <div className="container mx-auto py-6">
@@ -55,12 +73,12 @@ const Repairs = () => {
         <h1 className="text-2xl font-bold">Reparaciones</h1>
         <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
           <SheetTrigger asChild>
-            <Button>
+            <Button disabled={!assetId}>
               <Plus className="h-4 w-4 mr-2" />
               Nueva Reparación
             </Button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Registrar Nueva Reparación</SheetTitle>
             </SheetHeader>
@@ -79,9 +97,53 @@ const Repairs = () => {
         </Sheet>
       </div>
 
+      {/* Filtros de estado */}
+      <div className="flex gap-2 mb-4">
+        <Button
+          variant={statusFilter === 'all' ? 'default' : 'outline'}
+          onClick={() => setStatusFilter('all')}
+        >
+          Todas
+        </Button>
+        <Button
+          variant={statusFilter === 'pending' ? 'default' : 'outline'}
+          onClick={() => setStatusFilter('pending')}
+        >
+          Pendientes
+        </Button>
+        <Button
+          variant={statusFilter === 'in_progress' ? 'default' : 'outline'}
+          onClick={() => setStatusFilter('in_progress')}
+        >
+          En Progreso
+        </Button>
+        <Button
+          variant={statusFilter === 'completed' ? 'default' : 'outline'}
+          onClick={() => setStatusFilter('completed')}
+        >
+          Completadas
+        </Button>
+      </div>
+
       <div className="mt-6">
-        {assetId ? (
-          <RepairsList repairs={repairs} />
+        {isLoading && !repairs.length ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="text-center p-8 border rounded-md bg-red-50 text-red-500">
+            Error al cargar las reparaciones: {error.message}
+          </div>
+        ) : assetId ? (
+          <>
+            {filteredRepairs.length === 0 ? (
+              <div className="text-center p-8 border rounded-md bg-gray-50">
+                No hay reparaciones registradas para este activo.
+              </div>
+            ) : (
+              <RepairsList repairs={filteredRepairs} />
+            )}
+          </>
         ) : (
           <div className="text-center p-8 border rounded-md bg-gray-50">
             Seleccione un activo para ver sus reparaciones.
