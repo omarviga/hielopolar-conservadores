@@ -12,7 +12,6 @@ import DetailLocationInfo from './client/DetailLocationInfo';
 import DetailBusinessInfo from './client/DetailBusinessInfo';
 import DetailCreditInfo from './client/DetailCreditInfo';
 import ClientDetailActions from './client/ClientDetailActions';
-import EditClientForm from './client/EditClientForm';
 import { ClientFormValues } from './client/ClientFormSchema';
 
 
