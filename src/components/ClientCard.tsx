@@ -32,6 +32,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const handleEditSubmit = (values: ClientFormValues) => {
     updateClient(client.id, {
       ...values,
+      conserver: values.conserver, // Actualizar el conservador asignado
     });
     setShowEditForm(false);
   };
