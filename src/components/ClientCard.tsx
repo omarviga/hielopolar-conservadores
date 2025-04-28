@@ -15,6 +15,8 @@ import ClientDetailActions from './client/ClientDetailActions';
 import EditClientForm from './client/EditClientForm';
 import { ClientFormValues } from './client/ClientFormSchema';
 
+
+// Removed the local declaration of ClientFormValues to avoid conflict with the imported one.
 interface ClientCardProps {
   client: Client;
 }
