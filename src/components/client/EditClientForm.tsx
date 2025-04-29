@@ -1,40 +1,62 @@
-import { z } from 'zod';
+import React, { useState } from 'react';
+import { ClientFormValues } from './ClientFormSchema';
 
-// Define la interfaz para los valores del formulario
-export interface ClientFormValues {
-  name?: string;
-  contactPerson?: string;
-  phone?: string;
-  email?: string;
-  address?: string;
-  channelType?: 'tradicional' | 'moderno' | 'industrial';
-  status?: 'active' | 'inactive';
-  conserverProductivity?: number;
-  conserver?: string; // Agregar la propiedad 'conserver'
+interface EditClientFormProps {
+  client: ClientFormValues;
+  onSubmit: (values: ClientFormValues) => void;
+  onCancel: () => void;
 }
 
-// Define el esquema de validación usando zod
-export const clientFormSchema = z.object({
-  name: z.string().nonempty('El nombre es obligatorio'),
-  contactPerson: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().email('Debe ser un correo válido').optional(),
-  address: z.string().optional(),
-  channelType: z.enum(['tradicional', 'moderno', 'industrial']),
-  status: z.enum(['active', 'inactive']),
-  conserverProductivity: z.number().optional(),
-  conserver: z.string().optional(),
-});
+const EditClientForm: React.FC<EditClientFormProps> = ({ client, onSubmit, onCancel }) => {
+  const [formValues, setFormValues] = useState<ClientFormValues>(client);
 
-// Define y exporta los valores predeterminados
-export const defaultValues: ClientFormValues = {
-  name: '',
-  contactPerson: '',
-  phone: '',
-  email: '',
-  address: '',
-  channelType: 'tradicional',
-  status: 'active',
-  conserverProductivity: 0,
-  conserver: '',
+  const handleChange = (field: keyof ClientFormValues, value: string | number) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formValues); // Enviar los datos al componente padre
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>Nombre</label>
+        <input
+          type="text"
+          value={formValues.name || ''}
+          onChange={(e) => handleChange('name', e.target.value)}
+          placeholder="Nombre"
+        />
+      </div>
+      <div>
+        <label>Correo Electrónico</label>
+        <input
+          type="email"
+          value={formValues.email || ''}
+          onChange={(e) => handleChange('email', e.target.value)}
+          placeholder="Correo Electrónico"
+        />
+      </div>
+      <div>
+        <label>Conservador</label>
+        <input
+          type="text"
+          value={formValues.conserver || ''}
+          onChange={(e) => handleChange('conserver', e.target.value)}
+          placeholder="Conservador"
+        />
+      </div>
+      <button type="submit">Guardar</button>
+      <button type="button" onClick={onCancel}>
+        Cancelar
+      </button>
+    </form>
+  );
 };
+
+export default EditClientForm;
