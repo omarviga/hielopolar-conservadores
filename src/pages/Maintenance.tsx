@@ -21,9 +21,9 @@ const Maintenance: React.FC = () => {
 
   const handleStatusUpdate = (status: 'active' | 'scheduled' | 'completed' | 'delayed') => {
     if (selectedMaintenance && selectedMaintenance.id) {
-      updateMaintenance({ 
-        id: selectedMaintenance.id, 
-        status 
+      updateMaintenance({
+        id: selectedMaintenance.id,
+        status
       });
       setSelectedMaintenance(null);
     }
@@ -35,7 +35,7 @@ const Maintenance: React.FC = () => {
 
   const handleMaintenanceFormComplete = (data?: MaintenanceFormData) => {
     setShowMaintenanceForm(false);
-    
+
     if (data) {
       const newMaintenance: MaintenanceData = {
         title: `Mantenimiento #${maintenances.length + 1}`,
@@ -47,12 +47,12 @@ const Maintenance: React.FC = () => {
         type: data.type,
         notes: data.notes
       };
-      
+
       createMaintenance(newMaintenance);
     }
   };
 
-  const filterMaintenances = (status: string) => 
+  const filterMaintenances = (status: string) =>
     maintenances.filter(m => m.status === status);
 
   return (
@@ -62,13 +62,13 @@ const Maintenance: React.FC = () => {
           <Wrench className="h-6 w-6 text-polar-600" />
           <h2 className="text-2xl font-bold">Mantenimiento</h2>
         </div>
-        
+
         <Button className="bg-polar-600 hover:bg-polar-700" onClick={handleScheduleMaintenance}>
           <CalendarIcon className="h-4 w-4 mr-2" />
           Programar mantenimiento
         </Button>
       </div>
-      
+
       <Tabs defaultValue="active" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="active">Activos</TabsTrigger>
@@ -76,12 +76,12 @@ const Maintenance: React.FC = () => {
           <TabsTrigger value="completed">Completados</TabsTrigger>
           <TabsTrigger value="delayed">Atrasados</TabsTrigger>
         </TabsList>
-        
+
         {['active', 'scheduled', 'completed', 'delayed'].map(status => (
           <TabsContent key={status} value={status} className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filterMaintenances(status).map(maintenance => (
-                <MaintenanceCard 
+                <MaintenanceCard
                   key={maintenance.id}
                   maintenance={maintenance}
                   onViewDetails={handleShowDetails}
@@ -97,15 +97,14 @@ const Maintenance: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Detalles del Mantenimiento</DialogTitle>
           </DialogHeader>
-          
+
           {selectedMaintenance && (
             <div className="space-y-4">
-              <div className={`p-3 rounded-md ${
-                selectedMaintenance.status === 'active' ? 'bg-blue-50' : 
-                selectedMaintenance.status === 'scheduled' ? 'bg-amber-50' : 
-                selectedMaintenance.status === 'completed' ? 'bg-green-50' : 
-                'bg-red-50'
-              }`}>
+              <div className={`p-3 rounded-md ${selectedMaintenance.status === 'active' ? 'bg-blue-50' :
+                  selectedMaintenance.status === 'scheduled' ? 'bg-amber-50' :
+                    selectedMaintenance.status === 'completed' ? 'bg-green-50' :
+                      'bg-red-50'
+                }`}>
                 <h3 className="font-semibold text-lg">{selectedMaintenance.title}</h3>
                 <p className="text-sm text-muted-foreground">{selectedMaintenance.client}</p>
               </div>
@@ -127,24 +126,23 @@ const Maintenance: React.FC = () => {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Tipo:</span>
                     <span className="font-medium">
-                      {selectedMaintenance.type === 'preventive' ? 'Preventivo' : 
-                       selectedMaintenance.type === 'corrective' ? 'Correctivo' : 
-                       'Inspección'}
+                      {selectedMaintenance.type === 'preventive' ? 'Preventivo' :
+                        selectedMaintenance.type === 'corrective' ? 'Correctivo' :
+                          'Inspección'}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Estado:</span>
-                  <span className={`font-medium px-2 py-1 rounded-full text-xs ${
-                    selectedMaintenance.status === 'active' ? 'bg-blue-100 text-blue-800' :
-                    selectedMaintenance.status === 'scheduled' ? 'bg-amber-100 text-amber-800' :
-                    selectedMaintenance.status === 'completed' ? 'bg-green-100 text-green-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={`font-medium px-2 py-1 rounded-full text-xs ${selectedMaintenance.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                      selectedMaintenance.status === 'scheduled' ? 'bg-amber-100 text-amber-800' :
+                        selectedMaintenance.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          'bg-red-100 text-red-800'
+                    }`}>
                     {selectedMaintenance.status === 'active' ? 'En proceso' :
-                     selectedMaintenance.status === 'scheduled' ? 'Programado' :
-                     selectedMaintenance.status === 'completed' ? 'Completado' :
-                     'Atrasado'}
+                      selectedMaintenance.status === 'scheduled' ? 'Programado' :
+                        selectedMaintenance.status === 'completed' ? 'Completado' :
+                          'Atrasado'}
                   </span>
                 </div>
               </div>
@@ -159,24 +157,24 @@ const Maintenance: React.FC = () => {
               <div className="pt-4 flex justify-between border-t">
                 <div className="space-x-2">
                   {selectedMaintenance.status !== 'active' && (
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => handleStatusUpdate('active')}
                     >
                       Activar
                     </Button>
                   )}
                   {selectedMaintenance.status !== 'completed' && (
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => handleStatusUpdate('completed')}
                     >
                       Completar
                     </Button>
                   )}
                   {selectedMaintenance.status !== 'delayed' && (
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => handleStatusUpdate('delayed')}
                     >
                       Atrasar
@@ -191,16 +189,16 @@ const Maintenance: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
-      
+
       <Sheet open={showMaintenanceForm} onOpenChange={setShowMaintenanceForm}>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Programar Mantenimiento</SheetTitle>
           </SheetHeader>
-          <ScheduleMaintenanceForm 
-            assetId="NUEVO" 
+          <ScheduleMaintenanceForm
+            assetId="NUEVO"
             assetModel="Nuevo Conservador"
-            onComplete={handleMaintenanceFormComplete} 
+            onComplete={handleMaintenanceFormComplete}
           />
         </SheetContent>
       </Sheet>

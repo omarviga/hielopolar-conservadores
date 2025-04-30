@@ -10,11 +10,11 @@ const Index: React.FC = () => {
   const { assets, loading: assetsLoading } = useAssets();
   const { clients, loading: clientsLoading } = useClients();
   const { maintenances, isLoading: maintenanceLoading } = useMaintenance();
-  
+
   // Get the most recent assets and clients for the dashboard
   const recentAssets = assets?.slice(0, 3) || [];
   const recentClients = clients?.slice(0, 3) || [];
-  
+
   // Get scheduled maintenances
   const scheduledMaintenances = maintenances
     ?.filter(m => m.status === 'scheduled')
@@ -33,10 +33,10 @@ const Index: React.FC = () => {
   }
 
   return (
-    <Dashboard 
-      recentAssets={recentAssets} 
-      recentClients={recentClients} 
-      scheduledMaintenances={scheduledMaintenances} 
+    <Dashboard
+      recentAssets={recentAssets}
+      recentClients={recentClients}
+      scheduledMaintenances={scheduledMaintenances}
     />
   );
 };

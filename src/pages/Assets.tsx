@@ -24,7 +24,7 @@ const Assets: React.FC = () => {
       <div className="text-center py-10">
         <div className="bg-red-100 text-red-700 p-4 rounded-lg inline-block">
           <p>{error}</p>
-          <button 
+          <button
             className="mt-2 text-sm underline"
             onClick={() => window.location.reload()}
           >

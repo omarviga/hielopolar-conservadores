@@ -45,7 +45,7 @@ const AssetsMapPage: React.FC = () => {
       description: "El token de Mapbox ha sido guardado correctamente"
     });
   };
-  
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-6">
