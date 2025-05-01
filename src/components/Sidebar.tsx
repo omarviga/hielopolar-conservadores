@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, Calendar, Settings, BarChart3, Wrench, LogOut, MapPin } from 'lucide-react';
+import { LayoutDashboard, Package, Users, Calendar, Settings, BarChart3, Wrench, LogOut, MapPin, ClipboardList, Truck, ShoppingCart, Warehouse } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
   ContextMenu,
@@ -54,16 +54,36 @@ const menuItems = [
     title: 'Reportes',
     icon: <BarChart3 className="h-5 w-5" />,
     path: '/reports'
-  }, 
+  },
   {
-    title: 'Configuración',
-    icon: <Settings className="h-5 w-5" />,
-    path: '/settings'
+    title: 'Inventario',
+    icon: <Warehouse className="h-5 w-5" />,
+    path: '/inventory'
+  },
+  {
+    title: 'Pedidos',
+    icon: <ClipboardList className="h-5 w-5" />,
+    path: '/orders'
+  },
+  {
+    title: 'Proveedores',
+    icon: <Truck className="h-5 w-5" />,
+    path: '/suppliers'
+  },
+  {
+    title: 'Compras',
+    icon: <ShoppingCart className="h-5 w-5" />,
+    path: '/purchases'
   },
   {
     title: 'Reparaciones',
     icon: <Wrench className="h-5 w-5" />,
     path: '/repairs'
+  },
+  {
+    title: 'Configuración',
+    icon: <Settings className="h-5 w-5" />,
+    path: '/settings'
   }
 ];
 

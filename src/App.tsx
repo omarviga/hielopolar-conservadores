@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,6 +18,10 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Map from "./pages/Map";
 import Repairs from "./pages/Repairs";
+import Inventory from "./pages/Inventory";
+import Orders from "./pages/Orders";
+import Suppliers from "./pages/Suppliers";
+import Purchases from "./pages/Purchases";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +52,10 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/map" element={<Map />} />
             <Route path="/repairs" element={<Repairs />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/purchases" element={<Purchases />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
