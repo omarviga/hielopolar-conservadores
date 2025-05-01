@@ -2,10 +2,10 @@
 export interface Client {
   id: string;
   name: string;
-  contactPerson: string;
-  phone: string;
+  contactPerson?: string; // Making this optional with ?
+  phone?: string;
   email: string;
-  address: string;
+  address?: string;
   assetsAssigned: number;
   maxCredit: number;
   activeCredit: number;

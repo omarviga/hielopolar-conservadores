@@ -30,18 +30,20 @@ const NewClientForm = () => {
 
   const onSubmit = async (values: ClientFormValues) => {
     try {
-      // Create a complete client object with missing required fields
+      // Create a complete client object
       const newClient = {
         ...values,
         id: uuidv4(),
         assetsAssigned: 0,
         maxCredit: 0,
         activeCredit: 0,
-        // Make sure name is not undefined
-        name: values.name || '',
-        // Make sure email is not undefined
-        email: values.email || '',
-        imageSrc: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name || '')}&background=random`,
+        // Ensure required fields are not undefined
+        name: values.name,
+        email: values.email,
+        imageSrc: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
+        // Make sure channelType and conserverProductivity have default values
+        channelType: values.channelType || 'tradicional',
+        conserverProductivity: values.conserverProductivity || 0,
       };
       
       await addClient(newClient);
