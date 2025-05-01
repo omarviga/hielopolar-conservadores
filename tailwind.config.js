@@ -56,11 +56,18 @@ export default {
       },
       backgroundColor: ({ theme }) => ({
         ...theme('colors'),
-        background: theme('colors.background')
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          accent: "hsl(var(--sidebar-accent))",
+        }
       }),
-      borderColor: ({ theme }) => ({
+      textColor: ({ theme }) => ({
         ...theme('colors'),
-        border: theme('colors.border')
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-foreground))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+        }
       }),
       borderRadius: {
         lg: "var(--radius)",
