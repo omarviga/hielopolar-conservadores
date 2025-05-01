@@ -6,9 +6,10 @@
   text-align: center;
 }
 
-/* Remove any potential conflicting styles */
-.sidebar-item {
-  color: hsl(var(--sidebar-foreground));
+/* Sidebar specific styles */
+aside.bg-sidebar {
+  display: flex;
+  z-index: 10;
 }
 
 .logo {
