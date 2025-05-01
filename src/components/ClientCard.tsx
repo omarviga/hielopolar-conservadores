@@ -12,8 +12,8 @@ import DetailLocationInfo from './client/DetailLocationInfo';
 import DetailBusinessInfo from './client/DetailBusinessInfo';
 import DetailCreditInfo from './client/DetailCreditInfo';
 import ClientDetailActions from './client/ClientDetailActions';
-import { ClientFormValues } from './client/ClientFormSchema';
 import EditClientForm from './client/EditClientForm';
+import { ClientFormValues } from './client/ClientFormSchema';
 
 
 // Removed the local declaration of ClientFormValues to avoid conflict with the imported one.

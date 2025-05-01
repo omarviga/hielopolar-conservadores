@@ -13,21 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Edit, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface Repair {
-  id: string;
-  repair_number: string | null;
-  asset_id: string;
-  description: string;
-  diagnosis: string | null;
-  repair_type: 'corrective' | 'preventive';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  technician: string | null;
-  cost: number | null;
-  estimated_completion: string | null;
-  created_at: string;
-}
+import { Repair } from '@/types/repairs';
 
 interface RepairsListProps {
   repairs: Repair[];
@@ -48,7 +34,7 @@ const priorityLabels = {
   urgent: { label: 'Urgente', class: 'bg-red-500' },
 };
 
-const RepairsList = ({ repairs, onEdit }: RepairsListProps) => {
+const RepairsList: React.FC<RepairsListProps> = ({ repairs, onEdit }) => {
   return (
     <div className="rounded-md border">
       <Table>
@@ -61,7 +47,6 @@ const RepairsList = ({ repairs, onEdit }: RepairsListProps) => {
             <TableHead>Descripción</TableHead>
             <TableHead>Técnico</TableHead>
             <TableHead>Estado</TableHead>
-            <TableHead>Costo</TableHead>
             <TableHead>Fecha Estimada</TableHead>
             <TableHead>Acciones</TableHead>
           </TableRow>
@@ -69,7 +54,7 @@ const RepairsList = ({ repairs, onEdit }: RepairsListProps) => {
         <TableBody>
           {repairs.map((repair) => (
             <TableRow key={repair.id}>
-              <TableCell>{repair.repair_number || '-'}</TableCell>
+              <TableCell>{repair.repair_number || repair.order_number || '-'}</TableCell>
               <TableCell>
                 {format(new Date(repair.created_at), 'dd/MM/yyyy')}
               </TableCell>
@@ -83,15 +68,12 @@ const RepairsList = ({ repairs, onEdit }: RepairsListProps) => {
                   {priorityLabels[repair.priority].label}
                 </Badge>
               </TableCell>
-              <TableCell>{repair.description}</TableCell>
-              <TableCell>{repair.technician || '-'}</TableCell>
+              <TableCell>{repair.problem_description || repair.description}</TableCell>
+              <TableCell>{repair.assigned_to || '-'}</TableCell>
               <TableCell>
                 <Badge className={statusLabels[repair.status].class}>
                   {statusLabels[repair.status].label}
                 </Badge>
-              </TableCell>
-              <TableCell>
-                {repair.cost ? `$${repair.cost.toFixed(2)}` : '-'}
               </TableCell>
               <TableCell>
                 {repair.estimated_completion
@@ -114,7 +96,7 @@ const RepairsList = ({ repairs, onEdit }: RepairsListProps) => {
           ))}
           {repairs.length === 0 && (
             <TableRow>
-              <TableCell colSpan={10} className="text-center">
+              <TableCell colSpan={9} className="text-center">
                 No hay reparaciones registradas
               </TableCell>
             </TableRow>

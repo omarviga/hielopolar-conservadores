@@ -25,7 +25,7 @@ interface FormattedRepairData {
 const Repairs = () => {
   const location = useLocation();
   const assetId = location.state?.assetId;
-  const { repairs, isLoading, createRepair } = useRepairs(assetId);
+  const { repairs, isLoading, addRepair } = useRepairs();
   const [isFormOpen, setIsFormOpen] = React.useState(false);
 
   const handleSubmit = async (data: FormattedRepairData) => {
@@ -37,10 +37,24 @@ const Repairs = () => {
     try {
       console.log('Submitting repair with data:', { ...data, asset_id: assetId });
 
-      await createRepair({
+      // Create a repair object that matches the expected structure
+      const repairData = {
         asset_id: assetId,
-        ...data,
-      });
+        equipment_type: 'conservador', // Default equipment type
+        customer_name: 'Cliente', // Default customer name
+        problem_description: data.description,
+        order_number: data.repair_number || '',
+        status: 'pending' as const,
+        repair_type: data.repair_type || 'corrective',
+        priority: data.priority || 'medium',
+        diagnosis: data.diagnosis,
+        assigned_to: data.technician,
+        estimated_completion: data.estimated_completion?.toISOString() || new Date().toISOString(),
+        notes: data.notes,
+        parts_used: data.parts_used || []
+      };
+
+      await addRepair.mutate(repairData);
 
       setIsFormOpen(false);
     } catch (error) {
@@ -81,7 +95,7 @@ const Repairs = () => {
 
       <div className="mt-6">
         {assetId ? (
-          <RepairsList repairs={repairs} />
+          <RepairsList repairs={repairs || []} />
         ) : (
           <div className="text-center p-8 border rounded-md bg-gray-50">
             Seleccione un activo para ver sus reparaciones.

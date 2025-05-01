@@ -1,15 +1,18 @@
 
-import { type Config } from "tailwindcss";
-
+/** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  darkMode: ["class"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+  ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
@@ -51,17 +54,17 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      backgroundColor: {
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          accent: "hsl(var(--sidebar-accent))",
+        }
+      },
       textColor: {
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-foreground))",
           foreground: "hsl(var(--sidebar-foreground))",
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-        }
-      },
-      backgroundColor: {
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          accent: "hsl(var(--sidebar-accent))",
         }
       },
       borderRadius: {
@@ -72,4 +75,4 @@ export default {
     },
   },
   plugins: [],
-} satisfies Config;
+}

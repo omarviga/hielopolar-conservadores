@@ -30,7 +30,8 @@ export const useClients = () => {
     imageSrc: client.image_src,
     coordinates: client.coordinates ? JSON.parse(client.coordinates) : null,
     channelType: client.channel_type,
-    conserverProductivity: client.conserver_productivity
+    conserverProductivity: client.conserver_productivity,
+    conserver: client.conserver
   }));
 
   return {

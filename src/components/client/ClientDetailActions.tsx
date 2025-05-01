@@ -17,7 +17,7 @@ const ClientDetailActions: React.FC<ClientDetailActionsProps> = ({ onClose, onEd
         <X className="h-4 w-4 mr-2" />
         Cerrar
       </Button>
-      <Button onClick={onEdit} className="bg-polar-600 hover:bg-polar-700">
+      <Button onClick={onEdit}>
         <Edit className="h-4 w-4 mr-2" />
         Editar
       </Button>

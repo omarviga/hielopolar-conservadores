@@ -1,150 +1,192 @@
 
-import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Repair } from '@/types/repairs';
+import { toast } from './use-toast';
 
-interface Repair {
-  id: string;
-  asset_id: string;
-  repair_number: string | null;
-  description: string;
-  diagnosis: string | null;
-  repair_type: 'corrective' | 'preventive';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  technician: string | null;
-  cost: number | null;
-  estimated_completion: string | null;
-  actual_completion_date: string | null;
-  created_at: string;
-  updated_at: string;
-  notes: string | null;
-  parts_used: string[] | null;
-}
+// Helper to map database repair to our Repair type
+const mapDbRepairToRepair = (dbRepair: any): Repair => {
+  return {
+    id: dbRepair.id.toString(),
+    asset_id: dbRepair.equipment_type || "",
+    repair_number: dbRepair.order_number,
+    customer_name: dbRepair.customer_name,
+    customer_phone: dbRepair.customer_phone,
+    customer_email: dbRepair.customer_email,
+    equipment_type: dbRepair.equipment_type,
+    problem_description: dbRepair.problem_description,
+    diagnosis: dbRepair.diagnosis,
+    repair_type: dbRepair.repair_type || "corrective",
+    priority: dbRepair.priority || "medium",
+    status: dbRepair.status,
+    assigned_to: dbRepair.assigned_to,
+    brand: dbRepair.brand,
+    model: dbRepair.model,
+    serial_number: dbRepair.serial_number,
+    parts_used: dbRepair.parts_used || [],
+    estimated_completion: dbRepair.estimated_completion,
+    completed_at: dbRepair.completed_at,
+    created_at: dbRepair.created_at,
+    updated_at: dbRepair.updated_at,
+    created_by: dbRepair.created_by,
+    notes: dbRepair.notes,
+    order_number: dbRepair.order_number,
+    description: dbRepair.problem_description,
+  };
+};
 
-interface NewRepair {
-  asset_id: string;
-  repair_number?: string;
-  description: string;
-  diagnosis?: string;
-  repair_type?: 'corrective' | 'preventive';
-  priority?: 'low' | 'medium' | 'high' | 'urgent';
-  technician?: string;
-  cost?: number;
-  estimated_completion?: Date | string;
-  notes?: string;
-  parts_used?: string[];
-}
-
-export const useRepairs = (assetId?: string) => {
+export const useRepairs = () => {
   const queryClient = useQueryClient();
 
-  const fetchRepairs = async () => {
-    let query = supabase
-      .from('repairs')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (assetId) {
-      query = query.eq('asset_id', assetId);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Error fetching repairs:', error);
-      throw error;
-    }
-
-    return data as Repair[];
-  };
-
-  const { data: repairs = [], isLoading } = useQuery({
-    queryKey: ['repairs', assetId],
-    queryFn: fetchRepairs,
-  });
-
-  const createRepairMutation = useMutation({
-    mutationFn: async (newRepair: NewRepair) => {
-      console.log('Creating repair with data:', newRepair);
+  // Fetch all repairs
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['repairs'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('repairs').select('*');
       
-      const formattedRepair = {
-        ...newRepair,
-        repair_type: newRepair.repair_type || 'corrective',
-        priority: newRepair.priority || 'medium',
-        estimated_completion: newRepair.estimated_completion 
-          ? new Date(newRepair.estimated_completion).toISOString().split('T')[0]
-          : null,
-        parts_used: newRepair.parts_used || null
-      };
-
-      console.log('Formatted repair data:', formattedRepair);
-
-      const { data, error } = await supabase
-        .from('repairs')
-        .insert(formattedRepair)
-        .select()
-        .single();
-
       if (error) {
-        console.error('Supabase error creating repair:', error);
-        throw error;
+        throw new Error(error.message);
       }
       
-      console.log('Repair created successfully:', data);
-      return data;
+      // Map to our type
+      return data.map(mapDbRepairToRepair);
+    },
+  });
+
+  // Add a new repair
+  const addRepair = useMutation({
+    mutationFn: async (repair: Omit<Repair, 'id' | 'created_at' | 'updated_at'>) => {
+      const dbRepair = {
+        equipment_type: repair.equipment_type,
+        problem_description: repair.problem_description,
+        order_number: repair.repair_number || repair.order_number,
+        customer_name: repair.customer_name,
+        customer_phone: repair.customer_phone,
+        customer_email: repair.customer_email,
+        diagnosis: repair.diagnosis,
+        status: repair.status,
+        brand: repair.brand,
+        model: repair.model,
+        serial_number: repair.serial_number,
+        estimated_completion: repair.estimated_completion,
+        notes: repair.notes,
+        priority: repair.priority,
+        repair_type: repair.repair_type,
+      };
+      
+      const { data, error } = await supabase
+        .from('repairs')
+        .insert([dbRepair])
+        .select();
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      return data[0];
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['repairs'] });
       toast({
-        title: "Reparación registrada",
-        description: "La reparación ha sido registrada exitosamente.",
+        title: 'Reparación creada',
+        description: 'La reparación ha sido creada exitosamente',
       });
     },
-    onError: (error) => {
-      console.error('Error al crear la reparación:', error);
+    onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: "No se pudo registrar la reparación. Por favor, intenta nuevamente.",
-        variant: "destructive",
+        title: 'Error',
+        description: `No se pudo crear la reparación: ${error.message}`,
+        variant: 'destructive',
       });
     },
   });
 
-  const updateRepairMutation = useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Repair> & { id: string }) => {
+  // Update a repair
+  const updateRepair = useMutation({
+    mutationFn: async ({ id, ...repair }: Partial<Repair> & { id: string }) => {
+      const dbRepair = {
+        equipment_type: repair.equipment_type,
+        problem_description: repair.problem_description,
+        order_number: repair.order_number,
+        customer_name: repair.customer_name,
+        customer_phone: repair.customer_phone,
+        customer_email: repair.customer_email,
+        diagnosis: repair.diagnosis,
+        status: repair.status,
+        brand: repair.brand,
+        model: repair.model,
+        serial_number: repair.serial_number,
+        estimated_completion: repair.estimated_completion,
+        notes: repair.notes,
+        priority: repair.priority,
+        repair_type: repair.repair_type,
+      };
+      
       const { data, error } = await supabase
         .from('repairs')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+        .update(dbRepair)
+        .eq('id', parseInt(id))
+        .select();
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      return data[0];
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['repairs'] });
       toast({
-        title: "Reparación actualizada",
-        description: "La reparación ha sido actualizada exitosamente.",
+        title: 'Reparación actualizada',
+        description: 'La reparación ha sido actualizada exitosamente',
       });
     },
-    onError: (error) => {
-      console.error('Error al actualizar la reparación:', error);
+    onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: "No se pudo actualizar la reparación. Por favor, intenta nuevamente.",
-        variant: "destructive",
+        title: 'Error',
+        description: `No se pudo actualizar la reparación: ${error.message}`,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Delete a repair
+  const deleteRepair = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('repairs')
+        .delete()
+        .eq('id', parseInt(id));
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['repairs'] });
+      toast({
+        title: 'Reparación eliminada',
+        description: 'La reparación ha sido eliminada exitosamente',
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: `No se pudo eliminar la reparación: ${error.message}`,
+        variant: 'destructive',
       });
     },
   });
 
   return {
-    repairs,
+    repairs: data,
     isLoading,
-    createRepair: createRepairMutation.mutate,
-    updateRepair: updateRepairMutation.mutate,
+    isError,
+    error,
+    addRepair,
+    updateRepair,
+    deleteRepair,
   };
 };
