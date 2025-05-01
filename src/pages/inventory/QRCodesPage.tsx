@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useInventory } from '@/hooks/useInventory';
-import { QRCode } from 'qrcode.react';
+import QRCode from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { saveAs } from 'file-saver';

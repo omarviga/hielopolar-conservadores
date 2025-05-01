@@ -25,7 +25,7 @@ interface FormattedRepairData {
 const Repairs = () => {
   const location = useLocation();
   const assetId = location.state?.assetId;
-  const { repairs, isLoading, createRepair } = useRepairs(assetId);
+  const { repairs, isLoading, addRepair } = useRepairs();
   const [isFormOpen, setIsFormOpen] = React.useState(false);
 
   const handleSubmit = async (data: FormattedRepairData) => {
@@ -37,7 +37,7 @@ const Repairs = () => {
     try {
       console.log('Submitting repair with data:', { ...data, asset_id: assetId });
 
-      await createRepair({
+      await addRepair.mutate({
         asset_id: assetId,
         ...data,
       });
@@ -81,7 +81,7 @@ const Repairs = () => {
 
       <div className="mt-6">
         {assetId ? (
-          <RepairsList repairs={repairs} />
+          <RepairsList repairs={repairs || []} />
         ) : (
           <div className="text-center p-8 border rounded-md bg-gray-50">
             Seleccione un activo para ver sus reparaciones.

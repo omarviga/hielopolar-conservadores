@@ -153,7 +153,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
           <DialogHeader>
             <DialogTitle>Nuevo Cliente</DialogTitle>
           </DialogHeader>
-          <NewClientForm onSubmit={handleNewClientSubmit} />
+          <NewClientForm />
         </DialogContent>
       </Dialog>
 

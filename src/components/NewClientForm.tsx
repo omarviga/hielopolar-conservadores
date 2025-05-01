@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useClients } from '@/hooks/useClients';
 import { clientFormSchema, ClientFormValues } from './client/ClientFormSchema';
+import { v4 as uuidv4 } from 'uuid';
 
 const NewClientForm = () => {
   const { addClient } = useClients();
@@ -29,7 +30,17 @@ const NewClientForm = () => {
 
   const onSubmit = async (values: ClientFormValues) => {
     try {
-      await addClient(values);
+      // Create a complete client object with missing required fields
+      const newClient = {
+        ...values,
+        id: uuidv4(),
+        assetsAssigned: 0,
+        maxCredit: 0,
+        activeCredit: 0,
+        imageSrc: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
+      };
+      
+      await addClient(newClient);
       toast({
         title: 'Cliente creado',
         description: `El cliente ${values.name} ha sido creado correctamente.`,

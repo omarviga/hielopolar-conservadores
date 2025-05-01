@@ -6,42 +6,25 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { EditIcon, Trash2Icon } from 'lucide-react';
 import { useClients } from '@/hooks/useClients';
+import { Client } from './client/ClientInterface';
 import { ClientFormValues } from './client/ClientFormSchema';
 import { toast } from '@/hooks/use-toast';
 
-interface ClientProps {
-  id: string;
-  name: string;
-  email?: string;
-  status: 'active' | 'inactive';
-  address?: string;
-  phone?: string;
-  contactPerson?: string;
-  channelType?: string;
-  conserverProductivity?: number;
+interface ClientCardProps {
+  client: Client;
 }
 
-const ClientCard: React.FC<ClientProps> = ({
-  id,
-  name,
-  email,
-  status,
-  address,
-  phone,
-  contactPerson,
-  channelType,
-  conserverProductivity
-}) => {
+const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const { deleteClient, updateClient } = useClients();
   const [isEditing, setIsEditing] = React.useState(false);
 
   const handleDelete = async () => {
-    if (window.confirm(`¿Estás seguro de eliminar a ${name}?`)) {
+    if (window.confirm(`¿Estás seguro de eliminar a ${client.name}?`)) {
       try {
-        await deleteClient(id);
+        await deleteClient(client.id);
         toast({
           title: 'Cliente eliminado',
-          description: `El cliente ${name} ha sido eliminado correctamente.`,
+          description: `El cliente ${client.name} ha sido eliminado correctamente.`,
         });
       } catch (error) {
         console.error(error);
@@ -56,10 +39,10 @@ const ClientCard: React.FC<ClientProps> = ({
 
   const handleEdit = async (values: ClientFormValues) => {
     try {
-      await updateClient(id, values);
+      await updateClient(client.id, values);
       toast({
         title: 'Cliente actualizado',
-        description: `El cliente ${name} ha sido actualizado correctamente.`,
+        description: `El cliente ${client.name} ha sido actualizado correctamente.`,
       });
       setIsEditing(false);
     } catch (error) {
@@ -77,22 +60,22 @@ const ClientCard: React.FC<ClientProps> = ({
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-medium">
-            {name}
+            {client.name}
           </CardTitle>
-          <Badge variant={status === 'active' ? 'default' : 'secondary'}>
-            {status === 'active' ? 'Activo' : 'Inactivo'}
+          <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
+            {client.status === 'active' ? 'Activo' : 'Inactivo'}
           </Badge>
         </div>
       </CardHeader>
       <CardContent>
-        {email && <p className="text-sm text-muted-foreground mb-2">{email}</p>}
-        {address && <p className="text-sm mb-1">📍 {address}</p>}
-        {phone && <p className="text-sm mb-1">📞 {phone}</p>}
-        {contactPerson && <p className="text-sm mb-1">👤 {contactPerson}</p>}
-        {channelType && (
+        {client.email && <p className="text-sm text-muted-foreground mb-2">{client.email}</p>}
+        {client.address && <p className="text-sm mb-1">📍 {client.address}</p>}
+        {client.phone && <p className="text-sm mb-1">📞 {client.phone}</p>}
+        {client.contactPerson && <p className="text-sm mb-1">👤 {client.contactPerson}</p>}
+        {client.channelType && (
           <div className="flex items-center mt-2">
             <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-md">
-              {channelType}
+              {client.channelType}
             </span>
           </div>
         )}
