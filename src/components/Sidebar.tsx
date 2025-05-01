@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, Calendar, Settings, BarChart3, Wrench, LogOut, MapPin } from 'lucide-react';
@@ -81,9 +82,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
     )}>
       <div className="p-4 flex items-center justify-center h-16 border-b border-sidebar-border">
         {open ? (
-          <h1 className="text-lg font-bold text-sidebar-foreground">Conservadores Hielo Polar</h1>
+          <h1 className="text-lg font-bold text-white">Conservadores Hielo Polar</h1>
         ) : (
-          <Package className="h-6 w-6 text-sidebar-foreground" />
+          <Package className="h-6 w-6 text-white" />
         )}
       </div>
       
@@ -96,8 +97,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
                   <NavLink 
                     to={item.path} 
                     className={({ isActive }) => cn(
-                      "sidebar-item", 
-                      isActive && "sidebar-item-active"
+                      "flex items-center gap-3 px-3 py-2 rounded-md text-white hover:bg-sidebar-accent transition-colors", 
+                      isActive && "bg-sidebar-accent"
                     )}
                   >
                     {item.icon}
@@ -123,8 +124,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
                 key={item.title} 
                 to={item.path} 
                 className={({ isActive }) => cn(
-                  "sidebar-item", 
-                  isActive && "sidebar-item-active"
+                  "flex items-center gap-3 px-3 py-2 rounded-md text-white hover:bg-sidebar-accent transition-colors", 
+                  isActive && "bg-sidebar-accent"
                 )}
               >
                 {item.icon}
@@ -137,7 +138,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
       
       <div className="p-4 border-t border-sidebar-border">
         <button 
-          className="sidebar-item w-full justify-center md:justify-start"
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-white hover:bg-sidebar-accent transition-colors w-full justify-center md:justify-start"
           onClick={handleLogout}
         >
           <LogOut className="h-5 w-5" />

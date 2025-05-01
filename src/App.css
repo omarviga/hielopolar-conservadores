@@ -1,8 +1,14 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+/* Remove any potential conflicting styles */
+.sidebar-item {
+  color: hsl(var(--sidebar-foreground));
 }
 
 .logo {
