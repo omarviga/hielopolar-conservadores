@@ -54,21 +54,19 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
-      backgroundColor: ({ theme }) => ({
-        ...theme('colors'),
+      backgroundColor: {
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           accent: "hsl(var(--sidebar-accent))",
         }
-      }),
-      textColor: ({ theme }) => ({
-        ...theme('colors'),
+      },
+      textColor: {
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-foreground))",
           foreground: "hsl(var(--sidebar-foreground))",
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
         }
-      }),
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

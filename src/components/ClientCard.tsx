@@ -1,117 +1,125 @@
 
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { EditIcon, Trash2Icon } from 'lucide-react';
 import { useClients } from '@/hooks/useClients';
-import { Client } from './client/ClientInterface';
-import ClientHeader from './client/ClientHeader';
-import ContactInfo from './client/ContactInfo';
-import CreditProgress from './client/CreditProgress';
-import ClientActions from './client/ClientActions';
-import ClientDetailHeader from './client/ClientDetailHeader';
-import DetailContactInfo from './client/DetailContactInfo';
-import DetailLocationInfo from './client/DetailLocationInfo';
-import DetailBusinessInfo from './client/DetailBusinessInfo';
-import DetailCreditInfo from './client/DetailCreditInfo';
-import ClientDetailActions from './client/ClientDetailActions';
-import EditClientForm from './client/EditClientForm';
 import { ClientFormValues } from './client/ClientFormSchema';
+import { toast } from '@/hooks/use-toast';
 
-interface ClientCardProps {
-  client: Client;
+interface ClientProps {
+  id: string;
+  name: string;
+  email?: string;
+  status: 'active' | 'inactive';
+  address?: string;
+  phone?: string;
+  contactPerson?: string;
+  channelType?: string;
+  conserverProductivity?: number;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
-  const [showDetails, setShowDetails] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
-  const { updateClient } = useClients();
+const ClientCard: React.FC<ClientProps> = ({
+  id,
+  name,
+  email,
+  status,
+  address,
+  phone,
+  contactPerson,
+  channelType,
+  conserverProductivity
+}) => {
+  const { deleteClient, updateClient } = useClients();
+  const [isEditing, setIsEditing] = React.useState(false);
 
-  const toggleClientStatus = () => {
-    const newStatus = client.status === 'active' ? 'inactive' : 'active';
-    updateClient(client.id, { status: newStatus });
+  const handleDelete = async () => {
+    if (window.confirm(`¿Estás seguro de eliminar a ${name}?`)) {
+      try {
+        await deleteClient(id);
+        toast({
+          title: 'Cliente eliminado',
+          description: `El cliente ${name} ha sido eliminado correctamente.`,
+        });
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: 'Error',
+          description: 'No se pudo eliminar el cliente. Intente nuevamente.',
+          variant: 'destructive',
+        });
+      }
+    }
   };
 
-  const handleEditSubmit = (values: ClientFormValues) => {
-    // Convert form values to the correct types expected by updateClient
-    const updatedClient: Partial<Client> = {
-      ...values,
-      status: values.status as 'active' | 'inactive',
-      channelType: values.channelType as 'tradicional' | 'moderno' | 'industrial',
-      conserverProductivity: typeof values.conserverProductivity === 'string' 
-        ? parseInt(values.conserverProductivity) 
-        : values.conserverProductivity || 0,
-    };
-    
-    updateClient(client.id, updatedClient);
-    setShowEditForm(false);
+  const handleEdit = async (values: ClientFormValues) => {
+    try {
+      await updateClient(id, values);
+      toast({
+        title: 'Cliente actualizado',
+        description: `El cliente ${name} ha sido actualizado correctamente.`,
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el cliente. Intente nuevamente.',
+        variant: 'destructive',
+      });
+    }
   };
-
-  if (showEditForm) {
-    return (
-      <Dialog open={showEditForm} onOpenChange={setShowEditForm}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Editar Cliente</DialogTitle>
-          </DialogHeader>
-          <EditClientForm
-            client={client}
-            onSubmit={handleEditSubmit}
-            onCancel={() => setShowEditForm(false)}
-          />
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   return (
-    <>
-      <div className="bg-white rounded-lg shadow overflow-hidden card-hover">
-        <div className="p-4 border-b">
-          <ClientHeader client={client} />
+    <Card className="card-hover">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg font-medium">
+            {name}
+          </CardTitle>
+          <Badge variant={status === 'active' ? 'default' : 'secondary'}>
+            {status === 'active' ? 'Activo' : 'Inactivo'}
+          </Badge>
         </div>
-
-        <div className="p-4">
-          <ContactInfo client={client} />
-          <CreditProgress client={client} />
-          <div className="text-sm text-gray-500 mb-2">
-            <strong>Conservador asignado:</strong> {client.conserver || 'No asignado'}
+      </CardHeader>
+      <CardContent>
+        {email && <p className="text-sm text-muted-foreground mb-2">{email}</p>}
+        {address && <p className="text-sm mb-1">📍 {address}</p>}
+        {phone && <p className="text-sm mb-1">📞 {phone}</p>}
+        {contactPerson && <p className="text-sm mb-1">👤 {contactPerson}</p>}
+        {channelType && (
+          <div className="flex items-center mt-2">
+            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-md">
+              {channelType}
+            </span>
           </div>
-          <ClientActions
-            onShowDetails={() => setShowDetails(true)}
-            onEdit={() => setShowEditForm(true)}
-            client={client}
-          />
+        )}
+        
+        <div className="flex justify-end gap-2 mt-4">
+          <Dialog open={isEditing} onOpenChange={setIsEditing}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <EditIcon className="h-4 w-4 mr-1" />
+                Editar
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Editar Cliente</DialogTitle>
+              </DialogHeader>
+              {/* Edit form would go here */}
+            </DialogContent>
+          </Dialog>
+          
+          <Button variant="destructive" size="sm" onClick={handleDelete}>
+            <Trash2Icon className="h-4 w-4 mr-1" />
+            Eliminar
+          </Button>
         </div>
-      </div>
-
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Detalles del Cliente</DialogTitle>
-          </DialogHeader>
-
-          <ClientDetailHeader client={client} onToggleStatus={toggleClientStatus} />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <DetailContactInfo client={client} />
-            <DetailLocationInfo client={client} />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <DetailBusinessInfo client={client} />
-            <DetailCreditInfo client={client} />
-          </div>
-
-          <ClientDetailActions
-            onClose={() => setShowDetails(false)}
-            onEdit={() => {
-              setShowDetails(false);
-              setShowEditForm(true);
-            }}
-            client={client}
-          />
-        </DialogContent>
-      </Dialog>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 
