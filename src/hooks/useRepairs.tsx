@@ -2,13 +2,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Repair } from '@/types/repairs';
-import { toast } from './use-toast';
+import { toast } from '@/hooks/use-toast';
 
 // Helper to map database repair to our Repair type
 const mapDbRepairToRepair = (dbRepair: any): Repair => {
   return {
     id: dbRepair.id.toString(),
-    asset_id: dbRepair.equipment_type || "",
+    asset_id: dbRepair.asset_id || "",
     repair_number: dbRepair.order_number,
     customer_name: dbRepair.customer_name,
     customer_phone: dbRepair.customer_phone,
@@ -35,14 +35,20 @@ const mapDbRepairToRepair = (dbRepair: any): Repair => {
   };
 };
 
-export const useRepairs = () => {
+export const useRepairs = (assetId?: string) => {
   const queryClient = useQueryClient();
 
-  // Fetch all repairs
+  // Fetch all repairs or repairs for a specific asset
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['repairs'],
+    queryKey: ['repairs', assetId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('repairs').select('*');
+      let query = supabase.from('repairs').select('*');
+      
+      if (assetId) {
+        query = query.eq('asset_id', assetId);
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
       
       if (error) {
         throw new Error(error.message);
@@ -51,14 +57,16 @@ export const useRepairs = () => {
       // Map to our type
       return data.map(mapDbRepairToRepair);
     },
+    enabled: true, // Always fetch repairs
   });
 
   // Add a new repair
   const addRepair = useMutation({
     mutationFn: async (repair: Omit<Repair, 'id' | 'created_at' | 'updated_at'>) => {
       const dbRepair = {
+        asset_id: repair.asset_id,
         equipment_type: repair.equipment_type,
-        problem_description: repair.problem_description,
+        problem_description: repair.problem_description || repair.description,
         order_number: repair.repair_number || repair.order_number,
         customer_name: repair.customer_name,
         customer_phone: repair.customer_phone,
@@ -72,6 +80,8 @@ export const useRepairs = () => {
         notes: repair.notes,
         priority: repair.priority,
         repair_type: repair.repair_type,
+        assigned_to: repair.assigned_to,
+        parts_used: repair.parts_used,
       };
       
       const { data, error } = await supabase
@@ -106,8 +116,8 @@ export const useRepairs = () => {
     mutationFn: async ({ id, ...repair }: Partial<Repair> & { id: string }) => {
       const dbRepair = {
         equipment_type: repair.equipment_type,
-        problem_description: repair.problem_description,
-        order_number: repair.order_number,
+        problem_description: repair.problem_description || repair.description,
+        order_number: repair.order_number || repair.repair_number,
         customer_name: repair.customer_name,
         customer_phone: repair.customer_phone,
         customer_email: repair.customer_email,
@@ -120,7 +130,12 @@ export const useRepairs = () => {
         notes: repair.notes,
         priority: repair.priority,
         repair_type: repair.repair_type,
+        assigned_to: repair.assigned_to,
+        parts_used: repair.parts_used,
       };
+      
+      // Remove undefined properties
+      Object.keys(dbRepair).forEach(key => dbRepair[key] === undefined && delete dbRepair[key]);
       
       const { data, error } = await supabase
         .from('repairs')
@@ -180,13 +195,30 @@ export const useRepairs = () => {
     },
   });
 
+  // Get a repair by ID
+  const getRepairById = async (id: string): Promise<Repair | null> => {
+    const { data, error } = await supabase
+      .from('repairs')
+      .select('*')
+      .eq('id', parseInt(id))
+      .single();
+    
+    if (error) {
+      console.error('Error fetching repair:', error);
+      return null;
+    }
+    
+    return mapDbRepairToRepair(data);
+  };
+
   return {
-    repairs: data,
+    repairs: data || [],
     isLoading,
     isError,
     error,
     addRepair,
     updateRepair,
     deleteRepair,
+    getRepairById,
   };
 };
