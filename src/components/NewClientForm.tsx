@@ -40,6 +40,7 @@ const NewClientForm = () => {
         // Ensure required fields are not undefined
         name: values.name,
         email: values.email,
+        status: values.status || 'active', // Ensure status is always set
         imageSrc: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
         // Make sure channelType and conserverProductivity have default values
         channelType: values.channelType || 'tradicional',
