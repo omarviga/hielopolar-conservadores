@@ -1,59 +1,50 @@
+
 import React from 'react';
 import { useInventory } from '@/hooks/useInventory';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 
-export default function Inventory() {
-  const { inventory, isLoading } = useInventory();
+const Inventory = () => {
+  const { data: inventory, isLoading } = useInventory();
+
+  if (isLoading) {
+    return <div>Cargando inventario...</div>;
+  }
 
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Inventario</h1>
         <Button>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Nuevo Item
         </Button>
       </div>
-
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Número de Parte</TableHead>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Categoría</TableHead>
-              <TableHead className="text-right">Cantidad</TableHead>
-              <TableHead className="text-right">Precio Unitario</TableHead>
-              <TableHead>Ubicación</TableHead>
-              <TableHead>Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {inventory?.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.part_number}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.category}</TableCell>
-                <TableCell className="text-right">{item.quantity}</TableCell>
-                <TableCell className="text-right">${item.unit_price}</TableCell>
-                <TableCell>{item.location}</TableCell>
-                <TableCell>
-                  {/* Acciones */}
-                </TableCell>
-              </TableRow>
+      
+      <div className="bg-white rounded-lg shadow p-6">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {inventory && inventory.map((item) => (
+              <tr key={item.id}>
+                <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{item.category}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{item.quantity}</td>
+                <td className="px-6 py-4 whitespace-nowrap">${item.price}</td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
     </div>
   );
-} 
+};
+
+export default Inventory;

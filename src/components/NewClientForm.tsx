@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,11 +45,12 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
       assetsAssigned: 0,
       maxCredit: 5,
       activeCredit: 0,
-      status: values.status,
+      status: values.status as 'active' | 'inactive',
       imageSrc: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70) + 1}.jpg`,
       coordinates: coordinates,
-      channelType: values.channelType,
+      channelType: values.channelType as 'tradicional' | 'moderno' | 'industrial',
       conserverProductivity: parseInt(String(values.conserverProductivity)),
+      conserver: values.conserver
     };
 
     console.log('Adding new client:', newClient);
@@ -76,7 +78,10 @@ const NewClientForm: React.FC<NewClientFormProps> = ({ onSubmit }) => {
               <FormItem>
                 <FormLabel>Estado</FormLabel>
                 <FormControl>
-                  <StatusToggle value={field.value} onChange={field.onChange} />
+                  <StatusToggle 
+                    value={field.value as 'active' | 'inactive'} 
+                    onChange={field.onChange} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

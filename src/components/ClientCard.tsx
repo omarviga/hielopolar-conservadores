@@ -31,11 +31,17 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   };
 
   const handleEditSubmit = (values: ClientFormValues) => {
-    updateClient(client.id, {
+    // Convert form values to the correct types expected by updateClient
+    const updatedClient: Partial<Client> = {
       ...values,
-      conserverProductivity: values.conserverProductivity || 0,
-      conserver: values.conserver,
-    });
+      status: values.status as 'active' | 'inactive',
+      channelType: values.channelType as 'tradicional' | 'moderno' | 'industrial',
+      conserverProductivity: typeof values.conserverProductivity === 'string' 
+        ? parseInt(values.conserverProductivity) 
+        : values.conserverProductivity || 0,
+    };
+    
+    updateClient(client.id, updatedClient);
     setShowEditForm(false);
   };
 
