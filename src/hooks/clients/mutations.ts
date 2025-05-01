@@ -22,7 +22,8 @@ export const useClientMutations = (queryClient: QueryClient) => {
         image_src: client.imageSrc,
         coordinates: client.coordinates ? JSON.stringify(client.coordinates) : null,
         channel_type: client.channelType,
-        conserver_productivity: client.conserverProductivity
+        conserver_productivity: client.conserverProductivity,
+        conserver: client.conserver
       };
 
       const { data, error } = await supabase
@@ -73,6 +74,7 @@ export const useClientMutations = (queryClient: QueryClient) => {
       if (updates.coordinates) formattedUpdates.coordinates = JSON.stringify(updates.coordinates);
       if (updates.channelType) formattedUpdates.channel_type = updates.channelType;
       if ('conserverProductivity' in updates) formattedUpdates.conserver_productivity = updates.conserverProductivity;
+      if (updates.conserver) formattedUpdates.conserver = updates.conserver;
 
       const { data, error } = await supabase
         .from('clients_extended')

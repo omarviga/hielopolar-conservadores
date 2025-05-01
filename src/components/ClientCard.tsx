@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useClients } from '@/hooks/useClients';
@@ -15,8 +16,6 @@ import ClientDetailActions from './client/ClientDetailActions';
 import EditClientForm from './client/EditClientForm';
 import { ClientFormValues } from './client/ClientFormSchema';
 
-
-// Removed the local declaration of ClientFormValues to avoid conflict with the imported one.
 interface ClientCardProps {
   client: Client;
 }
@@ -34,7 +33,8 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const handleEditSubmit = (values: ClientFormValues) => {
     updateClient(client.id, {
       ...values,
-      conserver: values.conserver, // Actualizar el conservador asignado
+      conserverProductivity: values.conserverProductivity || 0,
+      conserver: values.conserver,
     });
     setShowEditForm(false);
   };
