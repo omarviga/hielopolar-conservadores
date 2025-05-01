@@ -35,6 +35,10 @@ const mapDbRepairToRepair = (dbRepair: any): Repair => {
   };
 };
 
+// Define types for repair mutations to avoid excessive type instantiation
+type AddRepairInput = Omit<Repair, 'id' | 'created_at' | 'updated_at'>;
+type UpdateRepairInput = Partial<Repair> & { id: string };
+
 export const useRepairs = (assetId?: string) => {
   const queryClient = useQueryClient();
 
@@ -62,7 +66,7 @@ export const useRepairs = (assetId?: string) => {
 
   // Add a new repair
   const addRepair = useMutation({
-    mutationFn: async (repair: Omit<Repair, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (repair: AddRepairInput) => {
       const dbRepair = {
         asset_id: repair.asset_id,
         equipment_type: repair.equipment_type,
@@ -113,7 +117,7 @@ export const useRepairs = (assetId?: string) => {
 
   // Update a repair
   const updateRepair = useMutation({
-    mutationFn: async ({ id, ...repair }: Partial<Repair> & { id: string }) => {
+    mutationFn: async ({ id, ...repair }: UpdateRepairInput) => {
       const dbRepair = {
         equipment_type: repair.equipment_type,
         problem_description: repair.problem_description || repair.description,
@@ -135,7 +139,11 @@ export const useRepairs = (assetId?: string) => {
       };
       
       // Remove undefined properties
-      Object.keys(dbRepair).forEach(key => dbRepair[key] === undefined && delete dbRepair[key]);
+      Object.keys(dbRepair).forEach(key => {
+        if (dbRepair[key] === undefined) {
+          delete dbRepair[key];
+        }
+      });
       
       const { data, error } = await supabase
         .from('repairs')
