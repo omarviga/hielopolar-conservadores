@@ -9,6 +9,7 @@ import { useClients } from '@/hooks/useClients';
 import { Client } from './client/ClientInterface';
 import { ClientFormValues } from './client/ClientFormSchema';
 import { toast } from '@/hooks/use-toast';
+import EditClientForm from './client/EditClientForm';
 
 interface ClientCardProps {
   client: Client;
@@ -92,7 +93,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
               <DialogHeader>
                 <DialogTitle>Editar Cliente</DialogTitle>
               </DialogHeader>
-              {/* Edit form would go here */}
+              <EditClientForm client={client} onSubmit={handleEdit} onCancel={() => setIsEditing(false)} />
             </DialogContent>
           </Dialog>
           

@@ -5,18 +5,15 @@ export const clientFormSchema = z.object({
   name: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres",
   }),
-  email: z
-    .string()
-    .email({
-      message: "Ingrese un correo electrónico válido",
-    })
-    .optional(),
+  email: z.string().email({
+    message: "Ingrese un correo electrónico válido",
+  }),
   phone: z.string().optional(),
   contactPerson: z.string().optional(),
   address: z.string().optional(),
   status: z.enum(["active", "inactive"]).default("active"),
-  channelType: z.enum(["tradicional", "moderno", "industrial"]).optional(),
-  conserverProductivity: z.number().optional(),
+  channelType: z.enum(["tradicional", "moderno", "industrial"]).default("tradicional"),
+  conserverProductivity: z.number().default(0),
   conserver: z.string().optional(),
 });
 

@@ -37,10 +37,24 @@ const Repairs = () => {
     try {
       console.log('Submitting repair with data:', { ...data, asset_id: assetId });
 
-      await addRepair.mutate({
+      // Create a repair object that matches the expected structure
+      const repairData = {
         asset_id: assetId,
-        ...data,
-      });
+        equipment_type: 'conservador', // Default equipment type
+        customer_name: 'Cliente', // Default customer name
+        problem_description: data.description,
+        order_number: data.repair_number || '',
+        status: 'pending' as const,
+        repair_type: data.repair_type || 'corrective',
+        priority: data.priority || 'medium',
+        diagnosis: data.diagnosis,
+        assigned_to: data.technician,
+        estimated_completion: data.estimated_completion?.toISOString() || new Date().toISOString(),
+        notes: data.notes,
+        parts_used: data.parts_used || []
+      };
+
+      await addRepair.mutate(repairData);
 
       setIsFormOpen(false);
     } catch (error) {

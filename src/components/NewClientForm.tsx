@@ -37,7 +37,11 @@ const NewClientForm = () => {
         assetsAssigned: 0,
         maxCredit: 0,
         activeCredit: 0,
-        imageSrc: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
+        // Make sure name is not undefined
+        name: values.name || '',
+        // Make sure email is not undefined
+        email: values.email || '',
+        imageSrc: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name || '')}&background=random`,
       };
       
       await addClient(newClient);

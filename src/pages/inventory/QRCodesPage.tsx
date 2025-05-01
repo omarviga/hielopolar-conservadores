@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useInventory } from '@/hooks/useInventory';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { saveAs } from 'file-saver';
@@ -47,7 +47,7 @@ const QRCodesPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredInventory?.map((item) => (
           <div key={item.id} className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <QRCode
+            <QRCodeSVG
               id={`qr-${item.id}`}
               value={`item:${item.id}`}
               size={150}
