@@ -28,7 +28,7 @@ export const useRepairQueries = (assetId?: string) => {
         // Use a traditional for loop with index to avoid type inference issues
         for (let i = 0; i < dbResults.length; i++) {
           // Use a simple object type for intermediate data to break the chain
-          const rawItem: Record<string, unknown> = dbResults[i];
+          const rawItem: Record<string, unknown> = dbResults[i] as Record<string, unknown>;
           // Add the mapped item to our explicitly typed array
           repairs.push(mapDbRepairToRepair(rawItem));
         }
@@ -36,8 +36,7 @@ export const useRepairQueries = (assetId?: string) => {
       
       return repairs;
     },
-    // Disable suspense to prevent additional type inference issues
-    suspense: false,
+    // Remove the suspense option as it's not supported in the current version
   });
 
   // Get a repair by ID - defined as a separate function to avoid type inference issues
@@ -55,7 +54,7 @@ export const useRepairQueries = (assetId?: string) => {
       }
       
       // Use explicit type casting to break the inference chain
-      const rawItem: Record<string, unknown> = rawData;
+      const rawItem: Record<string, unknown> = rawData as Record<string, unknown>;
       return mapDbRepairToRepair(rawItem);
     }
     catch (err) {

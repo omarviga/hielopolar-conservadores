@@ -15,7 +15,7 @@ export const mapDbRepairToRepair = (dbRepair: Record<string, unknown>): Repair =
     diagnosis: dbRepair.diagnosis as string | undefined,
     repair_type: (dbRepair.repair_type as string || "corrective") as "preventive" | "corrective",
     priority: (dbRepair.priority as string || "medium") as "low" | "medium" | "high" | "urgent",
-    status: (dbRepair.status as string) as "pending" | "in_progress" | "completed" | "cancelled",
+    status: (dbRepair.status as string || "pending") as "pending" | "in_progress" | "completed" | "cancelled",
     assigned_to: dbRepair.assigned_to as string | undefined,
     brand: dbRepair.brand as string | undefined,
     model: dbRepair.model as string | undefined,
