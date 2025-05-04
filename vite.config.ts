@@ -1,29 +1,66 @@
-
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import type { UserConfig } from "vite";
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+// Configuración optimizada para TypeScript y React Query
+export default defineConfig(({ mode }): UserConfig => {
   const env = loadEnv(mode, process.cwd(), '');
+
   return {
     server: {
       host: "::",
       port: 8080,
     },
     define: {
-      'import.meta.env.VITE_MAPBOX_API_TOKEN': JSON.stringify(env.MAPBOX_API_TOKEN),
+      'process.env.VITE_MAPBOX_API_TOKEN': JSON.stringify(env.MAPBOX_API_TOKEN),
+      __DEV__: mode === 'development' ? 'true' : 'false'
     },
     plugins: [
-      react(),
-      mode === 'development' &&
-      componentTagger(),
+      react({
+        jsxImportSource: '@emotion/react',
+        tsDecorators: true,
+      }),
+      mode === 'development' && componentTagger(),
     ].filter(Boolean),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        // Alias adicional para evitar problemas de módulos
+        '@tanstack/react-query': path.resolve(__dirname, 'node_modules/@tanstack/react-query'),
       },
     },
+    build: {
+      sourcemap: mode === 'development',
+      minify: mode === 'production' ? 'terser' : false,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-query': ['@tanstack/react-query'],
+            'supabase': ['@supabase/supabase-js'],
+          }
+        }
+      }
+    },
+    optimizeDeps: {
+      include: [
+        '@tanstack/react-query',
+        '@supabase/supabase-js',
+        'react',
+        'react-dom'
+      ],
+      esbuildOptions: {
+        tsconfigRaw: {
+          compilerOptions: {
+            // Configuración específica para ESBuild
+            experimentalDecorators: true,
+            emitDecoratorMetadata: true,
+            // Limitar profundidad de tipos
+            maxNodeModuleJsDepth: 2
+          }
+        }
+      }
+    }
   };
 });
