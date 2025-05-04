@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, Calendar, Settings, BarChart3, Wrench, LogOut } from 'lucide-react';
@@ -7,8 +6,7 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuTrigger,
-  ContextMenuSeparator,
+  ContextMenuTrigger
 } from '@/components/ui/context-menu';
 import { toast } from '@/hooks/use-toast';
 

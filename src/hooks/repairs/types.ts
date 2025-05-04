@@ -1,6 +1,4 @@
 
-import { Repair } from '@/types/repairs';
-
 // Define simplified types for repair mutations to avoid excessive type instantiation
 export interface AddRepairInput {
   asset_id?: string;

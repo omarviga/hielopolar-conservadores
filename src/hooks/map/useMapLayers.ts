@@ -1,30 +1,31 @@
 
-import mapboxgl from 'mapbox-gl';
 import { Asset } from '@/components/AssetCard';
 import { Location } from '@/types/map';
 
 export const useMapLayers = () => {
-  const addMapLayers = (map: mapboxgl.Map, assets: Asset[], locations: Location[]) => {
+  const addMapLayers = (map: any, assets: Asset[], locations: Location[]) => {
     // Add assets source
     map.addSource('assets', {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: assets.filter(asset => asset.coordinates).map(asset => ({
-          type: 'Feature',
-          properties: {
-            id: asset.id,
-            model: asset.model,
-            location: asset.location,
-            capacity: asset.capacity,
-            assignedTo: asset.assignedTo || '',
-            status: asset.status
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: asset.coordinates
-          }
-        }))
+        features: assets
+          .filter(asset => asset.coordinates)
+          .map(asset => ({
+            type: 'Feature',
+            properties: {
+              id: asset.id,
+              model: asset.model,
+              location: asset.location,
+              capacity: asset.capacity,
+              assignedTo: asset.assignedTo || '',
+              status: asset.status
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: asset.coordinates || [0, 0] // Provide default to avoid undefined
+            }
+          }))
       },
       cluster: true,
       clusterMaxZoom: 14,
@@ -36,16 +37,18 @@ export const useMapLayers = () => {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: locations.filter(loc => loc.coordinates).map(loc => ({
-          type: 'Feature',
-          properties: {
-            address: loc.address
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: loc.coordinates
-          }
-        }))
+        features: locations
+          .filter(loc => loc.coordinates)
+          .map(loc => ({
+            type: 'Feature',
+            properties: {
+              address: loc.address
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: loc.coordinates || [0, 0] // Provide default to avoid undefined
+            }
+          }))
       }
     });
 

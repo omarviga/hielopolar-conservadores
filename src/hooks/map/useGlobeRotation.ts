@@ -1,46 +1,37 @@
+import { useEffect, useRef } from 'react';
 
-import mapboxgl from 'mapbox-gl';
+export const useGlobeRotation = (map: any) => {
+  const rotation = useRef([0, 0]);
+  const animation = useRef<number | null>(null);
 
-export const useGlobeRotation = () => {
-  const initializeGlobeRotation = (map: mapboxgl.Map) => {
-    const secondsPerRevolution = 240;
-    const maxSpinZoom = 5;
-    const slowSpinZoom = 3;
-    let userInteracting = false;
-    let spinEnabled = true;
+  useEffect(() => {
+    if (!map) return;
 
-    function spinGlobe() {
-      if (!map) return;
-      
-      const zoom = map.getZoom();
-      if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-        let distancePerSecond = 360 / secondsPerRevolution;
-        if (zoom > slowSpinZoom) {
-          const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-          distancePerSecond *= zoomDif;
-        }
-        const center = map.getCenter();
-        center.lng -= distancePerSecond;
-        map.easeTo({ center, duration: 1000, easing: (n) => n });
+    const spinGlobe = () => {
+      const now = Date.now();
+      const diff = now - (Number(animation.current) || now);
+      animation.current = now;
+
+      // Limiting the delta to 100ms translates to limiting the speed of the globe
+      if (diff > 100) return;
+
+      const newRotation = map.getBearing() + diff / 50;
+
+      // Ensure the rotation is within -180 to 180 degrees
+      const normalizedRotation = ((newRotation + 180) % 360) - 180;
+
+      map.setBearing(normalizedRotation);
+    };
+
+    map.on('render', () => {
+      if (map.loaded()) {
+        spinGlobe();
       }
-    }
-
-    // Event listeners for interaction
-    map.on('mousedown', () => { userInteracting = true; });
-    map.on('dragstart', () => { userInteracting = true; });
-    map.on('mouseup', () => {
-      userInteracting = false;
-      spinGlobe();
     });
-    map.on('touchend', () => {
-      userInteracting = false;
-      spinGlobe();
-    });
-    map.on('moveend', spinGlobe);
 
-    // Start the globe spinning
-    spinGlobe();
-  };
-
-  return { initializeGlobeRotation };
+    return () => {
+      map.off('render', spinGlobe);
+      animation.current = null;
+    };
+  }, [map]);
 };

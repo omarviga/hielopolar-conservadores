@@ -10,16 +10,16 @@ export const useRepairMutations = (queryClient: QueryClient) => {
     mutationFn: async (repair: AddRepairInput) => {
       const { data, error } = await supabase
         .from('repairs')
-        .insert([{
+        .insert({
           asset_id: repair.asset_id,
           equipment_type: repair.equipment_type,
           problem_description: repair.problem_description,
-          order_number: repair.order_number,
+          order_number: repair.order_number || '',
           customer_name: repair.customer_name,
           customer_phone: repair.customer_phone,
           customer_email: repair.customer_email,
           diagnosis: repair.diagnosis,
-          status: repair.status,
+          status: repair.status || 'pending',
           brand: repair.brand,
           model: repair.model,
           serial_number: repair.serial_number,
@@ -29,7 +29,7 @@ export const useRepairMutations = (queryClient: QueryClient) => {
           repair_type: repair.repair_type,
           assigned_to: repair.assigned_to,
           parts_used: repair.parts_used
-        }])
+        })
         .select();
       
       if (error) {
