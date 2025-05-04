@@ -1,68 +1,60 @@
-
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { mapDbRepairToRepair } from './utils';
 import type { Repair } from '@/types/repairs';
 
-// Define a simple type for database records to avoid deep type instantiation
-type DbRepair = {
-  [key: string]: any;
+// 1. Tipo explícito para la respuesta de Supabase
+type SupabaseRepair = {
+  id: number;
+  asset_id: string;
+  created_at: string;
+  // Añade todos los campos que esperas de la base de datos
 };
 
+// 2. Función de mapeo separada con tipos explícitos
+const mapToRepair = (data: SupabaseRepair): Repair => ({
+  id: data.id.toString(),
+  assetId: data.asset_id,
+  createdAt: new Date(data.created_at),
+  // Mapea todos los campos necesarios
+});
+
+// 3. Query con tipos explícitos en cada nivel
 export const useRepairQueries = (assetId?: string) => {
-  // Create a properly typed fetch function
-  const fetchRepairs = async (assetId?: string): Promise<Repair[]> => {
+  const fetchRepairs = async (): Promise<Repair[]> => {
     let query = supabase.from('repairs').select('*');
     
     if (assetId) {
       query = query.eq('asset_id', assetId);
     }
     
-    const { data: dbResults, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', { ascending: false });
     
-    if (error) {
-      throw new Error(error.message);
-    }
+    if (error) throw error;
     
-    if (!dbResults) return [];
-    
-    // Convert database rows to typed repairs using a simple loop
-    // This avoids complex type inference that can cause deep instantiation errors
-    const repairs: Repair[] = [];
-    for (const row of dbResults) {
-      repairs.push(mapDbRepairToRepair(row as DbRepair));
-    }
-    return repairs;
+    return data ? data.map(mapToRepair) : [];
   };
 
-  const { data, isLoading, isError, error } = useQuery({
+  // 4. Opciones de query con tipos manuales
+  const options: UseQueryOptions<Repair[], Error> = {
     queryKey: ['repairs', assetId],
-    queryFn: () => fetchRepairs(assetId),
-  });
+    queryFn: fetchRepairs,
+  };
 
-  const getRepairById = async (id: string): Promise<Repair | null> => {
-    try {
-      const { data: rawData, error } = await supabase
+  const query = useQuery(options);
+
+  return {
+    repairs: query.data || [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    getRepairById: async (id: string) => {
+      const { data, error } = await supabase
         .from('repairs')
         .select('*')
         .eq('id', parseInt(id))
         .single();
       
-      if (error || !rawData) return null;
-      
-      // Use the simple type casting to avoid deep type instantiation
-      return mapDbRepairToRepair(rawData as DbRepair);
-    } catch (err) {
-      console.error('Error fetching repair:', err);
-      return null;
+      return data ? mapToRepair(data) : null;
     }
-  };
-
-  return {
-    repairs: data || [],
-    isLoading,
-    isError,
-    error,
-    getRepairById,
   };
 };
