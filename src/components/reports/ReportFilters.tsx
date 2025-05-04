@@ -48,6 +48,15 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
     });
   }, [startDate, endDate, type, status, onFilterChange]);
 
+  // Create wrapper functions to handle the date selection properly
+  const handleStartDateSelect = (date: Date | undefined) => {
+    setStartDate(date || null);
+  };
+
+  const handleEndDateSelect = (date: Date | undefined) => {
+    setEndDate(date || null);
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between">
       <div className="flex flex-col sm:flex-row gap-4">
@@ -70,7 +79,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
               <Calendar
                 mode="single"
                 selected={startDate}
-                onSelect={setStartDate}
+                onSelect={handleStartDateSelect}
                 initialFocus
               />
             </PopoverContent>
@@ -96,7 +105,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
               <Calendar
                 mode="single"
                 selected={endDate}
-                onSelect={setEndDate}
+                onSelect={handleEndDateSelect}
                 initialFocus
               />
             </PopoverContent>
@@ -149,5 +158,4 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
   );
 };
 
-// Change default export to named export
 export default ReportFilters;

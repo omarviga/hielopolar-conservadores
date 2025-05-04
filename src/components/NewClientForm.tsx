@@ -1,108 +1,241 @@
+"use client"
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useClients } from "@/hooks/useClients";
+import { generateRandomCoordinates, randomUserImage } from "@/utils/utils";
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { toast } from '@/hooks/use-toast';
-import { useClients } from '@/hooks/useClients';
-import { clientFormSchema, ClientFormValues } from './client/ClientFormSchema';
-import { v4 as uuidv4 } from 'uuid';
+
+export const clientFormSchema = z.object({
+  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  email: z.string().email("Debe ser un email válido"),
+  status: z.enum(["active", "inactive"]),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  contactPerson: z.string().optional(),
+  channelType: z.enum(["tradicional", "moderno", "industrial"]).optional(),
+  conserverProductivity: z.number().optional(),
+  conserver: z.string().optional(),
+});
+
+export type ClientFormValues = z.infer<typeof clientFormSchema>;
 
 const NewClientForm = () => {
   const { addClient } = useClients();
-  
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientFormSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
+      status: "active",
+      email: "",
+      name: "",
+      address: "",
+      phone: "",
       contactPerson: '',
-      address: '',
-      status: 'active',
-      channelType: 'tradicional',
+      channelType: "tradicional",
       conserverProductivity: 0,
       conserver: '',
-    },
+    }
   });
 
-  const onSubmit = async (values: ClientFormValues) => {
-    try {
-      // Create a complete client object
-      const newClient = {
-        ...values,
-        id: uuidv4(),
-        assetsAssigned: 0,
-        maxCredit: 0,
-        activeCredit: 0,
-        // Ensure required fields are not undefined
-        name: values.name,
-        email: values.email,
-        status: values.status || 'active', // Ensure status is always set
-        imageSrc: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
-        // Make sure channelType and conserverProductivity have default values
-        channelType: values.channelType || 'tradicional',
-        conserverProductivity: values.conserverProductivity || 0,
-      };
-      
-      await addClient(newClient);
-      toast({
-        title: 'Cliente creado',
-        description: `El cliente ${values.name} ha sido creado correctamente.`,
-      });
-      form.reset();
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'No se pudo crear el cliente. Intente nuevamente.',
-        variant: 'destructive',
-      });
-    }
-  };
-
   return (
-    <div className="max-w-2xl mx-auto">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nombre del cliente" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Correo electrónico</FormLabel>
-                  <FormControl>
-                    <Input placeholder="correo@ejemplo.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            {/* Additional fields would go here */}
-          </div>
-          <Button type="submit" className="w-full">
-            Crear Cliente
-          </Button>
-        </form>
-      </Form>
-    </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit((values) => {
+  const newClient = {
+    id: `CL-${String(Math.floor(Math.random() * 900) + 100)}`,
+    assetsAssigned: 0,
+    maxCredit: 5,
+    activeCredit: 0,
+    name: values.name || '', // Ensure name is a string
+    email: values.email || '', // Ensure email is a string
+    status: values.status as 'active' | 'inactive',
+    imageSrc: randomUserImage,
+    channelType: values.channelType as 'tradicional' | 'moderno' | 'industrial',
+    contactPerson: values.contactPerson,
+    phone: values.phone,
+    address: values.address,
+    coordinates: generateRandomCoordinates(),
+    conserver: values.conserver,
+  };
+  
+  addClient(newClient);
+  form.reset();
+})} className="space-y-4">
+        {/* Status Toggle */}
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem className="flex flex-col sm:flex-row items-center justify-between">
+              <FormLabel className="text-sm font-medium">Estado</FormLabel>
+              <FormControl>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant={field.value === 'active' ? 'default' : 'outline'}
+                    className={field.value === 'active' ? 'bg-green-500 text-white' : ''}
+                    onClick={() => field.onChange('active')}
+                  >
+                    Activo
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={field.value === 'inactive' ? 'default' : 'outline'}
+                    className={field.value === 'inactive' ? 'bg-red-500 text-white' : ''}
+                    onClick={() => field.onChange('inactive')}
+                  >
+                    Inactivo
+                  </Button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Información básica */}
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nombre de la empresa</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Teléfono</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="contactPerson"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Persona de contacto</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Dirección</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Tipo de canal */}
+        <FormField
+          control={form.control}
+          name="channelType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tipo de canal</FormLabel>
+              <FormControl>
+                <select
+                  className="w-full p-2 border rounded-md"
+                  {...field}
+                >
+                  <option value="tradicional">Tradicional</option>
+                  <option value="moderno">Moderno</option>
+                  <option value="industrial">Industrial</option>
+                </select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Conservador asignado */}
+        <FormField
+          control={form.control}
+          name="conserver"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Conservador asignado</FormLabel>
+              <FormControl>
+                <select
+                  className="w-full p-2 border rounded-md"
+                  {...field}
+                >
+                  <option value="">Sin asignar</option>
+                  <option value="Conservador 1">Conservador 1</option>
+                  <option value="Conservador 2">Conservador 2</option>
+                  <option value="Conservador 3">Conservador 3</option>
+                </select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Productividad del conservador */}
+        <FormField
+          control={form.control}
+          name="conserverProductivity"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Productividad del conservador</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="bg-polar-600 hover:bg-polar-700">
+          Crear Cliente
+        </Button>
+      </form>
+    </Form>
   );
 };
 

@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { Asset } from '@/components/AssetCard';
@@ -17,7 +18,6 @@ export const useMapInitialization = ({ mapboxToken, assets, locations }: UseMapI
   const map = useRef<mapboxgl.Map | null>(null);
   const { addMapLayers } = useMapLayers();
   const { setupEventHandlers } = useMapEvents();
-  const { initializeGlobeRotation } = useGlobeRotation();
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -49,13 +49,13 @@ export const useMapInitialization = ({ mapboxToken, assets, locations }: UseMapI
       
       addMapLayers(map.current, assets, locations);
       setupEventHandlers(map.current);
-      initializeGlobeRotation(map.current);
+      useGlobeRotation(map.current);
     });
 
     return () => {
       map.current?.remove();
     };
-  }, [assets, locations, mapboxToken, addMapLayers, setupEventHandlers, initializeGlobeRotation]);
+  }, [assets, locations, mapboxToken, addMapLayers, setupEventHandlers]);
 
   return { mapContainer, map };
 };

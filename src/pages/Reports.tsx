@@ -26,10 +26,6 @@ import ReportFilters from '@/components/reports/ReportFilters';
 
 const Reports = () => {
   const [activeTab, setActiveTab] = useState("monthly");
-  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({
-    from: new Date(new Date().setDate(1)),
-    to: new Date()
-  });
   const [visibleFilters, setVisibleFilters] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
