@@ -174,11 +174,6 @@ export const useRepairs = (assetId?: string) => {
         dbRepair.problem_description = repair.description;
       }
       
-      // Handle repair_number/order_number field mapping
-      if (repair.repair_number && !repair.order_number) {
-        dbRepair.order_number = repair.repair_number;
-      }
-      
       const { data, error } = await supabase
         .from('repairs')
         .update(dbRepair)
