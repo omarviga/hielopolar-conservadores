@@ -8,21 +8,21 @@ export const useRepairQueries = (assetId?: string) => {
   // Fetch all repairs or repairs for a specific asset
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['repairs', assetId],
-    queryFn: async () => {
+    queryFn: async (): Promise<Repair[]> => {
       let query = supabase.from('repairs').select('*');
       
       if (assetId) {
         query = query.eq('asset_id', assetId);
       }
       
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data: repairData, error } = await query.order('created_at', { ascending: false });
       
       if (error) {
         throw new Error(error.message);
       }
       
-      // Use a simpler approach to map data to avoid deep type instantiation
-      return data.map((item: any) => mapDbRepairToRepair(item));
+      // Explicitly cast the data to any to break the deep type instantiation
+      return (repairData as any[]).map(item => mapDbRepairToRepair(item));
     },
   });
 
@@ -39,7 +39,7 @@ export const useRepairQueries = (assetId?: string) => {
       return null;
     }
     
-    return data ? mapDbRepairToRepair(data) : null;
+    return data ? mapDbRepairToRepair(data as any) : null;
   };
 
   return {
