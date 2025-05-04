@@ -1,13 +1,15 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { mapDbRepairToRepair } from './utils';
 import type { Repair } from '@/types/repairs';
 
-// Explicitly type the query function return type
-type FetchRepairsFn = (assetId?: string) => Promise<Repair[]>;
+// Create a type for database records
+type DbRepair = Record<string, unknown>;
 
 export const useRepairQueries = (assetId?: string) => {
-  const fetchRepairs: FetchRepairsFn = async (assetId) => {
+  // Create a properly typed fetch function
+  const fetchRepairs = async (assetId?: string): Promise<Repair[]> => {
     let query = supabase.from('repairs').select('*');
     
     if (assetId) {
@@ -22,7 +24,12 @@ export const useRepairQueries = (assetId?: string) => {
     
     if (!dbResults) return [];
     
-    return dbResults.map((rawItem) => mapDbRepairToRepair(rawItem));
+    // Convert database rows to typed repairs
+    const repairs: Repair[] = [];
+    for (const row of dbResults) {
+      repairs.push(mapDbRepairToRepair(row as DbRepair));
+    }
+    return repairs;
   };
 
   const { data, isLoading, isError, error } = useQuery({
@@ -40,7 +47,7 @@ export const useRepairQueries = (assetId?: string) => {
       
       if (error || !rawData) return null;
       
-      return mapDbRepairToRepair(rawData);
+      return mapDbRepairToRepair(rawData as DbRepair);
     } catch (err) {
       console.error('Error fetching repair:', err);
       return null;

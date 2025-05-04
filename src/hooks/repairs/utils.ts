@@ -1,8 +1,11 @@
 
 import { Repair } from '@/types/repairs';
 
+// Define type for database records
+type DbRepair = Record<string, unknown>;
+
 // Helper to map database repair to our Repair type
-export const mapDbRepairToRepair = (dbRepair: Record<string, unknown>): Repair => {
+export const mapDbRepairToRepair = (dbRepair: DbRepair): Repair => {
   return {
     id: String(dbRepair.id || ""),
     asset_id: String(dbRepair.asset_id || ""),
