@@ -1,8 +1,10 @@
 
 import { Repair } from '@/types/repairs';
 
-// Define type for database records
-type DbRepair = Record<string, unknown>;
+// Define a simple type for database records to avoid deep type instantiation
+type DbRepair = {
+  [key: string]: any;
+};
 
 // Helper to map database repair to our Repair type
 export const mapDbRepairToRepair = (dbRepair: DbRepair): Repair => {

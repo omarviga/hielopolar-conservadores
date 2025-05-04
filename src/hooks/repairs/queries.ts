@@ -4,8 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { mapDbRepairToRepair } from './utils';
 import type { Repair } from '@/types/repairs';
 
-// Create a type for database records
-type DbRepair = Record<string, unknown>;
+// Define a simple type for database records to avoid deep type instantiation
+type DbRepair = {
+  [key: string]: any;
+};
 
 export const useRepairQueries = (assetId?: string) => {
   // Create a properly typed fetch function
@@ -24,7 +26,8 @@ export const useRepairQueries = (assetId?: string) => {
     
     if (!dbResults) return [];
     
-    // Convert database rows to typed repairs
+    // Convert database rows to typed repairs using a simple loop
+    // This avoids complex type inference that can cause deep instantiation errors
     const repairs: Repair[] = [];
     for (const row of dbResults) {
       repairs.push(mapDbRepairToRepair(row as DbRepair));
@@ -47,6 +50,7 @@ export const useRepairQueries = (assetId?: string) => {
       
       if (error || !rawData) return null;
       
+      // Use the simple type casting to avoid deep type instantiation
       return mapDbRepairToRepair(rawData as DbRepair);
     } catch (err) {
       console.error('Error fetching repair:', err);
