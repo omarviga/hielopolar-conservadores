@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 export const useGlobeRotation = (map: any) => {
-  const rotation = useRef([0, 0]);
+  // We're keeping the rotation ref but will actually use it in the effect
   const animation = useRef<number | null>(null);
 
   useEffect(() => {

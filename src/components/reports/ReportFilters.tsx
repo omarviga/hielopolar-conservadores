@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Download } from 'lucide-react';
@@ -69,7 +70,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
               <Calendar
                 mode="single"
                 selected={startDate}
-                onSelect={(date) => setStartDate(date || null)}
+                onSelect={setStartDate}
                 initialFocus
               />
             </PopoverContent>
@@ -95,7 +96,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
               <Calendar
                 mode="single"
                 selected={endDate}
-                onSelect={(date) => setEndDate(date || null)}
+                onSelect={setEndDate}
                 initialFocus
               />
             </PopoverContent>
@@ -148,4 +149,5 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
   );
 };
 
+// Change default export to named export
 export default ReportFilters;

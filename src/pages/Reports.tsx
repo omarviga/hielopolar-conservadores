@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import { ReportChart } from '@/components/reports/ReportChart';
 import { ReportPieChart } from '@/components/reports/ReportPieChart';
-import { ReportFilters } from '@/components/reports/ReportFilters';
+import ReportFilters from '@/components/reports/ReportFilters';
 
 const Reports = () => {
   const [activeTab, setActiveTab] = useState("monthly");
@@ -86,6 +85,16 @@ const Reports = () => {
       setSortColumn(column);
       setSortDirection('asc');
     }
+  };
+
+  const handleFilterChange = (filters: {
+    startDate: Date | null;
+    endDate: Date | null;
+    type: string;
+    status: string;
+  }) => {
+    // Handle filter changes here
+    console.log('Filters changed:', filters);
   };
 
   const sortedMaintenanceData = [
@@ -172,9 +181,8 @@ const Reports = () => {
       
       {visibleFilters && (
         <ReportFilters 
-          dateRange={dateRange} 
-          setDateRange={setDateRange} 
-          onClose={() => setVisibleFilters(false)} 
+          onFilterChange={handleFilterChange} 
+          onExport={handleExportPDF}
         />
       )}
       
