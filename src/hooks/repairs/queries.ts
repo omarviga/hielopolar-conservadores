@@ -8,24 +8,27 @@ export const useRepairQueries = (assetId?: string) => {
   // Fetch all repairs or repairs for a specific asset
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['repairs', assetId],
-    queryFn: async () => {
+    queryFn: async (): Promise<Repair[]> => {
       let query = supabase.from('repairs').select('*');
       
       if (assetId) {
         query = query.eq('asset_id', assetId);
       }
       
-      const { data: repairData, error } = await query.order('created_at', { ascending: false });
+      const { data: dbData, error } = await query.order('created_at', { ascending: false });
       
       if (error) {
         throw new Error(error.message);
       }
       
-      // Break the type inference chain completely
+      // Use type assertion to break type inference chain
       const repairs: Repair[] = [];
-      if (repairData) {
-        for (const item of repairData) {
-          repairs.push(mapDbRepairToRepair(item as any));
+      
+      if (dbData) {
+        // Manual loop instead of map to avoid deep type instantiation
+        for (let i = 0; i < dbData.length; i++) {
+          const item = dbData[i] as Record<string, any>;
+          repairs.push(mapDbRepairToRepair(item));
         }
       }
       
@@ -46,7 +49,8 @@ export const useRepairQueries = (assetId?: string) => {
       return null;
     }
     
-    return data ? mapDbRepairToRepair(data as any) : null;
+    // Use type assertion to break type inference chain
+    return data ? mapDbRepairToRepair(data as Record<string, any>) : null;
   };
 
   return {
