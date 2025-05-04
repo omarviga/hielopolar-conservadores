@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, Calendar, Settings, BarChart3, Wrench, LogOut, MapPin, ClipboardList, Truck, ShoppingCart, Warehouse } from 'lucide-react';
+import { LayoutDashboard, Package, Users, Calendar, Settings, BarChart3, Wrench, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
   ContextMenu,
@@ -56,31 +56,6 @@ const menuItems = [
     path: '/reports'
   },
   {
-    title: 'Inventario',
-    icon: <Warehouse className="h-5 w-5" />,
-    path: '/inventory'
-  },
-  {
-    title: 'Pedidos',
-    icon: <ClipboardList className="h-5 w-5" />,
-    path: '/orders'
-  },
-  {
-    title: 'Proveedores',
-    icon: <Truck className="h-5 w-5" />,
-    path: '/suppliers'
-  },
-  {
-    title: 'Compras',
-    icon: <ShoppingCart className="h-5 w-5" />,
-    path: '/purchases'
-  },
-  {
-    title: 'Reparaciones',
-    icon: <Wrench className="h-5 w-5" />,
-    path: '/repairs'
-  },
-  {
     title: 'Configuración',
     icon: <Settings className="h-5 w-5" />,
     path: '/settings'
@@ -132,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
                         to={subItem.path}
                         className="w-full flex items-center"
                       >
-                        {subItem.title === 'Mapa de Clientes' ? <MapPin className="h-4 w-4 mr-2" /> : <Users className="h-4 w-4 mr-2" />}
+                        {subItem.title === 'Mapa de Clientes' ? <Users className="h-4 w-4 mr-2" /> : <Package className="h-4 w-4 mr-2" />}
                         {subItem.title}
                       </NavLink>
                     </ContextMenuItem>
