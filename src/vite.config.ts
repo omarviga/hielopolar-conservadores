@@ -20,7 +20,6 @@ export default defineConfig(({ mode }): UserConfig => {
     },
     plugins: [
       react({
-        // Remove the jsxImportSource configuration to use React's JSX runtime instead of Emotion's
         tsDecorators: true,
       }),
       mode === 'development' && componentTagger(),
@@ -28,7 +27,6 @@ export default defineConfig(({ mode }): UserConfig => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
-        // Alias adicional para evitar problemas de módulos
         '@tanstack/react-query': path.resolve(__dirname, 'node_modules/@tanstack/react-query'),
       },
     },
@@ -55,9 +53,8 @@ export default defineConfig(({ mode }): UserConfig => {
         tsconfigRaw: {
           compilerOptions: {
             // Configuración específica para ESBuild
-            experimentalDecorators: true,
-            // Limitar profundidad de tipos
-            maxNodeModuleJsDepth: 2
+            experimentalDecorators: true
+            // Removed maxNodeModuleJsDepth property
           }
         }
       }

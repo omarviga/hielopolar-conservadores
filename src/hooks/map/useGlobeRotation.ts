@@ -1,6 +1,5 @@
 
 import { useEffect } from 'react';
-import mapboxgl from 'mapbox-gl';
 
 export const useGlobeRotation = (map: mapboxgl.Map) => {
   useEffect(() => {
@@ -18,7 +17,7 @@ export const useGlobeRotation = (map: mapboxgl.Map) => {
       // Slow rotation speed
       const rotationSpeed = 5; // degrees per second
       const elapsed = (timestamp - start) / 1000;
-      const rotationDegrees = elapsed * rotationSpeed;
+      // Removed unused rotationDegrees variable
 
       // Set the new center with rotated longitude
       try {

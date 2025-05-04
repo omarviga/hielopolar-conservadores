@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import {
@@ -13,9 +14,10 @@ interface ClientActionsProps {
   clientId: string;
   onEdit: (clientId: string) => void;
   onDelete: (clientId: string) => void;
+  onShowDetails?: (clientId: string) => void; // Add this property
 }
 
-const ClientActions: React.FC<ClientActionsProps> = ({ clientId, onEdit, onDelete }) => {
+const ClientActions: React.FC<ClientActionsProps> = ({ clientId, onEdit, onDelete, onShowDetails }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,6 +27,11 @@ const ClientActions: React.FC<ClientActionsProps> = ({ clientId, onEdit, onDelet
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {onShowDetails && (
+          <DropdownMenuItem onClick={() => onShowDetails(clientId)}>
+            Ver detalles
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onClick={() => onEdit(clientId)}>
           <Pencil className="mr-2 h-4 w-4" /> Editar
         </DropdownMenuItem>

@@ -1,7 +1,7 @@
+
 import React, { useState } from 'react';
 import { Asset } from './AssetCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import ScheduleMaintenanceForm from './ScheduleMaintenanceForm';
@@ -17,7 +17,7 @@ interface AssetDetailProps {
 }
 
 const AssetDetail: React.FC<AssetDetailProps> = ({ asset, onUpdate, onClose }) => {
-  const _navigate = useNavigate();
+  // Removed unused navigate variable
   const [showMaintenanceForm, setShowMaintenanceForm] = useState(false);
   
   const handleScheduleMaintenance = () => {

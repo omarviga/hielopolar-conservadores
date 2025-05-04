@@ -1,5 +1,6 @@
-
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { PlusCircle } from 'lucide-react';
+import { format } from 'date-fns';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,8 @@ import RepairDetails from '@/components/repairs/RepairDetails';
 import { useRepairs } from '@/hooks/useRepairs';
 import { Repair } from '@/types/repairs';
 import { Plus, AlertCircle, Clipboard, ClipboardCheck, CheckCircle2, XCircle } from 'lucide-react';
+import { es } from 'date-fns/locale';
+import { toast } from '@/hooks/use-toast';
 
 const Repairs = () => {
   const location = useLocation();
@@ -115,7 +118,7 @@ const Repairs = () => {
         <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
           <SheetTrigger asChild>
             <Button>
-              <Plus className="h-4 w-4 mr-2" />
+              <PlusCircle className="h-4 w-4 mr-2" />
               Nueva Reparación
             </Button>
           </SheetTrigger>
@@ -255,7 +258,7 @@ const Repairs = () => {
                 className="mt-4" 
                 onClick={() => setIsFormOpen(true)}
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <PlusCircle className="h-4 w-4 mr-2" />
                 Crear Nueva Reparación
               </Button>
             </div>

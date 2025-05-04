@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -11,14 +12,14 @@ export function RegistroConservador() {
   const [formData, setFormData] = useState({
     numero_serie: '',
     modelo: '',
-    estado_conservador: 'nuevo', // Cambiado de capacidad a estado_conservador
+    estado_conservador: 'nuevo',
     cliente_id: '',
     ubicacion: '',
     notas: '',
     estado: 'activo'
   });
   const [mensaje, setMensaje] = useState('');
-  const [_isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,7 +29,7 @@ export function RegistroConservador() {
     setError('');
 
     try {
-      const { _data, error } = await supabase
+      const { data, error } = await supabase
         .from('clientes')
         .select('id, nombre')
         .order('nombre');
@@ -55,7 +56,7 @@ export function RegistroConservador() {
     setIsSubmitting(true);
 
     try {
-      const { _data, error } = await supabase
+      const { data, error } = await supabase
         .from('conservadores')
         .insert([formData])
         .select()

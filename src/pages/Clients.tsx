@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Plus, Search, Filter, SlidersHorizontal, Map as MapIcon, LayoutGrid } from "lucide-react";
+import { Plus, Search, SlidersHorizontal, Map as MapIcon, LayoutGrid } from "lucide-react";
 import { useClients } from '@/hooks/useClients';
 import ClientsList from '@/components/ClientsList';
 import ClientsMap from '@/components/ClientsMap';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import NewClientForm from '@/components/NewClientForm';
-import { Client } from '@/components/client/ClientInterface';
 
 const Clients = () => {
   const { clients } = useClients();
