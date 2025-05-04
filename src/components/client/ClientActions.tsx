@@ -15,7 +15,7 @@ interface ClientActionsProps {
   clientId?: string;
   client?: Client;
   onEdit: (clientId: string) => void;
-  onDelete: (clientId: string) => void;
+  onDelete?: (clientId: string) => void;
   onShowDetails?: (clientId: string) => void;
 }
 
@@ -40,9 +40,11 @@ const ClientActions: React.FC<ClientActionsProps> = ({ clientId, client, onEdit,
         <DropdownMenuItem onClick={() => onEdit(id)}>
           <Pencil className="mr-2 h-4 w-4" /> Editar
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onDelete(id)}>
-          <Trash2 className="mr-2 h-4 w-4" /> Eliminar
-        </DropdownMenuItem>
+        {onDelete && (
+          <DropdownMenuItem onClick={() => onDelete(id)}>
+            <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
       </DropdownMenuContent>
     </DropdownMenu>

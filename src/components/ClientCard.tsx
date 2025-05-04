@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useClients } from '@/hooks/useClients';
@@ -15,8 +16,6 @@ import ClientDetailActions from './client/ClientDetailActions';
 import EditClientForm from './client/EditClientForm';
 import { ClientFormValues } from './client/ClientFormSchema';
 
-
-// Removed the local declaration of ClientFormValues to avoid conflict with the imported one.
 interface ClientCardProps {
   client: Client;
 }
@@ -24,7 +23,7 @@ interface ClientCardProps {
 const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const { updateClient } = useClients();
+  const { updateClient, deleteClient } = useClients();
 
   const toggleClientStatus = () => {
     const newStatus = client.status === 'active' ? 'inactive' : 'active';
@@ -37,6 +36,12 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
       conserver: values.conserver, // Actualizar el conservador asignado
     });
     setShowEditForm(false);
+  };
+
+  const handleDelete = (clientId: string) => {
+    if (window.confirm("¿Estás seguro que deseas eliminar este cliente?")) {
+      deleteClient(clientId);
+    }
   };
 
   if (showEditForm) {
@@ -72,6 +77,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
           <ClientActions
             onShowDetails={() => setShowDetails(true)}
             onEdit={() => setShowEditForm(true)}
+            onDelete={handleDelete}
             client={client}
           />
         </div>

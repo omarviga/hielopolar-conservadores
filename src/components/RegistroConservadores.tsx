@@ -18,14 +18,13 @@ export function RegistroConservador() {
     estado: 'activo'
   });
   const [mensaje, setMensaje] = useState('');
-  const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   // Cargar lista de clientes al montar el componente
   const cargarClientes = async () => {
-    setLoading(true);
     setError('');
+    setIsSubmitting(true);
 
     try {
       const { data, error } = await supabase
@@ -40,7 +39,7 @@ export function RegistroConservador() {
       setError('Error al cargar clientes: ' + err.message);
       console.error('Error al cargar clientes:', err);
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
