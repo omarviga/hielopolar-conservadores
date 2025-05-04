@@ -35,9 +35,49 @@ const mapDbRepairToRepair = (dbRepair: any): Repair => {
   };
 };
 
-// Define types for repair mutations to avoid excessive type instantiation
-type AddRepairInput = Omit<Repair, 'id' | 'created_at' | 'updated_at'>;
-type UpdateRepairInput = Partial<Repair> & { id: string };
+// Define simplified types for repair mutations to avoid excessive type instantiation
+interface AddRepairInput {
+  asset_id?: string;
+  equipment_type: string;
+  problem_description: string;
+  order_number?: string;
+  customer_name: string;
+  customer_phone?: string;
+  customer_email?: string;
+  diagnosis?: string;
+  status?: string;
+  brand?: string;
+  model?: string;
+  serial_number?: string;
+  estimated_completion?: string;
+  notes?: string;
+  priority?: string;
+  repair_type?: string;
+  assigned_to?: string;
+  parts_used?: string[] | string;
+}
+
+interface UpdateRepairInput {
+  id: string;
+  equipment_type?: string;
+  problem_description?: string;
+  order_number?: string;
+  customer_name?: string;
+  customer_phone?: string;
+  customer_email?: string;
+  diagnosis?: string;
+  status?: string;
+  brand?: string;
+  model?: string;
+  serial_number?: string;
+  estimated_completion?: string;
+  notes?: string;
+  priority?: string;
+  repair_type?: string;
+  assigned_to?: string;
+  parts_used?: string[] | string;
+  description?: string;
+}
 
 export const useRepairs = (assetId?: string) => {
   const queryClient = useQueryClient();
@@ -70,8 +110,8 @@ export const useRepairs = (assetId?: string) => {
       const dbRepair = {
         asset_id: repair.asset_id,
         equipment_type: repair.equipment_type,
-        problem_description: repair.problem_description || repair.description,
-        order_number: repair.repair_number || repair.order_number,
+        problem_description: repair.problem_description,
+        order_number: repair.order_number,
         customer_name: repair.customer_name,
         customer_phone: repair.customer_phone,
         customer_email: repair.customer_email,
@@ -117,33 +157,27 @@ export const useRepairs = (assetId?: string) => {
 
   // Update a repair
   const updateRepair = useMutation({
-    mutationFn: async ({ id, ...repair }: UpdateRepairInput) => {
-      const dbRepair = {
-        equipment_type: repair.equipment_type,
-        problem_description: repair.problem_description || repair.description,
-        order_number: repair.order_number || repair.repair_number,
-        customer_name: repair.customer_name,
-        customer_phone: repair.customer_phone,
-        customer_email: repair.customer_email,
-        diagnosis: repair.diagnosis,
-        status: repair.status,
-        brand: repair.brand,
-        model: repair.model,
-        serial_number: repair.serial_number,
-        estimated_completion: repair.estimated_completion,
-        notes: repair.notes,
-        priority: repair.priority,
-        repair_type: repair.repair_type,
-        assigned_to: repair.assigned_to,
-        parts_used: repair.parts_used,
-      };
+    mutationFn: async (repair: UpdateRepairInput) => {
+      const { id, ...updateData } = repair;
       
-      // Remove undefined properties
-      Object.keys(dbRepair).forEach(key => {
-        if (dbRepair[key] === undefined) {
-          delete dbRepair[key];
+      const dbRepair: Record<string, any> = {};
+      
+      // Only include defined properties
+      Object.entries(updateData).forEach(([key, value]) => {
+        if (value !== undefined) {
+          dbRepair[key] = value;
         }
       });
+      
+      // Handle problem_description/description field mapping
+      if (repair.description && !repair.problem_description) {
+        dbRepair.problem_description = repair.description;
+      }
+      
+      // Handle repair_number/order_number field mapping
+      if (repair.repair_number && !repair.order_number) {
+        dbRepair.order_number = repair.repair_number;
+      }
       
       const { data, error } = await supabase
         .from('repairs')
