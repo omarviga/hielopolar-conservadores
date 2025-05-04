@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { ConservadorFormValues } from './ConservadorFormSchema';
 
 interface BasicInfoFieldsProps {
   formData: {
@@ -7,7 +8,7 @@ interface BasicInfoFieldsProps {
     modelo: string;
     estado_conservador: string;
   };
-  onChange: (field: string, value: string) => void;
+  onChange: (field: keyof ConservadorFormValues, value: string) => void;
   disabled?: boolean;
 }
 

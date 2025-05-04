@@ -1,9 +1,10 @@
 
 import React from 'react';
+import { ConservadorFormValues } from './ConservadorFormSchema';
 
 interface NotesFieldProps {
   notas: string;
-  onChange: (field: string, value: string) => void;
+  onChange: (field: keyof ConservadorFormValues, value: string) => void;
   disabled?: boolean;
 }
 
