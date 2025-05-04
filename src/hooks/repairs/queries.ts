@@ -21,7 +21,8 @@ export const useRepairQueries = (assetId?: string) => {
         throw new Error(error.message);
       }
       
-      return data.map(mapDbRepairToRepair);
+      // Use a simpler approach to map data to avoid deep type instantiation
+      return data.map((item: any) => mapDbRepairToRepair(item));
     },
   });
 
