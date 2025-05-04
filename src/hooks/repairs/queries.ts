@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { mapDbRepairToRepair } from './utils';
-import { Repair } from '@/types/repairs';
+import type { Repair } from '@/types/repairs';
 
 export const useRepairQueries = (assetId?: string) => {
   // Fetch all repairs or repairs for a specific asset
@@ -25,7 +25,7 @@ export const useRepairQueries = (assetId?: string) => {
     },
   });
 
-  // Get a repair by ID
+  // Get a repair by ID - defined as a separate function to avoid deep instantiation
   const getRepairById = async (id: string): Promise<Repair | null> => {
     const { data, error } = await supabase
       .from('repairs')
@@ -38,7 +38,7 @@ export const useRepairQueries = (assetId?: string) => {
       return null;
     }
     
-    return mapDbRepairToRepair(data);
+    return data ? mapDbRepairToRepair(data) : null;
   };
 
   return {

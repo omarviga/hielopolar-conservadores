@@ -1,10 +1,10 @@
 
-import { useMutation, UseQueryClient } from '@tanstack/react-query';
+import { useMutation, QueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { AddRepairInput, UpdateRepairInput } from './types';
 
-export const useRepairMutations = (queryClient: UseQueryClient) => {
+export const useRepairMutations = (queryClient: QueryClient) => {
   // Add a new repair
   const addRepair = useMutation({
     mutationFn: async (repair: AddRepairInput) => {

@@ -2,7 +2,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRepairQueries } from './repairs/queries';
 import { useRepairMutations } from './repairs/mutations';
-import type { Repair } from '@/types/repairs';
 import type { AddRepairInput, UpdateRepairInput } from './repairs/types';
 
 export const useRepairs = (assetId?: string) => {
