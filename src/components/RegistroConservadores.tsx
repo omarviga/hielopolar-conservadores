@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -19,13 +18,13 @@ export function RegistroConservador() {
     estado: 'activo'
   });
   const [mensaje, setMensaje] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   // Cargar lista de clientes al montar el componente
   const cargarClientes = async () => {
-    setIsLoading(true);
+    setLoading(true);
     setError('');
 
     try {
@@ -41,7 +40,7 @@ export function RegistroConservador() {
       setError('Error al cargar clientes: ' + err.message);
       console.error('Error al cargar clientes:', err);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -56,11 +55,9 @@ export function RegistroConservador() {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('conservadores')
-        .insert([formData])
-        .select()
-        .single();
+        .insert([formData]);
 
       if (error) throw error;
 

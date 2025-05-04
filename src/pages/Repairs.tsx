@@ -1,11 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { PlusCircle } from 'lucide-react';
-import { format } from 'date-fns';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import RepairForm from '@/components/repairs/RepairForm';
@@ -13,9 +12,7 @@ import RepairsList from '@/components/repairs/RepairsList';
 import RepairDetails from '@/components/repairs/RepairDetails';
 import { useRepairs } from '@/hooks/useRepairs';
 import { Repair } from '@/types/repairs';
-import { Plus, AlertCircle, Clipboard, ClipboardCheck, CheckCircle2, XCircle } from 'lucide-react';
-import { es } from 'date-fns/locale';
-import { toast } from '@/hooks/use-toast';
+import { AlertCircle, Clipboard, ClipboardCheck, CheckCircle2, XCircle } from 'lucide-react';
 
 const Repairs = () => {
   const location = useLocation();
