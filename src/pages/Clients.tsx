@@ -1,119 +1,156 @@
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import ClientsList from '@/components/ClientsList';
+import React, { useState, useEffect } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { MapPin, Plus, Search, Filter, SlidersHorizontal, Map as MapIcon, LayoutGrid } from "lucide-react";
 import { useClients } from '@/hooks/useClients';
-import { Button } from '@/components/ui/button';
-import { MapPin, Users, UserCheck, UserMinus, Building, RefreshCcw } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import ClientsList from '@/components/ClientsList';
+import ClientsMap from '@/components/ClientsMap';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import NewClientForm from '@/components/NewClientForm';
+import { Client } from '@/components/client/ClientInterface';
 
-const Clients: React.FC = () => {
-  const { clients, loading, error } = useClients();
+const Clients = () => {
+  const { clients } = useClients();
+  const [view, setView] = useState<'grid' | 'map'>('grid');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
+  const [filterChannel, setFilterChannel] = useState<'all' | 'tradicional' | 'moderno' | 'industrial'>('all');
+  const [isNewClientDialogOpen, setIsNewClientDialogOpen] = useState(false);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-          <p className="mt-2 text-gray-600">Cargando clientes...</p>
-        </div>
-      </div>
-    );
-  }
+  // Filter clients based on search term and filters
+  const filteredClients = clients.filter(client => {
+    // Search filter
+    const matchesSearch = 
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (client.contactPerson && client.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (client.email && client.email.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    // Status filter
+    const matchesStatus = filterStatus === 'all' || client.status === filterStatus;
+    
+    // Channel filter
+    const matchesChannel = filterChannel === 'all' || client.channelType === filterChannel;
+    
+    return matchesSearch && matchesStatus && matchesChannel;
+  });
 
-  if (error) {
-    return (
-      <div className="text-center py-10">
-        <div className="bg-red-100 text-red-700 p-4 rounded-lg inline-block">
-          <p>{error}</p>
-          <Button className="mt-2 text-sm" variant="link">
-            <RefreshCcw className="h-4 w-4 mr-1" />
-            Reintentar
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  const activeClients = clients.filter(client => client.status === 'active');
-  const inactiveClients = clients.filter(client => client.status === 'inactive');
-  const totalAssignedAssets = clients.reduce((total, client) => total + client.assetsAssigned, 0);
+  // Get Mapbox token from environment variables
+  const mapboxToken = import.meta.env.VITE_MAPBOX_API_TOKEN || '';
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Users className="h-6 w-6 text-polar-600" />
-          <h2 className="text-2xl font-bold">Clientes</h2>
+    <div className="container mx-auto p-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h1 className="text-2xl font-bold">Clientes</h1>
+        
+        <div className="flex flex-wrap gap-2">
+          <Dialog open={isNewClientDialogOpen} onOpenChange={setIsNewClientDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" /> Nuevo Cliente
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Crear Nuevo Cliente</DialogTitle>
+                <DialogDescription>
+                  Complete el formulario para registrar un nuevo cliente en el sistema.
+                </DialogDescription>
+              </DialogHeader>
+              <NewClientForm />
+            </DialogContent>
+          </Dialog>
+          
+          <Button variant="outline" className="gap-2" onClick={() => setView(view === 'grid' ? 'map' : 'grid')}>
+            {view === 'grid' ? (
+              <>
+                <MapIcon className="h-4 w-4" /> Ver Mapa
+              </>
+            ) : (
+              <>
+                <LayoutGrid className="h-4 w-4" /> Ver Lista
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+      
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+          <Input
+            placeholder="Buscar clientes..."
+            className="pl-8"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
         
-        <Link to="/clients/map">
-          <Button className="bg-polar-600 hover:bg-polar-700">
-            <MapPin className="h-4 w-4 mr-2" />
-            Ver en Mapa
+        <div className="flex gap-2">
+          <select
+            className="border rounded-md px-3 py-2"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'inactive')}
+          >
+            <option value="all">Todos los estados</option>
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+          </select>
+          
+          <select
+            className="border rounded-md px-3 py-2"
+            value={filterChannel}
+            onChange={(e) => setFilterChannel(e.target.value as 'all' | 'tradicional' | 'moderno' | 'industrial')}
+          >
+            <option value="all">Todos los canales</option>
+            <option value="tradicional">Tradicional</option>
+            <option value="moderno">Moderno</option>
+            <option value="industrial">Industrial</option>
+          </select>
+          
+          <Button variant="outline" size="icon">
+            <SlidersHorizontal className="h-4 w-4" />
           </Button>
-        </Link>
+        </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Clientes</p>
-                <p className="text-2xl font-bold">{clients.length}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <Building className="h-6 w-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Clientes Activos</p>
-                <p className="text-2xl font-bold">{activeClients.length}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-                <UserCheck className="h-6 w-6 text-green-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Clientes Inactivos</p>
-                <p className="text-2xl font-bold">{inactiveClients.length}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
-                <UserMinus className="h-6 w-6 text-red-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Conservadores Asignados</p>
-                <p className="text-2xl font-bold">{totalAssignedAssets}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-amber-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <ClientsList clients={clients} />
+      {view === 'grid' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filteredClients.map((client) => (
+            <Card key={client.id} className="overflow-hidden">
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg">{client.name}</CardTitle>
+                    <CardDescription>ID: {client.id}</CardDescription>
+                  </div>
+                  <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    client.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {client.status === 'active' ? 'Activo' : 'Inactivo'}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ClientsList client={client} />
+              </CardContent>
+              <CardFooter className="flex justify-between border-t pt-4">
+                <div className="text-sm">
+                  <span className="font-medium">Conservadores:</span> {client.assetsAssigned}
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium">Canal:</span> {client.channelType}
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="h-[calc(100vh-200px)] rounded-lg overflow-hidden border">
+          <ClientsMap mapboxToken={mapboxToken} />
+        </div>
+      )}
     </div>
   );
 };

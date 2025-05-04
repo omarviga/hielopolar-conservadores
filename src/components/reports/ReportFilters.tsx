@@ -78,7 +78,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
-                selected={startDate}
+                selected={startDate || undefined}
                 onSelect={handleStartDateSelect}
                 initialFocus
               />
@@ -104,7 +104,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
-                selected={endDate}
+                selected={endDate || undefined}
                 onSelect={handleEndDateSelect}
                 initialFocus
               />

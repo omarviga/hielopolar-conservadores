@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import ScheduleMaintenanceForm, { MaintenanceFormData } from '@/components/ScheduleMaintenanceForm';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { useMaintenance, Maintenance as MaintenanceData } from '@/hooks/useMaintenance';
 
 const Maintenance: React.FC = () => {

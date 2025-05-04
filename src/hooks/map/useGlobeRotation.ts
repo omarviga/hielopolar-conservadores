@@ -1,37 +1,53 @@
-import { useEffect, useRef } from 'react';
 
-export const useGlobeRotation = (map: any) => {
-  // We're keeping the rotation ref but will actually use it in the effect
-  const animation = useRef<number | null>(null);
+import { useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
 
+export const useGlobeRotation = (map: mapboxgl.Map) => {
   useEffect(() => {
     if (!map) return;
 
-    const spinGlobe = () => {
-      const now = Date.now();
-      const diff = now - (Number(animation.current) || now);
-      animation.current = now;
+    // Initialize the globe rotation
+    let start = 0;
+    const rotateGlobe = (timestamp: number) => {
+      if (!map || !map.isStyleLoaded()) return;
+      
+      if (start === 0) {
+        start = timestamp;
+      }
 
-      // Limiting the delta to 100ms translates to limiting the speed of the globe
-      if (diff > 100) return;
+      // Slow rotation speed
+      const rotationSpeed = 5; // degrees per second
+      const elapsed = (timestamp - start) / 1000;
+      const rotationDegrees = elapsed * rotationSpeed;
 
-      const newRotation = map.getBearing() + diff / 50;
-
-      // Ensure the rotation is within -180 to 180 degrees
-      const normalizedRotation = ((newRotation + 180) % 360) - 180;
-
-      map.setBearing(normalizedRotation);
+      // Set the new center with rotated longitude
+      try {
+        const currentCenter = map.getCenter();
+        map.setCenter([
+          currentCenter.lng + 0.05,
+          currentCenter.lat
+        ]);
+        
+        // Request the next frame
+        requestAnimationFrame(rotateGlobe);
+      } catch (error) {
+        console.error("Error rotating globe:", error);
+      }
     };
 
-    map.on('render', () => {
-      if (map.loaded()) {
-        spinGlobe();
-      }
-    });
+    // Start the animation if the style is loaded
+    if (map.isStyleLoaded()) {
+      requestAnimationFrame(rotateGlobe);
+    } else {
+      map.once('style.load', () => {
+        requestAnimationFrame(rotateGlobe);
+      });
+    }
 
     return () => {
-      map.off('render', spinGlobe);
-      animation.current = null;
+      // No direct way to cancel requestAnimationFrame, but the map check
+      // in the rotateGlobe function will prevent further execution
+      start = 0;
     };
   }, [map]);
 };

@@ -1,9 +1,7 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useClients } from '@/hooks/useClients';
-import { Client } from '@/components/client/ClientInterface';
 import { toast } from '@/hooks/use-toast';
 
 interface ClientsMapProps {

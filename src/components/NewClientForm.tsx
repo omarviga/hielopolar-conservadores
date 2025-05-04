@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useForm } from "react-hook-form";
@@ -59,6 +60,7 @@ const NewClientForm = () => {
     address: values.address,
     coordinates: generateRandomCoordinates(),
     conserver: values.conserver,
+    conserverProductivity: values.conserverProductivity || 0,
   };
   
   addClient(newClient);

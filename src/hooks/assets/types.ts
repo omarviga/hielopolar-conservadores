@@ -1,6 +1,4 @@
-
 import { Asset } from '@/components/AssetCard';
-import { Tables } from '@/integrations/supabase/types';
 
 export type AssetHookReturn = {
   assets: Asset[];
@@ -26,4 +24,3 @@ export type FormattedAsset = {
   created_at: string;
   updated_at: string;
 };
-

@@ -49,6 +49,8 @@ export const useMapInitialization = ({ mapboxToken, assets, locations }: UseMapI
       
       addMapLayers(map.current, assets, locations);
       setupEventHandlers(map.current);
+      
+      // Apply globe rotation effect
       useGlobeRotation(map.current);
     });
 

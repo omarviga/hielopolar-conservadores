@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Asset } from './AssetCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +17,7 @@ interface AssetDetailProps {
 }
 
 const AssetDetail: React.FC<AssetDetailProps> = ({ asset, onUpdate, onClose }) => {
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [showMaintenanceForm, setShowMaintenanceForm] = useState(false);
   
   const handleScheduleMaintenance = () => {

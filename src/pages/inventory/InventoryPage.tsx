@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 
 export default function InventoryPage() {
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [_isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   return (
     <div className="container mx-auto py-6">

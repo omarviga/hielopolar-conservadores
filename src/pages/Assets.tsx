@@ -1,8 +1,6 @@
-
 import React from 'react';
 import AssetsList from '@/components/AssetsList';
 import { useAssets } from '@/hooks/useAssets';
-import { toast } from '@/hooks/use-toast';
 import { Package } from 'lucide-react';
 
 const Assets: React.FC = () => {
