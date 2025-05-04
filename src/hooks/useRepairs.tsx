@@ -107,6 +107,7 @@ export const useRepairs = (assetId?: string) => {
   // Add a new repair
   const addRepair = useMutation({
     mutationFn: async (repair: AddRepairInput) => {
+      // Create a simple object without complex typing to avoid excessive type instantiation
       const dbRepair = {
         asset_id: repair.asset_id,
         equipment_type: repair.equipment_type,
@@ -125,7 +126,7 @@ export const useRepairs = (assetId?: string) => {
         priority: repair.priority,
         repair_type: repair.repair_type,
         assigned_to: repair.assigned_to,
-        parts_used: repair.parts_used,
+        parts_used: repair.parts_used
       };
       
       const { data, error } = await supabase
@@ -160,6 +161,7 @@ export const useRepairs = (assetId?: string) => {
     mutationFn: async (repair: UpdateRepairInput) => {
       const { id, ...updateData } = repair;
       
+      // Create a simple object to hold our update data
       const dbRepair: Record<string, any> = {};
       
       // Only include defined properties
