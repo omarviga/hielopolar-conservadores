@@ -98,40 +98,36 @@ export const useRepairs = (assetId?: string) => {
         throw new Error(error.message);
       }
       
-      // Map to our type
       return data.map(mapDbRepairToRepair);
     },
-    enabled: true, // Always fetch repairs
   });
 
-  // Add a new repair
+  // Add a new repair - simplified to avoid excessive type instantiation
   const addRepair = useMutation({
     mutationFn: async (repair: AddRepairInput) => {
-      // Create a simple object without complex typing to avoid excessive type instantiation
-      const dbRepair = {
-        asset_id: repair.asset_id,
-        equipment_type: repair.equipment_type,
-        problem_description: repair.problem_description,
-        order_number: repair.order_number,
-        customer_name: repair.customer_name,
-        customer_phone: repair.customer_phone,
-        customer_email: repair.customer_email,
-        diagnosis: repair.diagnosis,
-        status: repair.status,
-        brand: repair.brand,
-        model: repair.model,
-        serial_number: repair.serial_number,
-        estimated_completion: repair.estimated_completion,
-        notes: repair.notes,
-        priority: repair.priority,
-        repair_type: repair.repair_type,
-        assigned_to: repair.assigned_to,
-        parts_used: repair.parts_used
-      };
-      
+      // Using direct object literal instead of complex typing
       const { data, error } = await supabase
         .from('repairs')
-        .insert([dbRepair])
+        .insert([{
+          asset_id: repair.asset_id,
+          equipment_type: repair.equipment_type,
+          problem_description: repair.problem_description,
+          order_number: repair.order_number,
+          customer_name: repair.customer_name,
+          customer_phone: repair.customer_phone,
+          customer_email: repair.customer_email,
+          diagnosis: repair.diagnosis,
+          status: repair.status,
+          brand: repair.brand,
+          model: repair.model,
+          serial_number: repair.serial_number,
+          estimated_completion: repair.estimated_completion,
+          notes: repair.notes,
+          priority: repair.priority,
+          repair_type: repair.repair_type,
+          assigned_to: repair.assigned_to,
+          parts_used: repair.parts_used
+        }])
         .select();
       
       if (error) {
@@ -156,29 +152,29 @@ export const useRepairs = (assetId?: string) => {
     },
   });
 
-  // Update a repair
+  // Update a repair - simplified to avoid excessive type instantiation
   const updateRepair = useMutation({
     mutationFn: async (repair: UpdateRepairInput) => {
       const { id, ...updateData } = repair;
       
-      // Create a simple object to hold our update data
-      const dbRepair: Record<string, any> = {};
+      // Using a simplified approach to build the update object
+      const updateObj: Record<string, any> = {};
       
       // Only include defined properties
       Object.entries(updateData).forEach(([key, value]) => {
         if (value !== undefined) {
-          dbRepair[key] = value;
+          updateObj[key] = value;
         }
       });
       
       // Handle problem_description/description field mapping
       if (repair.description && !repair.problem_description) {
-        dbRepair.problem_description = repair.description;
+        updateObj.problem_description = repair.description;
       }
       
       const { data, error } = await supabase
         .from('repairs')
-        .update(dbRepair)
+        .update(updateObj)
         .eq('id', parseInt(id))
         .select();
       
