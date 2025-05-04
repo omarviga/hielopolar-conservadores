@@ -8,7 +8,7 @@ export const useRepairQueries = (assetId?: string) => {
   // Fetch all repairs or repairs for a specific asset
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['repairs', assetId],
-    queryFn: async (): Promise<Repair[]> => {
+    queryFn: async () => {
       let query = supabase.from('repairs').select('*');
       
       if (assetId) {
@@ -21,8 +21,15 @@ export const useRepairQueries = (assetId?: string) => {
         throw new Error(error.message);
       }
       
-      // Explicitly cast the data to any to break the deep type instantiation
-      return (repairData as any[]).map(item => mapDbRepairToRepair(item));
+      // Break the type inference chain completely
+      const repairs: Repair[] = [];
+      if (repairData) {
+        for (const item of repairData) {
+          repairs.push(mapDbRepairToRepair(item as any));
+        }
+      }
+      
+      return repairs;
     },
   });
 
