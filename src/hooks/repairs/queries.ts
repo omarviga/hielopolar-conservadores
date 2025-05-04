@@ -15,42 +15,53 @@ export const useRepairQueries = (assetId?: string) => {
         query = query.eq('asset_id', assetId);
       }
       
-      const { data: dbData, error } = await query.order('created_at', { ascending: false });
+      const { data: dbResults, error } = await query.order('created_at', { ascending: false });
       
       if (error) {
         throw new Error(error.message);
       }
       
-      // Use type assertion to break type inference chain
+      // Create an empty array with explicit type to break inference chain
       const repairs: Repair[] = [];
       
-      if (dbData) {
-        // Manual loop instead of map to avoid deep type instantiation
-        for (let i = 0; i < dbData.length; i++) {
-          const item = dbData[i] as Record<string, any>;
-          repairs.push(mapDbRepairToRepair(item));
+      if (dbResults) {
+        // Use a traditional for loop with index to avoid type inference issues
+        for (let i = 0; i < dbResults.length; i++) {
+          // Use a simple object type for intermediate data to break the chain
+          const rawItem: Record<string, unknown> = dbResults[i];
+          // Add the mapped item to our explicitly typed array
+          repairs.push(mapDbRepairToRepair(rawItem));
         }
       }
       
       return repairs;
     },
+    // Disable suspense to prevent additional type inference issues
+    suspense: false,
   });
 
-  // Get a repair by ID - defined as a separate function to avoid deep instantiation
+  // Get a repair by ID - defined as a separate function to avoid type inference issues
   const getRepairById = async (id: string): Promise<Repair | null> => {
-    const { data, error } = await supabase
-      .from('repairs')
-      .select('*')
-      .eq('id', parseInt(id))
-      .single();
-    
-    if (error) {
-      console.error('Error fetching repair:', error);
+    try {
+      const { data: rawData, error } = await supabase
+        .from('repairs')
+        .select('*')
+        .eq('id', parseInt(id))
+        .single();
+      
+      if (error || !rawData) {
+        console.error('Error fetching repair:', error);
+        return null;
+      }
+      
+      // Use explicit type casting to break the inference chain
+      const rawItem: Record<string, unknown> = rawData;
+      return mapDbRepairToRepair(rawItem);
+    }
+    catch (err) {
+      console.error('Unexpected error in getRepairById:', err);
       return null;
     }
-    
-    // Use type assertion to break type inference chain
-    return data ? mapDbRepairToRepair(data as Record<string, any>) : null;
   };
 
   return {
