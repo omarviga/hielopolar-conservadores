@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Settings, Home, Package, Users, Calendar as CalendarIcon, BarChart3, Map, Wrench, Box, ShoppingCart, Truck, QrCode, ClipboardList } from 'lucide-react';
+import { Settings, Home, Package, Users, ClipboardList, QrCode } from 'lucide-react';
 
 const Sidebar = () => {
   return (
