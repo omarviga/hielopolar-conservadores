@@ -22,6 +22,8 @@ import Inventory from "./pages/Inventory";
 import Orders from "./pages/Orders";
 import Suppliers from "./pages/Suppliers";
 import Purchases from "./pages/Purchases";
+import ServiceOrders from "./pages/ServiceOrders";
+import QRCodeGeneratorPage from "./pages/QRCodeGenerator";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +58,9 @@ const App = () => (
             <Route path="/orders" element={<Orders />} />
             <Route path="/suppliers" element={<Suppliers />} />
             <Route path="/purchases" element={<Purchases />} />
+            {/* Nuevas rutas */}
+            <Route path="/service-orders" element={<ServiceOrders />} />
+            <Route path="/qr-generator" element={<QRCodeGeneratorPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
