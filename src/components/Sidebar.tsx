@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Settings, Home, Package, Users, Calendar as CalendarIcon, BarChart3, Map, Tool, Inventory, ShoppingCart, Truck, QrCode, ListOrdered } from 'lucide-react';
+import { Settings, Home, Package, Users, Calendar as CalendarIcon, BarChart3, Map, Wrench, BoxesIcon, ShoppingCart, Truck, QrCode, ListOrdered } from 'lucide-react';
 
 const Sidebar = () => {
   return (
@@ -48,7 +48,7 @@ const Sidebar = () => {
             isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
           }
         >
-          <Tool size={20} />
+          <Wrench size={20} />
           <span>Mantenimiento</span>
         </NavLink>
         
@@ -98,7 +98,7 @@ const Sidebar = () => {
             isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
           }
         >
-          <Tool size={20} />
+          <Wrench size={20} />
           <span>Reparaciones</span>
         </NavLink>
 
@@ -108,7 +108,7 @@ const Sidebar = () => {
             isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
           }
         >
-          <Inventory size={20} />
+          <BoxesIcon size={20} />
           <span>Inventario</span>
         </NavLink>
 

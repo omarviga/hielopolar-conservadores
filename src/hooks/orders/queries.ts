@@ -3,23 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ServiceOrder, OrderDetail } from '@/types/orders';
 
-interface DbServiceOrder {
-  id: string;
-  numero_orden: string;
-  cliente_id: string | null;
-  conservador_id: string | null;
-  problema_reportado: string | null;
-  diagnostico: string | null;
-  solucion: string | null;
-  estado: string;
-  fecha_entrega_estimada: string | null;
-  fecha_entrega_real: string | null;
-  costo_reparacion: number | null;
-  tipo_servicio: string;
-  created_at: string | null;
-  updated_at: string | null;
-}
-
 // Mapear desde el formato de la base de datos al formato de la interfaz
 const mapToServiceOrder = (dbOrder: any): ServiceOrder => {
   return {
