@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,20 +6,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
-import ServiceOrders from "./pages/ServiceOrders";
-import QRCodeGeneratorPage from "./pages/QRCodeGenerator";
+import Assets from "./pages/Assets";
+import Clients from "./pages/Clients";
 import NotFound from "./pages/NotFound";
-import Settings from "./pages/Settings";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -31,9 +21,13 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
-            <Route path="/service-orders" element={<ServiceOrders />} />
-            <Route path="/qr-generator" element={<QRCodeGeneratorPage />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/assets" element={<Assets />} />
+            <Route path="/clients" element={<Clients />} />
+            {/* Placeholder routes for future implementation */}
+            <Route path="/maintenance" element={<NotFound />} />
+            <Route path="/calendar" element={<NotFound />} />
+            <Route path="/reports" element={<NotFound />} />
+            <Route path="/settings" element={<NotFound />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

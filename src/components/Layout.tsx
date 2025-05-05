@@ -13,7 +13,7 @@ const Layout: React.FC = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar />
+      <Sidebar open={sidebarOpen} />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar toggleSidebar={toggleSidebar} />

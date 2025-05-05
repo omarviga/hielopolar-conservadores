@@ -1,14 +1,12 @@
+
 import React from 'react';
 import { 
   Package, 
   MapPin, 
   Calendar, 
-  AlertCircle,
-  Users
+  AlertCircle 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from "@/hooks/use-toast";
 
 export interface Asset {
   id: string;
@@ -21,13 +19,10 @@ export interface Asset {
   capacity: string;
   temperatureRange: string;
   imageSrc: string;
-  coordinates?: [number, number];
 }
 
 interface AssetCardProps {
   asset: Asset;
-  onUpdate?: (id: string, updates: Partial<Asset>) => void;
-  onSelect?: (asset: Asset) => void;
 }
 
 const statusLabels: Record<Asset['status'], string> = {
@@ -44,39 +39,13 @@ const statusClasses: Record<Asset['status'], string> = {
   'retired': 'status-badge-retired'
 };
 
-const AssetCard: React.FC<AssetCardProps> = ({ asset, onUpdate, onSelect }) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleViewDetails = () => {
-    if (onSelect) {
-      onSelect(asset);
-    } else {
-      toast({
-        title: "Función en desarrollo",
-        description: `Detalles completos del conservador ${asset.id} estarán disponibles pronto.`,
-      });
-    }
-  };
-
-  const handleManage = () => {
-    if (onUpdate) {
-      navigate('/maintenance', { state: { assetId: asset.id } });
-    } else {
-      toast({
-        title: "Función en desarrollo",
-        description: "La gestión completa estará disponible pronto.",
-      });
-    }
-  };
-
+const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden card-hover">
       <div className="relative h-40 bg-gray-200">
-        {/* Imagen local reemplazada aquí */}
         <img 
-          src="/lovable-uploads/FT_FCC-100-2.jpg"  // Ruta desde la carpeta `public`
-          alt={asset.model}
+          src={asset.imageSrc} 
+          alt={asset.model} 
           className="w-full h-full object-cover"
         />
         <span className={`status-badge ${statusClasses[asset.status]} absolute top-2 right-2`}>
@@ -122,14 +91,12 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, onUpdate, onSelect }) => {
             variant="outline" 
             size="sm" 
             className="flex-1"
-            onClick={handleViewDetails}
           >
             Ver Detalles
           </Button>
           <Button 
             size="sm" 
             className="flex-1 bg-polar-600 hover:bg-polar-700"
-            onClick={handleManage}
           >
             Gestionar
           </Button>

@@ -1,40 +1,19 @@
 {
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      // Resolver conflictos de módulos
-      "@tanstack/react-query": ["./node_modules/@tanstack/react-query"],
-      "@supabase/supabase-js": ["./node_modules/@supabase/supabase-js"]
+      "@/*": ["./src/*"]
     },
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    // Configuración crítica para el error TS2589
-    "maxNodeModuleJsDepth": 2,
-    "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo"
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "vite.config.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.spec.ts"
-  ]
+    "noUnusedParameters": false,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noUnusedLocals": false,
+    "strictNullChecks": false
+  }
 }

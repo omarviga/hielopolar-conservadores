@@ -11,39 +11,14 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Asset } from './AssetCard';
-import { Client } from './client/ClientInterface';
-import { Maintenance } from '@/hooks/useMaintenance';
-import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { Client } from './ClientCard';
 
 interface DashboardProps {
   recentAssets: Asset[];
   recentClients: Client[];
-  scheduledMaintenances?: Maintenance[];
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ 
-  recentAssets, 
-  recentClients, 
-  scheduledMaintenances = [] 
-}) => {
-  const navigate = useNavigate();
-
-  const handleViewAllMaintenance = () => {
-    navigate('/maintenance');
-  };
-
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return format(date, 'dd/MM/yyyy', { locale: es });
-    } catch (e) {
-      console.error("Error formatting date:", e);
-      return dateString;
-    }
-  };
-
+const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) => {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -102,38 +77,32 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <Calendar className="h-5 w-5 text-polar-600 mr-2" />
-              <h2 className="text-xl font-semibold">Mantenimientos Programados</h2>
+              <h2 className="text-xl font-semibold">Próximos Eventos</h2>
             </div>
           </div>
           
           <div className="space-y-3">
-            {scheduledMaintenances.length > 0 ? (
-              scheduledMaintenances.map((maintenance) => (
-                <div key={maintenance.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-polar-100 text-polar-600 flex items-center justify-center">
-                    <Calendar className="h-5 w-5" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="font-medium">{maintenance.title}</p>
-                    <p className="text-sm text-gray-500">
-                      {maintenance.asset} - {maintenance.client}
-                    </p>
-                  </div>
-                  <div className="ml-auto text-right">
-                    <p className="text-sm font-medium">
-                      {formatDate(maintenance.date)}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Técnico: {maintenance.technician}
-                    </p>
-                  </div>
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-polar-100 text-polar-600 flex items-center justify-center">
+                  <Calendar className="h-5 w-5" />
                 </div>
-              ))
-            ) : (
-              <div className="p-4 text-center text-gray-500">No hay mantenimientos programados</div>
-            )}
+                <div className="ml-3">
+                  <p className="font-medium">Mantenimiento Preventivo</p>
+                  <p className="text-sm text-gray-500">Conservador #{Math.floor(Math.random() * 1000)}</p>
+                </div>
+                <div className="ml-auto text-right">
+                  <p className="text-sm font-medium">
+                    {new Date(Date.now() + item * 86400000).toLocaleDateString()}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {Math.floor(Math.random() * 12) + 8}:00 AM
+                  </p>
+                </div>
+              </div>
+            ))}
             
-            <Button variant="outline" className="w-full mt-2" onClick={handleViewAllMaintenance}>
+            <Button variant="outline" className="w-full mt-2">
               <Plus className="h-4 w-4 mr-2" />
               Ver Todos
             </Button>
@@ -148,36 +117,32 @@ const Dashboard: React.FC<DashboardProps> = ({
               <PackageOpen className="h-5 w-5 text-polar-600 mr-2" />
               <h2 className="text-xl font-semibold">Últimas Consignaciones</h2>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/assets')}>Ver Todos</Button>
+            <Button variant="ghost" size="sm">Ver Todos</Button>
           </div>
           
           <div className="space-y-3">
-            {recentAssets && recentAssets.length > 0 ? (
-              recentAssets.map((asset) => (
-                <div key={asset.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-lg overflow-hidden">
-                    <img src={asset.imageSrc} alt={asset.model} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="font-medium">{asset.model}</p>
-                    <p className="text-sm text-gray-500">ID: {asset.id}</p>
-                  </div>
-                  <div className="ml-auto">
-                    <span className={`status-badge ${asset.status === 'available' ? 'status-badge-available' : 
+            {recentAssets.slice(0, 3).map((asset) => (
+              <div key={asset.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-lg overflow-hidden">
+                  <img src={asset.imageSrc} alt={asset.model} className="w-full h-full object-cover" />
+                </div>
+                <div className="ml-3">
+                  <p className="font-medium">{asset.model}</p>
+                  <p className="text-sm text-gray-500">ID: {asset.id}</p>
+                </div>
+                <div className="ml-auto">
+                  <span className={`status-badge ${asset.status === 'available' ? 'status-badge-available' : 
                                    asset.status === 'in-use' ? 'status-badge-in-use' : 
                                    asset.status === 'maintenance' ? 'status-badge-maintenance' : 
                                    'status-badge-retired'}`}>
-                      {asset.status === 'available' ? 'Disponible' : 
-                       asset.status === 'in-use' ? 'En Uso' : 
-                       asset.status === 'maintenance' ? 'Mantenimiento' : 
-                       'Retirado'}
-                    </span>
-                  </div>
+                    {asset.status === 'available' ? 'Disponible' : 
+                     asset.status === 'in-use' ? 'En Uso' : 
+                     asset.status === 'maintenance' ? 'Mantenimiento' : 
+                     'Retirado'}
+                  </span>
                 </div>
-              ))
-            ) : (
-              <div className="p-4 text-center text-gray-500">No hay conservadores registrados</div>
-            )}
+              </div>
+            ))}
           </div>
         </div>
         
@@ -187,28 +152,24 @@ const Dashboard: React.FC<DashboardProps> = ({
               <Users className="h-5 w-5 text-polar-600 mr-2" />
               <h2 className="text-xl font-semibold">Clientes Recientes</h2>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/clients')}>Ver Todos</Button>
+            <Button variant="ghost" size="sm">Ver Todos</Button>
           </div>
           
           <div className="space-y-3">
-            {recentClients && recentClients.length > 0 ? (
-              recentClients.map((client) => (
-                <div key={client.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-full overflow-hidden">
-                    <img src={client.imageSrc} alt={client.name} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="font-medium">{client.name}</p>
-                    <p className="text-sm text-gray-500">{client.assetsAssigned} conservadores</p>
-                  </div>
-                  <div className="ml-auto">
-                    <Button size="sm" variant="outline" onClick={() => navigate(`/clients?id=${client.id}`)}>Ver Detalle</Button>
-                  </div>
+            {recentClients.slice(0, 3).map((client) => (
+              <div key={client.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-full overflow-hidden">
+                  <img src={client.imageSrc} alt={client.name} className="w-full h-full object-cover" />
                 </div>
-              ))
-            ) : (
-              <div className="p-4 text-center text-gray-500">No hay clientes registrados</div>
-            )}
+                <div className="ml-3">
+                  <p className="font-medium">{client.name}</p>
+                  <p className="text-sm text-gray-500">{client.assetsAssigned} conservadores</p>
+                </div>
+                <div className="ml-auto">
+                  <Button size="sm" variant="outline">Ver Detalle</Button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

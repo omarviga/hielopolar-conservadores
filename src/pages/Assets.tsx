@@ -1,7 +1,7 @@
+
 import React from 'react';
 import AssetsList from '@/components/AssetsList';
 import { useAssets } from '@/hooks/useAssets';
-import { Package } from 'lucide-react';
 
 const Assets: React.FC = () => {
   const { assets, loading, error } = useAssets();
@@ -22,26 +22,13 @@ const Assets: React.FC = () => {
       <div className="text-center py-10">
         <div className="bg-red-100 text-red-700 p-4 rounded-lg inline-block">
           <p>{error}</p>
-          <button
-            className="mt-2 text-sm underline"
-            onClick={() => window.location.reload()}
-          >
-            Reintentar
-          </button>
+          <button className="mt-2 text-sm underline">Reintentar</button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div>
-      <div className="mb-6 flex items-center gap-2">
-        <Package className="h-6 w-6 text-polar-600" />
-        <h1 className="text-2xl font-bold">Gestión de Conservadores</h1>
-      </div>
-      <AssetsList assets={assets} />
-    </div>
-  );
+  return <AssetsList assets={assets} />;
 };
 
 export default Assets;

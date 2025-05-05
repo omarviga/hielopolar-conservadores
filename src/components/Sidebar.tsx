@@ -1,87 +1,100 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Settings, Home, Package, Users, ClipboardList, QrCode, BarChart3 } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  Package, 
+  Users, 
+  Calendar, 
+  Settings, 
+  BarChart, 
+  Wrench, 
+  LogOut 
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const Sidebar = () => {
+interface SidebarProps {
+  open: boolean;
+}
+
+const menuItems = [
+  { 
+    title: 'Dashboard', 
+    icon: <LayoutDashboard className="h-5 w-5" />, 
+    path: '/' 
+  },
+  { 
+    title: 'Conservadores', 
+    icon: <Package className="h-5 w-5" />, 
+    path: '/assets' 
+  },
+  { 
+    title: 'Clientes', 
+    icon: <Users className="h-5 w-5" />, 
+    path: '/clients' 
+  },
+  { 
+    title: 'Mantenimiento', 
+    icon: <Wrench className="h-5 w-5" />, 
+    path: '/maintenance' 
+  },
+  { 
+    title: 'Calendario', 
+    icon: <Calendar className="h-5 w-5" />, 
+    path: '/calendar' 
+  },
+  { 
+    title: 'Reportes', 
+    icon: <BarChart className="h-5 w-5" />, 
+    path: '/reports' 
+  },
+  { 
+    title: 'Configuración', 
+    icon: <Settings className="h-5 w-5" />, 
+    path: '/settings' 
+  },
+];
+
+const Sidebar: React.FC<SidebarProps> = ({ open }) => {
   return (
-    <aside data-sidebar="sidebar" className="fixed inset-y-0 left-0 z-40 w-64 bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
-      <div className="p-6">
-        <h2 className="text-2xl font-bold">Hielo App</h2>
+    <aside 
+      className={cn(
+        "bg-sidebar h-screen transition-all duration-300 flex flex-col",
+        open ? "w-64" : "w-0 md:w-16 overflow-hidden"
+      )}
+    >
+      <div className="p-4 flex items-center justify-center h-16 border-b border-sidebar-border">
+        {open ? (
+          <h1 className="text-lg font-bold text-sidebar-foreground">Gestión de Activos</h1>
+        ) : (
+          <Package className="h-6 w-6 text-sidebar-foreground" />
+        )}
       </div>
-
-      <nav className="px-3 py-2 space-y-1">
-        <NavLink
-          to="/"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-          end
-        >
-          <Home size={20} />
-          <span>Inicio</span>
-        </NavLink>
-
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <BarChart3 size={20} />
-          <span>Dashboard</span>
-        </NavLink>
-
-        <NavLink
-          to="/assets"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <Package size={20} />
-          <span>Activos</span>
-        </NavLink>
-
-        <NavLink
-          to="/clients"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <Users size={20} />
-          <span>Clientes</span>
-        </NavLink>
-
-        <NavLink
-          to="/service-orders"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <ClipboardList size={20} />
-          <span>Órdenes de Servicio</span>
-        </NavLink>
-
-        <NavLink
-          to="/qr-generator"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <QrCode size={20} />
-          <span>Generador QR</span>
-        </NavLink>
-
-        <NavLink
-          to="/settings"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <Settings size={20} />
-          <span>Configuración</span>
-        </NavLink>
-      </nav>
+      
+      <div className="flex-1 py-4 overflow-y-auto">
+        <nav className="px-2 space-y-1">
+          {menuItems.map((item) => (
+            <NavLink
+              key={item.title}
+              to={item.path}
+              className={({ isActive }) => cn(
+                "sidebar-item",
+                isActive && "sidebar-item-active"
+              )}
+            >
+              {item.icon}
+              {open && <span>{item.title}</span>}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+      
+      <div className="p-4 border-t border-sidebar-border">
+        <button className="sidebar-item w-full justify-center md:justify-start">
+          <LogOut className="h-5 w-5" />
+          {open && <span>Cerrar Sesión</span>}
+        </button>
+      </div>
     </aside>
   );
 };

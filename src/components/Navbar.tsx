@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Bell, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -14,11 +16,8 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           <Menu className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-2">
-          <img 
-            src="/lovable-uploads/c1da25b1-89e2-4efd-b463-7c1df36a52bd.png" 
-            alt="Hielo Polar del Centro" 
-            className="h-12 w-auto" 
-          />
+          <img src="/placeholder.svg" alt="Hielo Polar" className="h-8 w-8" />
+          <span className="font-semibold text-xl text-polar-700 hidden sm:inline-block">Hielo Polar</span>
         </div>
       </div>
       

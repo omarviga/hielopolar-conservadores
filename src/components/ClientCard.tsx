@@ -1,117 +1,114 @@
 
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useClients } from '@/hooks/useClients';
-import { Client } from './client/ClientInterface';
-import ClientHeader from './client/ClientHeader';
-import ContactInfo from './client/ContactInfo';
-import CreditProgress from './client/CreditProgress';
-import ClientActions from './client/ClientActions';
-import ClientDetailHeader from './client/ClientDetailHeader';
-import DetailContactInfo from './client/DetailContactInfo';
-import DetailLocationInfo from './client/DetailLocationInfo';
-import DetailBusinessInfo from './client/DetailBusinessInfo';
-import DetailCreditInfo from './client/DetailCreditInfo';
-import ClientDetailActions from './client/ClientDetailActions';
-import EditClientForm from './client/EditClientForm';
-import { ClientFormValues } from './client/ClientFormSchema';
+import React from 'react';
+import { 
+  User, 
+  MapPin, 
+  Phone, 
+  Package 
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+export interface Client {
+  id: string;
+  name: string;
+  contactPerson: string;
+  phone: string;
+  email: string;
+  address: string;
+  assetsAssigned: number;
+  maxCredit: number;
+  activeCredit: number;
+  status: 'active' | 'inactive';
+  imageSrc: string;
+}
 
 interface ClientCardProps {
   client: Client;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
-  const [showDetails, setShowDetails] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
-  const { updateClient, deleteClient } = useClients();
-
-  const toggleClientStatus = () => {
-    const newStatus = client.status === 'active' ? 'inactive' : 'active';
-    updateClient(client.id, { status: newStatus });
-  };
-
-  const handleEditSubmit = (values: ClientFormValues) => {
-    updateClient(client.id, {
-      ...values,
-      conserver: values.conserver, // Actualizar el conservador asignado
-    });
-    setShowEditForm(false);
-  };
-
-  const handleDelete = (clientId: string) => {
-    if (window.confirm("¿Estás seguro que deseas eliminar este cliente?")) {
-      deleteClient(clientId);
-    }
-  };
-
-  if (showEditForm) {
-    return (
-      <Dialog open={showEditForm} onOpenChange={setShowEditForm}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Editar Cliente</DialogTitle>
-          </DialogHeader>
-          <EditClientForm
-            client={client}
-            onSubmit={handleEditSubmit}
-            onCancel={() => setShowEditForm(false)}
-          />
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  const creditPercentage = (client.activeCredit / client.maxCredit) * 100;
+  const creditStatus = 
+    creditPercentage < 50 ? 'bg-green-500' :
+    creditPercentage < 80 ? 'bg-yellow-500' :
+    'bg-red-500';
 
   return (
-    <>
-      <div className="bg-white rounded-lg shadow overflow-hidden card-hover">
-        <div className="p-4 border-b">
-          <ClientHeader client={client} />
-        </div>
-
-        <div className="p-4">
-          <ContactInfo client={client} />
-          <CreditProgress client={client} />
-          <div className="text-sm text-gray-500 mb-2">
-            <strong>Conservador asignado:</strong> {client.conserver || 'No asignado'}
+    <div className="bg-white rounded-lg shadow overflow-hidden card-hover">
+      <div className="p-4 border-b">
+        <div className="flex items-center">
+          <div className="h-12 w-12 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
+            <img 
+              src={client.imageSrc} 
+              alt={client.name} 
+              className="w-full h-full object-cover"
+            />
           </div>
-          <ClientActions
-            onShowDetails={() => setShowDetails(true)}
-            onEdit={() => setShowEditForm(true)}
-            onDelete={handleDelete}
-            client={client}
-          />
+          <div className="ml-4">
+            <h3 className="font-bold text-lg">{client.name}</h3>
+            <div className="flex items-center">
+              <span className={`inline-block h-2 w-2 rounded-full ${client.status === 'active' ? 'bg-green-500' : 'bg-red-500'} mr-2`}></span>
+              <span className="text-sm text-gray-500">
+                {client.status === 'active' ? 'Cliente Activo' : 'Cliente Inactivo'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
-
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Detalles del Cliente</DialogTitle>
-          </DialogHeader>
-
-          <ClientDetailHeader client={client} onToggleStatus={toggleClientStatus} />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <DetailContactInfo client={client} />
-            <DetailLocationInfo client={client} />
+      
+      <div className="p-4">
+        <div className="space-y-2">
+          <div className="flex items-center text-sm">
+            <User className="h-4 w-4 mr-2 text-polar-600" />
+            <span>Contacto: {client.contactPerson}</span>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <DetailBusinessInfo client={client} />
-            <DetailCreditInfo client={client} />
+          
+          <div className="flex items-center text-sm">
+            <Phone className="h-4 w-4 mr-2 text-polar-600" />
+            <span>{client.phone}</span>
           </div>
-
-          <ClientDetailActions
-            onClose={() => setShowDetails(false)}
-            onEdit={() => {
-              setShowDetails(false);
-              setShowEditForm(true);
-            }}
-            client={client}
-          />
-        </DialogContent>
-      </Dialog>
-    </>
+          
+          <div className="flex items-center text-sm">
+            <MapPin className="h-4 w-4 mr-2 text-polar-600" />
+            <span>{client.address}</span>
+          </div>
+          
+          <div className="flex items-center text-sm">
+            <Package className="h-4 w-4 mr-2 text-polar-600" />
+            <span>Conservadores Asignados: {client.assetsAssigned}</span>
+          </div>
+          
+          <div className="mt-4">
+            <div className="flex justify-between text-sm">
+              <span>Límite de Crédito</span>
+              <span>{client.activeCredit} / {client.maxCredit}</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+              <div 
+                className={`h-2 rounded-full ${creditStatus}`}
+                style={{ width: `${creditPercentage}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-6 flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+          >
+            Ver Detalle
+          </Button>
+          <Button 
+            size="sm" 
+            className="flex-1 bg-polar-600 hover:bg-polar-700"
+          >
+            Asignar Conservador
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 
