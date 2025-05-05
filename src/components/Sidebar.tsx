@@ -34,6 +34,11 @@ const menuItems = [
     path: '/clients' 
   },
   { 
+    title: 'Reparaciones', 
+    icon: <Wrench className="h-5 w-5" />, 
+    path: '/repairs' 
+  },
+  { 
     title: 'Mantenimiento', 
     icon: <Wrench className="h-5 w-5" />, 
     path: '/maintenance' 
