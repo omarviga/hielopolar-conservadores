@@ -2,7 +2,17 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AreaChart, BarChart } from '@/components/ui/chart';
+import { ChartContainer } from '@/components/ui/chart';
+import { 
+  AreaChart, 
+  BarChart, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Area, 
+  Bar 
+} from 'recharts';
 
 const RepairReports: React.FC = () => {
   // Mock data for charts
@@ -44,14 +54,30 @@ const RepairReports: React.FC = () => {
             <CardTitle>Reparaciones por Mes</CardTitle>
           </CardHeader>
           <CardContent>
-            <AreaChart
-              data={monthlyRepairsData}
-              index="name"
-              categories={["value"]}
-              colors={["blue"]}
-              valueFormatter={(value: number) => `${value} órdenes`}
-              className="h-72"
-            />
+            <ChartContainer config={{}} className="h-72">
+              <AreaChart
+                data={monthlyRepairsData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip formatter={(value) => [`${value} órdenes`, 'Cantidad']} />
+                <Area 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#3b82f6" 
+                  fillOpacity={1} 
+                  fill="url(#colorValue)" 
+                />
+              </AreaChart>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -60,14 +86,18 @@ const RepairReports: React.FC = () => {
             <CardTitle>Reparaciones por Tipo</CardTitle>
           </CardHeader>
           <CardContent>
-            <BarChart
-              data={repairTypeData}
-              index="name"
-              categories={["value"]}
-              colors={["blue"]}
-              valueFormatter={(value: number) => `${value} órdenes`}
-              className="h-72"
-            />
+            <ChartContainer config={{}} className="h-72">
+              <BarChart
+                data={repairTypeData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip formatter={(value) => [`${value} órdenes`, 'Cantidad']} />
+                <Bar dataKey="value" fill="#3b82f6" />
+              </BarChart>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
