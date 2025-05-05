@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Settings, Home, Package, Users, ClipboardList, QrCode } from 'lucide-react';
+import { Settings, Home, Package, Users, ClipboardList, QrCode, BarChart3 } from 'lucide-react';
 
 const Sidebar = () => {
   return (
@@ -20,6 +20,16 @@ const Sidebar = () => {
         >
           <Home size={20} />
           <span>Inicio</span>
+        </NavLink>
+
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) => 
+            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
+          }
+        >
+          <BarChart3 size={20} />
+          <span>Dashboard</span>
         </NavLink>
 
         <NavLink
