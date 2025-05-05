@@ -26,7 +26,7 @@ export const OrderDetail = ({ order }: OrderDetailProps) => {
         <div>
           <h2 className="text-2xl font-bold">Orden #{order.order_number}</h2>
           <p className="text-muted-foreground">
-            Creada el {format(new Date(order.created_at), 'dd/MM/yyyy')}
+            Creada el {order.created_at ? format(new Date(order.created_at), 'dd/MM/yyyy') : '-'}
           </p>
         </div>
         <Badge className={getStatusColor(order.status)}>

@@ -27,13 +27,3 @@ export interface OrderDetail {
   subtotal: number;
   type: 'repuesto' | 'servicio' | 'otro';
 }
-
-export interface OrderFormValues {
-  client_id?: string;
-  equipment_id?: string;
-  equipment_type?: string;
-  problem_description?: string;
-  service_type: 'mantenimiento' | 'reparacion' | 'instalacion';
-  status: 'pendiente' | 'en_proceso' | 'completado' | 'cancelado';
-  estimated_delivery_date?: string;
-}

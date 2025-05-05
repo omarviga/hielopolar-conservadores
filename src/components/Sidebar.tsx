@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Settings, Home, Package, Users, Calendar as CalendarIcon, BarChart3, Map, Wrench, BoxesIcon, ShoppingCart, Truck, QrCode, ListOrdered } from 'lucide-react';
+import { Settings, Home, Package, Users, Calendar as CalendarIcon, BarChart3, Map, Wrench, Box, ShoppingCart, Truck, QrCode, ClipboardList } from 'lucide-react';
 
 const Sidebar = () => {
   return (
@@ -43,95 +43,15 @@ const Sidebar = () => {
         </NavLink>
 
         <NavLink
-          to="/maintenance"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <Wrench size={20} />
-          <span>Mantenimiento</span>
-        </NavLink>
-        
-        <NavLink
           to="/service-orders"
           className={({ isActive }) => 
             isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
           }
         >
-          <ListOrdered size={20} />
+          <ClipboardList size={20} />
           <span>Órdenes de Servicio</span>
         </NavLink>
 
-        <NavLink
-          to="/calendar"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <CalendarIcon size={20} />
-          <span>Calendario</span>
-        </NavLink>
-
-        <NavLink
-          to="/reports"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <BarChart3 size={20} />
-          <span>Reportes</span>
-        </NavLink>
-
-        <NavLink
-          to="/map"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <Map size={20} />
-          <span>Mapa</span>
-        </NavLink>
-
-        <NavLink
-          to="/repairs"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <Wrench size={20} />
-          <span>Reparaciones</span>
-        </NavLink>
-
-        <NavLink
-          to="/inventory"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <BoxesIcon size={20} />
-          <span>Inventario</span>
-        </NavLink>
-
-        <NavLink
-          to="/orders"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <ShoppingCart size={20} />
-          <span>Pedidos</span>
-        </NavLink>
-
-        <NavLink
-          to="/suppliers"
-          className={({ isActive }) => 
-            isActive ? 'sidebar-item-active sidebar-item' : 'sidebar-item'
-          }
-        >
-          <Truck size={20} />
-          <span>Proveedores</span>
-        </NavLink>
-        
         <NavLink
           to="/qr-generator"
           className={({ isActive }) => 

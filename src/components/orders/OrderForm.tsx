@@ -4,16 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useClients } from "@/hooks/useClients";
-import { useOrderMutations } from '@/hooks/orders/mutations';
 import { useQueryClient } from '@tanstack/react-query';
 
 const formSchema = z.object({
-  client_id: z.string().optional(),
   equipment_type: z.string().min(2, {
     message: "El tipo de equipo debe tener al menos 2 caracteres",
   }),
@@ -30,9 +27,7 @@ interface OrderFormProps {
 }
 
 const OrderForm = ({ onCancel }: OrderFormProps) => {
-  const { clients } = useClients();
   const queryClient = useQueryClient();
-  const { createOrder } = useOrderMutations(queryClient);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,41 +38,14 @@ const OrderForm = ({ onCancel }: OrderFormProps) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    await createOrder.mutateAsync(values);
+    console.log(values);
+    // Aquí se implementaría la lógica para guardar la orden
     onCancel();
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="client_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cliente</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione un cliente" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {clients.map((client) => (
-                    <SelectItem key={client.id} value={client.id}>
-                      {client.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                Seleccione el cliente para esta orden
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="equipment_type"

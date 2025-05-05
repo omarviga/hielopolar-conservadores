@@ -56,7 +56,7 @@ const OrdersList = () => {
                 </Badge>
               </TableCell>
               <TableCell>
-                {format(new Date(order.created_at), 'dd/MM/yyyy')}
+                {order.created_at ? format(new Date(order.created_at), 'dd/MM/yyyy') : '-'}
               </TableCell>
               <TableCell className="text-right">
                 <Button
