@@ -12,6 +12,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Asset } from './AssetCard';
 import { Client } from './ClientCard';
+import { useNavigate } from 'react-router-dom';
+import { toast } from "@/components/ui/use-toast";
 
 interface DashboardProps {
   recentAssets: Asset[];
@@ -19,6 +21,36 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) => {
+  const navigate = useNavigate();
+
+  const handleViewAll = (route: string) => {
+    navigate(route);
+  };
+
+  const handleViewEvents = () => {
+    navigate('/calendar');
+    toast({
+      title: "Eventos",
+      description: "Redirigiendo a la vista completa de eventos",
+    });
+  };
+
+  const handleViewAssetDetail = (assetId: string) => {
+    toast({
+      title: "Detalle del Conservador",
+      description: `Viendo detalles del conservador ${assetId}`,
+    });
+    // En una implementación completa, esto redigiría a una página de detalle
+  };
+
+  const handleViewClientDetail = (clientId: string) => {
+    toast({
+      title: "Detalle del Cliente",
+      description: `Viendo detalles del cliente ${clientId}`,
+    });
+    // En una implementación completa, esto redigiría a una página de detalle
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -102,7 +134,11 @@ const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) =>
               </div>
             ))}
             
-            <Button variant="outline" className="w-full mt-2">
+            <Button 
+              variant="outline" 
+              className="w-full mt-2"
+              onClick={handleViewEvents}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Ver Todos
             </Button>
@@ -117,7 +153,13 @@ const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) =>
               <PackageOpen className="h-5 w-5 text-polar-600 mr-2" />
               <h2 className="text-xl font-semibold">Últimas Consignaciones</h2>
             </div>
-            <Button variant="ghost" size="sm">Ver Todos</Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => handleViewAll('/assets')}
+            >
+              Ver Todos
+            </Button>
           </div>
           
           <div className="space-y-3">
@@ -152,7 +194,13 @@ const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) =>
               <Users className="h-5 w-5 text-polar-600 mr-2" />
               <h2 className="text-xl font-semibold">Clientes Recientes</h2>
             </div>
-            <Button variant="ghost" size="sm">Ver Todos</Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => handleViewAll('/clients')}
+            >
+              Ver Todos
+            </Button>
           </div>
           
           <div className="space-y-3">
@@ -166,7 +214,13 @@ const Dashboard: React.FC<DashboardProps> = ({ recentAssets, recentClients }) =>
                   <p className="text-sm text-gray-500">{client.assetsAssigned} conservadores</p>
                 </div>
                 <div className="ml-auto">
-                  <Button size="sm" variant="outline">Ver Detalle</Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => handleViewClientDetail(client.id)}
+                  >
+                    Ver Detalle
+                  </Button>
                 </div>
               </div>
             ))}
