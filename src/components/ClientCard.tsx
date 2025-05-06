@@ -4,10 +4,13 @@ import {
   User, 
   MapPin, 
   Phone, 
-  Package 
+  Package, 
+  Edit,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 
 export interface Client {
@@ -26,10 +29,14 @@ export interface Client {
 
 interface ClientCardProps {
   client: Client;
+  onUpdateClient?: (updatedClient: Client) => void;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
+const ClientCard: React.FC<ClientCardProps> = ({ client, onUpdateClient }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editData, setEditData] = useState<Partial<Client>>({});
+  
   const creditPercentage = (client.activeCredit / client.maxCredit) * 100;
   const creditStatus = 
     creditPercentage < 50 ? 'bg-green-500' :
@@ -41,6 +48,46 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
       title: "Asignación de conservador",
       description: `Iniciando proceso de asignación para ${client.name}`,
     });
+  };
+
+  const handleEditClick = () => {
+    setEditData({
+      name: client.name,
+      contactPerson: client.contactPerson,
+      email: client.email,
+      phone: client.phone,
+      address: client.address,
+      status: client.status
+    });
+    setShowEditModal(true);
+  };
+
+  const handleEditChange = (field: keyof Client, value: string) => {
+    setEditData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleStatusChange = (newStatus: 'active' | 'inactive') => {
+    setEditData(prev => ({
+      ...prev,
+      status: newStatus
+    }));
+  };
+
+  const handleSubmitEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (onUpdateClient) {
+      const updatedClient = {
+        ...client,
+        ...editData
+      };
+      onUpdateClient(updatedClient);
+    }
+    
+    setShowEditModal(false);
   };
 
   return (
@@ -102,7 +149,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
           </div>
         </div>
         
-        <div className="mt-6 flex gap-2">
+        <div className="mt-6 grid grid-cols-3 gap-2">
           <Button 
             variant="outline" 
             size="sm" 
@@ -112,11 +159,19 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
             Ver Detalle
           </Button>
           <Button 
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={handleEditClick}
+          >
+            <Edit className="h-4 w-4 mr-1" /> Editar
+          </Button>
+          <Button 
             size="sm" 
             className="flex-1 bg-polar-600 hover:bg-polar-700"
             onClick={handleAssignAsset}
           >
-            Asignar Conservador
+            Asignar
           </Button>
         </div>
       </div>
@@ -205,6 +260,108 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
               Asignar Conservador
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Client Modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Editar Cliente</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmitEdit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="edit-name">Nombre de la Empresa</Label>
+                <Input 
+                  id="edit-name" 
+                  value={editData.name || ''}
+                  onChange={(e) => handleEditChange('name', e.target.value)}
+                  placeholder="Ingrese el nombre de la empresa" 
+                  required 
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="edit-contactPerson">Persona de Contacto</Label>
+                <Input 
+                  id="edit-contactPerson" 
+                  value={editData.contactPerson || ''}
+                  onChange={(e) => handleEditChange('contactPerson', e.target.value)}
+                  placeholder="Ingrese el nombre de la persona de contacto" 
+                  required 
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input 
+                  id="edit-email" 
+                  type="email"
+                  value={editData.email || ''}
+                  onChange={(e) => handleEditChange('email', e.target.value)}
+                  placeholder="Ingrese el email" 
+                  required 
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="edit-phone">Teléfono</Label>
+                <Input 
+                  id="edit-phone" 
+                  value={editData.phone || ''}
+                  onChange={(e) => handleEditChange('phone', e.target.value)}
+                  placeholder="Ingrese el teléfono" 
+                  required 
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="edit-address">Dirección</Label>
+                <Input 
+                  id="edit-address" 
+                  value={editData.address || ''}
+                  onChange={(e) => handleEditChange('address', e.target.value)}
+                  placeholder="Ingrese la dirección" 
+                  required 
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label>Estado</Label>
+                <div className="flex gap-2">
+                  <Button 
+                    type="button"
+                    variant={editData.status === 'active' ? 'default' : 'outline'} 
+                    size="sm"
+                    className={editData.status === 'active' ? 'bg-green-600 hover:bg-green-700' : ''}
+                    onClick={() => handleStatusChange('active')}
+                  >
+                    Activo
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant={editData.status === 'inactive' ? 'default' : 'outline'} 
+                    size="sm"
+                    className={editData.status === 'inactive' ? 'bg-red-600 hover:bg-red-700' : ''}
+                    onClick={() => handleStatusChange('inactive')}
+                  >
+                    Inactivo
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" type="button" onClick={() => setShowEditModal(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="bg-polar-600 hover:bg-polar-700">
+                Guardar Cambios
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

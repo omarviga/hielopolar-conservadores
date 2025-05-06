@@ -64,6 +64,17 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
     });
   };
 
+  // This function will be passed to the ClientCard component to handle updates
+  const handleUpdateClient = (updatedClient: Client) => {
+    // In a real app, this would update the client in your backend
+    console.log("Updating client:", updatedClient);
+    
+    toast({
+      title: "Cliente actualizado",
+      description: `El cliente ${updatedClient.name} ha sido actualizado correctamente.`,
+    });
+  };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -114,7 +125,7 @@ const ClientsList: React.FC<ClientsListProps> = ({ clients }) => {
             className="animate-slide-in" 
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <ClientCard client={client} />
+            <ClientCard client={client} onUpdateClient={handleUpdateClient} />
           </div>
         ))}
       </div>

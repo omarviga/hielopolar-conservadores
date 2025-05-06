@@ -2,9 +2,19 @@
 import React from 'react';
 import ClientsList from '@/components/ClientsList';
 import { useClients } from '@/hooks/useClients';
+import { Client } from '@/components/ClientCard';
+import { toast } from '@/components/ui/use-toast';
 
 const Clients: React.FC = () => {
-  const { clients, loading, error } = useClients();
+  const { clients, loading, error, updateClient } = useClients();
+
+  const handleUpdateClient = (updatedClient: Client) => {
+    updateClient(updatedClient.id, updatedClient);
+    toast({
+      title: "Cliente actualizado",
+      description: `El cliente ${updatedClient.name} ha sido actualizado correctamente.`,
+    });
+  };
 
   if (loading) {
     return (
