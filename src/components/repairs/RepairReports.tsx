@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChartContainer } from '@/components/ui/chart';
@@ -14,18 +14,40 @@ import {
   Tooltip, 
   Legend 
 } from 'recharts';
+import { toast } from "@/components/ui/use-toast";
 
 const RepairReports: React.FC = () => {
-  // Mock data for charts
-  const monthlyRepairsData = [
-    { name: 'Ene', value: 15 },
-    { name: 'Feb', value: 20 },
-    { name: 'Mar', value: 18 },
-    { name: 'Abr', value: 25 },
-    { name: 'May', value: 22 },
-    { name: 'Jun', value: 30 }
-  ];
+  const [selectedYear, setSelectedYear] = useState('2025');
+  
+  // Monthly repair data for different years
+  const repairData = {
+    '2023': [
+      { name: 'Ene', value: 10 },
+      { name: 'Feb', value: 12 },
+      { name: 'Mar', value: 15 },
+      { name: 'Abr', value: 11 },
+      { name: 'May', value: 14 },
+      { name: 'Jun', value: 18 }
+    ],
+    '2024': [
+      { name: 'Ene', value: 13 },
+      { name: 'Feb', value: 15 },
+      { name: 'Mar', value: 16 },
+      { name: 'Abr', value: 19 },
+      { name: 'May', value: 20 },
+      { name: 'Jun', value: 24 }
+    ],
+    '2025': [
+      { name: 'Ene', value: 15 },
+      { name: 'Feb', value: 20 },
+      { name: 'Mar', value: 18 },
+      { name: 'Abr', value: 25 },
+      { name: 'May', value: 22 },
+      { name: 'Jun', value: 30 }
+    ]
+  };
 
+  // Repair type data is consistent across years
   const repairTypeData = [
     { name: 'Fuga de gas', value: 35 },
     { name: 'Motor', value: 28 },
@@ -34,10 +56,18 @@ const RepairReports: React.FC = () => {
     { name: 'Otros', value: 12 }
   ];
 
+  const handleYearChange = (year: string) => {
+    setSelectedYear(year);
+    toast({
+      title: "Año actualizado",
+      description: `Mostrando datos del año ${year}`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-end space-x-4">
-        <Select defaultValue="2025">
+        <Select value={selectedYear} onValueChange={handleYearChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Seleccionar año" />
           </SelectTrigger>
@@ -57,7 +87,7 @@ const RepairReports: React.FC = () => {
           <CardContent>
             <ChartContainer config={{}} className="h-72">
               <AreaChart
-                data={monthlyRepairsData}
+                data={repairData[selectedYear as keyof typeof repairData]}
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
               >
                 <defs>
