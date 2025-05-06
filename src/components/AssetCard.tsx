@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Package, 
@@ -11,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
+import ClientAssetQR from './qr/ClientAssetQR';
 
 export interface Asset {
   id: string;
@@ -191,6 +191,11 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
                 </div>
               )}
             </div>
+          </div>
+          
+          <div className="mt-6">
+            <h4 className="font-medium mb-3">Código QR</h4>
+            <ClientAssetQR asset={asset} />
           </div>
           
           <div className="flex justify-end gap-2 mt-4">

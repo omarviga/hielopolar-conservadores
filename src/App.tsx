@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Assets from "./pages/Assets";
+import AssetsMap from "./pages/AssetsMap";
 import Clients from "./pages/Clients";
 import Repairs from "./pages/Repairs";
 import Maintenance from "./pages/Maintenance";
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
             <Route path="/assets" element={<Assets />} />
+            <Route path="/assets-map" element={<AssetsMap />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/repairs" element={<Repairs />} />
             <Route path="/maintenance" element={<Maintenance />} />

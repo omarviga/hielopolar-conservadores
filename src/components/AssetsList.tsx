@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import AssetCard, { Asset } from './AssetCard';
 import { Button } from '@/components/ui/button';
-import { Plus, Filter } from 'lucide-react';
+import { Plus, Filter, MapPin } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { Link } from 'react-router-dom';
 
 interface AssetsListProps {
   assets: Asset[];
@@ -104,6 +104,16 @@ const AssetsList: React.FC<AssetsListProps> = ({ assets }) => {
               Mantenimiento
             </Button>
           </div>
+          
+          <Link to="/assets-map">
+            <Button 
+              variant="outline"
+              className="flex items-center gap-1"
+            >
+              <MapPin className="h-4 w-4" />
+              Ver Mapa
+            </Button>
+          </Link>
           
           <Button 
             className="bg-polar-600 hover:bg-polar-700"
