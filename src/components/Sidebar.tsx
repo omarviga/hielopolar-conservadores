@@ -9,7 +9,8 @@ import {
   Settings, 
   BarChart, 
   Wrench, 
-  LogOut 
+  LogOut,
+  Settings2 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -40,7 +41,7 @@ const menuItems = [
   },
   { 
     title: 'Mantenimiento', 
-    icon: <Wrench className="h-5 w-5" />, 
+    icon: <Settings2 className="h-5 w-5" />, 
     path: '/maintenance' 
   },
   { 
