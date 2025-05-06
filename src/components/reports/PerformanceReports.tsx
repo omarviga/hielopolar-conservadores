@@ -2,7 +2,22 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Bar, CartesianGrid, Legend, Line, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, Tooltip, XAxis, YAxis } from 'recharts';
+import { 
+  BarChart, 
+  Bar, 
+  LineChart, 
+  Line, 
+  RadarChart, 
+  PolarGrid, 
+  PolarAngleAxis, 
+  PolarRadiusAxis, 
+  Radar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend 
+} from 'recharts';
 import { ChartContainer } from "@/components/ui/chart";
 
 const PerformanceReports: React.FC = () => {
@@ -80,9 +95,8 @@ const PerformanceReports: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <ChartContainer
-              title="Rendimiento por Técnico"
-              description="Métricas de rendimiento de cada técnico"
-              height={400}
+              config={{}}
+              className="h-[400px]"
             >
               <BarChart
                 data={techniciansData}
@@ -97,15 +111,18 @@ const PerformanceReports: React.FC = () => {
                 <Bar dataKey="time" fill="#ffc658" name="Tiempo Prom (hrs)" />
               </BarChart>
             </ChartContainer>
+            <div className="mt-2 text-center">
+              <h3 className="font-medium">Rendimiento por Técnico</h3>
+              <p className="text-sm text-muted-foreground">Métricas de rendimiento de cada técnico</p>
+            </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardContent className="p-6">
             <ChartContainer
-              title="Órdenes Completadas vs Pendientes"
-              description="Evolución mensual de órdenes de trabajo"
-              height={400}
+              config={{}}
+              className="h-[400px]"
             >
               <LineChart
                 data={monthlyPerformance}
@@ -119,15 +136,18 @@ const PerformanceReports: React.FC = () => {
                 <Line type="monotone" dataKey="pending" stroke="#82ca9d" name="Pendientes" strokeWidth={2} />
               </LineChart>
             </ChartContainer>
+            <div className="mt-2 text-center">
+              <h3 className="font-medium">Órdenes Completadas vs Pendientes</h3>
+              <p className="text-sm text-muted-foreground">Evolución mensual de órdenes de trabajo</p>
+            </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardContent className="p-6">
             <ChartContainer
-              title="Análisis de Rendimiento"
-              description="Comparativa de técnicos por área de desempeño"
-              height={400}
+              config={{}}
+              className="h-[400px]"
             >
               <RadarChart
                 cx={300}
@@ -147,6 +167,10 @@ const PerformanceReports: React.FC = () => {
                 <Tooltip />
               </RadarChart>
             </ChartContainer>
+            <div className="mt-2 text-center">
+              <h3 className="font-medium">Análisis de Rendimiento</h3>
+              <p className="text-sm text-muted-foreground">Comparativa de técnicos por área de desempeño</p>
+            </div>
           </CardContent>
         </Card>
       </div>

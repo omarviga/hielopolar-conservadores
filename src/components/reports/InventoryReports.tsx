@@ -1,6 +1,20 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Bar, CartesianGrid, Cell, Legend, Line, Pie, Tooltip, XAxis, YAxis } from 'recharts';
+import { 
+  BarChart, 
+  Bar, 
+  LineChart, 
+  Line, 
+  PieChart, 
+  Pie, 
+  Cell, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend 
+} from 'recharts';
 import { ChartContainer } from "@/components/ui/chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -63,9 +77,8 @@ const InventoryReports: React.FC = () => {
           <Card>
             <CardContent className="p-6">
               <ChartContainer
-                title="Niveles de Inventario"
-                description="Cantidad de productos por categoría"
-                height={400}
+                config={{}}
+                className="h-[400px]"
               >
                 <BarChart
                   data={stockData}
@@ -79,6 +92,10 @@ const InventoryReports: React.FC = () => {
                   <Bar dataKey="value" fill="#82ca9d" name="Valor ($)" />
                 </BarChart>
               </ChartContainer>
+              <div className="mt-2 text-center">
+                <h3 className="font-medium">Niveles de Inventario</h3>
+                <p className="text-sm text-muted-foreground">Cantidad de productos por categoría</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -87,9 +104,8 @@ const InventoryReports: React.FC = () => {
           <Card>
             <CardContent className="p-6">
               <ChartContainer
-                title="Índice de Rotación"
-                description="Evolución del índice de rotación mensual"
-                height={400}
+                config={{}}
+                className="h-[400px]"
               >
                 <LineChart
                   data={rotationData}
@@ -102,6 +118,10 @@ const InventoryReports: React.FC = () => {
                   <Line type="monotone" dataKey="rotacion" stroke="#8884d8" name="Índice" strokeWidth={2} />
                 </LineChart>
               </ChartContainer>
+              <div className="mt-2 text-center">
+                <h3 className="font-medium">Índice de Rotación</h3>
+                <p className="text-sm text-muted-foreground">Evolución del índice de rotación mensual</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -110,12 +130,10 @@ const InventoryReports: React.FC = () => {
           <Card>
             <CardContent className="p-6">
               <ChartContainer
-                title="Análisis ABC"
-                description="Clasificación de productos según valor/rotación"
-                height={400}
+                config={{}}
+                className="h-[400px]"
               >
                 <PieChart
-                  data={categoryData}
                   margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                 >
                   <Pie
@@ -136,6 +154,10 @@ const InventoryReports: React.FC = () => {
                   <Legend />
                 </PieChart>
               </ChartContainer>
+              <div className="mt-2 text-center">
+                <h3 className="font-medium">Análisis ABC</h3>
+                <p className="text-sm text-muted-foreground">Clasificación de productos según valor/rotación</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

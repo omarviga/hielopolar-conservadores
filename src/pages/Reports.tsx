@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import SalesReports from '@/components/reports/SalesReports';
 import InventoryReports from '@/components/reports/InventoryReports';
 import PerformanceReports from '@/components/reports/PerformanceReports';
+import RepairReports from '@/components/repairs/RepairReports';
 
 const Reports: React.FC = () => {
   return (
@@ -14,10 +15,11 @@ const Reports: React.FC = () => {
       </div>
 
       <Tabs defaultValue="sales" className="w-full">
-        <TabsList className="grid grid-cols-3 mb-4">
+        <TabsList className="grid grid-cols-4 mb-4">
           <TabsTrigger value="sales">Ventas</TabsTrigger>
           <TabsTrigger value="inventory">Inventario</TabsTrigger>
           <TabsTrigger value="performance">Rendimiento</TabsTrigger>
+          <TabsTrigger value="repairs">Reparaciones</TabsTrigger>
         </TabsList>
         
         <TabsContent value="sales">
@@ -58,6 +60,20 @@ const Reports: React.FC = () => {
             </CardHeader>
             <CardContent>
               <PerformanceReports />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="repairs">
+          <Card>
+            <CardHeader>
+              <CardTitle>Reportes de Reparaciones</CardTitle>
+              <CardDescription>
+                Análisis de órdenes de reparación y métricas de servicio.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RepairReports />
             </CardContent>
           </Card>
         </TabsContent>

@@ -5,13 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChartContainer } from '@/components/ui/chart';
 import { 
   AreaChart, 
+  Area, 
   BarChart, 
+  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Area, 
-  Bar 
+  Legend 
 } from 'recharts';
 
 const RepairReports: React.FC = () => {

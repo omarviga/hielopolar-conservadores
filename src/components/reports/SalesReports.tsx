@@ -3,7 +3,19 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Area, Bar, CartesianGrid, Cell, Legend, Line, Pie, Tooltip, XAxis, YAxis } from 'recharts';
+import { 
+  AreaChart, 
+  Area, 
+  BarChart, 
+  Bar, 
+  PieChart, 
+  Pie, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend 
+} from 'recharts';
 import { ChartContainer } from "@/components/ui/chart";
 
 const SalesReports: React.FC = () => {
@@ -125,12 +137,8 @@ const SalesReports: React.FC = () => {
           <Card>
             <CardContent className="p-6">
               <ChartContainer
-                title="Tendencia de Ventas"
-                description={`Evolución de ventas ${
-                  timeRange === "month" ? "mensuales" : 
-                  timeRange === "quarter" ? "trimestrales" : "anuales"
-                }`}
-                height={400}
+                config={{}}
+                className="h-[400px]"
               >
                 <AreaChart
                   data={reportData}
@@ -156,6 +164,15 @@ const SalesReports: React.FC = () => {
                   <Tooltip />
                 </AreaChart>
               </ChartContainer>
+              <div className="mt-2 text-center">
+                <h3 className="font-medium">Tendencia de Ventas</h3>
+                <p className="text-sm text-muted-foreground">
+                  {`Evolución de ventas ${
+                    timeRange === "month" ? "mensuales" : 
+                    timeRange === "quarter" ? "trimestrales" : "anuales"
+                  }`}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -166,12 +183,10 @@ const SalesReports: React.FC = () => {
               <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                 <div className="md:w-1/2">
                   <ChartContainer
-                    title="Ventas por Producto"
-                    description="Distribución de ventas por tipo de producto"
-                    height={300}
+                    config={{}}
+                    className="h-[300px]"
                   >
                     <PieChart
-                      data={productData}
                       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                     >
                       <Pie
@@ -188,13 +203,16 @@ const SalesReports: React.FC = () => {
                       <Tooltip />
                     </PieChart>
                   </ChartContainer>
+                  <div className="mt-2 text-center">
+                    <h3 className="font-medium">Ventas por Producto</h3>
+                    <p className="text-sm text-muted-foreground">Distribución de ventas por tipo de producto</p>
+                  </div>
                 </div>
                 
                 <div className="md:w-1/2">
                   <ChartContainer
-                    title="Ventas por Producto"
-                    description="Comparativa por tipo de producto"
-                    height={300}
+                    config={{}}
+                    className="h-[300px]"
                   >
                     <BarChart
                       data={productData}
@@ -206,6 +224,10 @@ const SalesReports: React.FC = () => {
                       <Bar dataKey="value" fill="#8884d8" />
                     </BarChart>
                   </ChartContainer>
+                  <div className="mt-2 text-center">
+                    <h3 className="font-medium">Ventas por Producto</h3>
+                    <p className="text-sm text-muted-foreground">Comparativa por tipo de producto</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
