@@ -14,12 +14,12 @@ interface AssetEditModalProps {
 
 const AssetEditModal: React.FC<AssetEditModalProps> = ({ asset, onSubmit, onCancel }) => {
   return (
-    <DialogContent>
+    <DialogContent className="max-w-3xl">
       <DialogHeader>
         <DialogTitle className="flex justify-between items-center">
           <span>Editar Conservador</span>
           <DialogClose asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={onCancel}>
               <X className="h-4 w-4" />
             </Button>
           </DialogClose>
