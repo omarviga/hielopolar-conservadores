@@ -10,7 +10,8 @@ import {
   BarChart, 
   Wrench, 
   LogOut,
-  Settings2 
+  Settings2,
+  Map
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +29,11 @@ const menuItems = [
     title: 'Conservadores', 
     icon: <Package className="h-5 w-5" />, 
     path: '/assets' 
+  },
+  { 
+    title: 'Mapa', 
+    icon: <Map className="h-5 w-5" />, 
+    path: '/assets-map' 
   },
   { 
     title: 'Clientes', 
@@ -83,6 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
             <NavLink
               key={item.title}
               to={item.path}
+              end={item.path === '/'}
               className={({ isActive }) => cn(
                 "sidebar-item",
                 isActive && "sidebar-item-active"

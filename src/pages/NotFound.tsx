@@ -1,5 +1,5 @@
 
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
@@ -22,9 +22,11 @@ const NotFound = () => {
         <p className="text-gray-500 mb-8">
           Lo sentimos, la página que estás buscando no existe o ha sido movida.
         </p>
-        <Button className="bg-polar-600 hover:bg-polar-700">
-          <Home className="mr-2 h-4 w-4" />
-          Volver al inicio
+        <Button className="bg-polar-600 hover:bg-polar-700" asChild>
+          <Link to="/">
+            <Home className="mr-2 h-4 w-4" />
+            Volver al inicio
+          </Link>
         </Button>
       </div>
     </div>
