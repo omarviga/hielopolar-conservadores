@@ -10,7 +10,7 @@ import {
   Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Asset } from './AssetCard';
+import { Asset } from '@/types/Asset';
 import { Client } from './ClientCard';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "@/components/ui/use-toast";

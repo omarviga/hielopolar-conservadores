@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { QRCode } from 'qrcode.react';
+import QRCode from 'qrcode.react';
 import { Asset } from '@/types/Asset';
 
 interface ClientAssetQRProps {

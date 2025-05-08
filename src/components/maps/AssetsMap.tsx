@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
-import { Asset } from '@/components/AssetCard';
+import { Asset } from '@/types/Asset';
 import { Button } from '@/components/ui/button';
 import { MapPin, AlertCircle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
