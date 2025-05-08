@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Package, 
@@ -5,12 +6,14 @@ import {
   Calendar, 
   AlertCircle,
   Users,
-  X
+  X,
+  Pencil
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
 import ClientAssetQR from './qr/ClientAssetQR';
+import EditAssetForm from './forms/EditAssetForm';
 
 export interface Asset {
   id: string;
@@ -27,6 +30,7 @@ export interface Asset {
 
 interface AssetCardProps {
   asset: Asset;
+  onUpdate?: (id: string, updates: Partial<Asset>) => void;
 }
 
 const statusLabels: Record<Asset['status'], string> = {
@@ -43,8 +47,9 @@ const statusClasses: Record<Asset['status'], string> = {
   'retired': 'status-badge-retired'
 };
 
-const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
+const AssetCard: React.FC<AssetCardProps> = ({ asset, onUpdate }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   
   const handleManage = () => {
     toast({
@@ -52,6 +57,23 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
       description: `Iniciando gestión para ${asset.model} (${asset.id})`,
       variant: "default",
     });
+  };
+
+  const handleEdit = () => {
+    setShowDetailsModal(false);
+    setShowEditModal(true);
+  };
+
+  const handleUpdateAsset = (updatedAsset: Partial<Asset>) => {
+    if (onUpdate) {
+      onUpdate(asset.id, updatedAsset);
+      setShowEditModal(false);
+      toast({
+        title: "Conservador actualizado",
+        description: `${asset.model} (${asset.id}) ha sido actualizado correctamente`,
+        variant: "default",
+      });
+    }
   };
 
   return (
@@ -199,8 +221,13 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
           </div>
           
           <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={() => setShowDetailsModal(false)}>
-              Cerrar
+            <Button 
+              variant="outline" 
+              className="flex gap-1 items-center"
+              onClick={handleEdit}
+            >
+              <Pencil className="h-4 w-4" />
+              Editar
             </Button>
             <Button 
               className="bg-polar-600 hover:bg-polar-700"
@@ -209,6 +236,28 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
               Gestionar
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex justify-between items-center">
+              <span>Editar Conservador</span>
+              <DialogClose asChild>
+                <Button variant="ghost" size="icon">
+                  <X className="h-4 w-4" />
+                </Button>
+              </DialogClose>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <EditAssetForm 
+            asset={asset} 
+            onSubmit={handleUpdateAsset} 
+            onCancel={() => setShowEditModal(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>

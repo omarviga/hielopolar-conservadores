@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AssetCard, { Asset } from './AssetCard';
 import { Button } from '@/components/ui/button';
@@ -10,9 +11,10 @@ import { Link } from 'react-router-dom';
 
 interface AssetsListProps {
   assets: Asset[];
+  updateAsset?: (id: string, updates: Partial<Asset>) => void;
 }
 
-const AssetsList: React.FC<AssetsListProps> = ({ assets }) => {
+const AssetsList: React.FC<AssetsListProps> = ({ assets, updateAsset }) => {
   const [filter, setFilter] = useState<Asset['status'] | 'all'>('all');
   const [showNewAssetModal, setShowNewAssetModal] = useState(false);
   const [newAssetData, setNewAssetData] = useState({
@@ -132,7 +134,10 @@ const AssetsList: React.FC<AssetsListProps> = ({ assets }) => {
             className="animate-slide-in" 
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <AssetCard asset={asset} />
+            <AssetCard 
+              asset={asset} 
+              onUpdate={updateAsset}
+            />
           </div>
         ))}
       </div>

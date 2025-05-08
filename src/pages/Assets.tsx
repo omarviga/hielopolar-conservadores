@@ -2,9 +2,11 @@
 import React from 'react';
 import AssetsList from '@/components/AssetsList';
 import { useAssets } from '@/hooks/useAssets';
+import { Button } from '@/components/ui/button';
+import { RefreshCcw } from 'lucide-react';
 
 const Assets: React.FC = () => {
-  const { assets, loading, error } = useAssets();
+  const { assets, loading, error, refetchAssets, updateAsset } = useAssets();
 
   if (loading) {
     return (
@@ -22,13 +24,20 @@ const Assets: React.FC = () => {
       <div className="text-center py-10">
         <div className="bg-red-100 text-red-700 p-4 rounded-lg inline-block">
           <p>{error}</p>
-          <button className="mt-2 text-sm underline">Reintentar</button>
+          <Button 
+            variant="outline" 
+            className="mt-2 text-sm"
+            onClick={refetchAssets}
+          >
+            <RefreshCcw className="h-4 w-4 mr-2" />
+            Reintentar
+          </Button>
         </div>
       </div>
     );
   }
 
-  return <AssetsList assets={assets} />;
+  return <AssetsList assets={assets} updateAsset={updateAsset} />;
 };
 
 export default Assets;
