@@ -1,9 +1,6 @@
-
-import React, { useState } from 'react';
-import { Asset } from '../AssetCard';
+import React from 'react';
+import { Asset } from '@/types/Asset';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { 
   Select,
   SelectContent,
@@ -14,7 +11,6 @@ import {
 import { 
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,6 +19,7 @@ import {
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/input';
 
 interface EditAssetFormProps {
   asset: Asset;

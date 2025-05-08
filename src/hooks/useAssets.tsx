@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Asset } from '@/components/AssetCard';
+import { Asset } from '@/types/Asset';
 import { toast } from '@/components/ui/use-toast';
 
 // Simulated data

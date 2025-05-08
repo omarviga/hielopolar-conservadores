@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import AssetCard, { Asset } from './AssetCard';
+import AssetCard from './AssetCard';
+import { Asset } from '@/types/Asset';
 import { Button } from '@/components/ui/button';
-import { Plus, Filter, MapPin } from 'lucide-react';
+import { Plus, MapPin } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
