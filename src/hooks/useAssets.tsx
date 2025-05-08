@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Asset } from '@/components/AssetCard';
+import { toast } from '@/components/ui/use-toast';
 
 // Simulated data
 const mockAssets: Asset[] = [
@@ -102,26 +103,33 @@ export const useAssets = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Simulate API call
-    const fetchAssets = async () => {
-      try {
-        // In a real app, this would be an API call
-        setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setAssets(mockAssets);
-        setError(null);
-      } catch (err) {
-        setError('Error al cargar los conservadores');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchAssets = async () => {
+    try {
+      // In a real app, this would be an API call
+      setLoading(true);
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setAssets(mockAssets);
+      setError(null);
+    } catch (err) {
+      setError('Error al cargar los conservadores');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAssets();
   }, []);
+
+  const refetchAssets = () => {
+    toast({
+      title: "Actualizando",
+      description: "Recargando información de conservadores..."
+    });
+    fetchAssets();
+  };
 
   const addAsset = (asset: Asset) => {
     setAssets(prev => [...prev, asset]);
@@ -143,6 +151,7 @@ export const useAssets = () => {
     assets,
     loading,
     error,
+    refetchAssets,
     addAsset,
     updateAsset,
     deleteAsset
