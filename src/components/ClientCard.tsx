@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import ClientQR from './qr/ClientQR';
+import ClientPDF from './pdf/ClientPDF';
 
 export interface Client {
   id: string;
@@ -246,9 +247,16 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onUpdateClient }) => {
             </div>
           </div>
           
-          <div className="mt-6">
-            <h4 className="font-medium mb-3">Código QR</h4>
-            <ClientQR client={client} />
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-medium mb-3">Código QR</h4>
+              <ClientQR client={client} />
+            </div>
+            <div>
+              <h4 className="font-medium mb-3">Exportar información</h4>
+              <p className="text-sm text-gray-500 mb-3">Descarga o imprime el expediente completo del cliente.</p>
+              <ClientPDF client={client} />
+            </div>
           </div>
           
           <div className="flex justify-end gap-2 mt-4">
