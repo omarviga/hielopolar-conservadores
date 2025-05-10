@@ -38,7 +38,7 @@ const Clients: React.FC = () => {
     );
   }
 
-  return <ClientsList clients={clients} />;
+  return <ClientsList clients={clients} onUpdateClient={handleUpdateClient} />;
 };
 
 export default Clients;

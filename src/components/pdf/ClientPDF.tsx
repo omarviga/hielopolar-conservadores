@@ -2,8 +2,10 @@
 import React, { useRef } from 'react';
 import { Client } from '../ClientCard';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
-import { generatePDF } from 'react-to-pdf';
+import { Download, Printer, FileText } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import { toast } from '@/components/ui/use-toast';
 
 interface ClientPDFProps {
   client: Client;
@@ -13,16 +15,45 @@ interface ClientPDFProps {
 const ClientPDF: React.FC<ClientPDFProps> = ({ client, label = "Descargar PDF" }) => {
   const targetRef = useRef<HTMLDivElement>(null);
   
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (targetRef.current) {
-      generatePDF({
-        element: targetRef.current,
-        filename: `cliente-${client.id}.pdf`,
-        page: {
-          margin: 20,
-          format: 'letter',
-        }
-      });
+      try {
+        toast({
+          title: "Generando PDF",
+          description: "Por favor espere mientras se genera el PDF...",
+        });
+        
+        const canvas = await html2canvas(targetRef.current, {
+          scale: 2,
+          logging: false,
+          useCORS: true
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+        
+        const imgWidth = 210;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(`cliente-${client.id}.pdf`);
+        
+        toast({
+          title: "PDF generado correctamente",
+          description: `El expediente de ${client.name} ha sido descargado.`,
+        });
+      } catch (error) {
+        console.error('Error generando PDF:', error);
+        toast({
+          title: "Error al generar PDF",
+          description: "Ocurrió un error al generar el PDF. Por favor intente nuevamente.",
+          variant: "destructive"
+        });
+      }
     }
   };
   
@@ -72,7 +103,7 @@ const ClientPDF: React.FC<ClientPDFProps> = ({ client, label = "Descargar PDF" }
         size="sm"
         className="flex items-center gap-2"
       >
-        <Download className="h-4 w-4" /> {label}
+        <FileText className="h-4 w-4" /> {label}
       </Button>
     </div>
   );
