@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { Client } from '../ClientCard';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
-import { usePDF } from 'react-to-pdf';
+import { generatePDF } from 'react-to-pdf';
 
 interface ClientPDFProps {
   client: Client;
@@ -12,13 +12,19 @@ interface ClientPDFProps {
 
 const ClientPDF: React.FC<ClientPDFProps> = ({ client, label = "Descargar PDF" }) => {
   const targetRef = useRef<HTMLDivElement>(null);
-  const { toPDF, targetRef: pdfTargetRef } = usePDF({
-    filename: `cliente-${client.id}.pdf`,
-    page: {
-      margin: 20,
-      format: 'letter',
+  
+  const handleDownload = () => {
+    if (targetRef.current) {
+      generatePDF({
+        element: targetRef.current,
+        filename: `cliente-${client.id}.pdf`,
+        page: {
+          margin: 20,
+          format: 'letter',
+        }
+      });
     }
-  });
+  };
   
   return (
     <div>
@@ -61,7 +67,7 @@ const ClientPDF: React.FC<ClientPDFProps> = ({ client, label = "Descargar PDF" }
       </div>
       
       <Button 
-        onClick={() => toPDF(targetRef)}
+        onClick={handleDownload}
         variant="outline" 
         size="sm"
         className="flex items-center gap-2"
