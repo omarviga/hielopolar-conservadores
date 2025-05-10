@@ -2,8 +2,8 @@
 import React, { useRef } from 'react';
 import { Client } from '../ClientCard';
 import { Button } from '@/components/ui/button';
-import { Download, Printer } from 'lucide-react';
-import { toPDF } from 'react-to-pdf';
+import { Download } from 'lucide-react';
+import { usePDF } from 'react-to-pdf';
 
 interface ClientPDFProps {
   client: Client;
@@ -11,24 +11,19 @@ interface ClientPDFProps {
 }
 
 const ClientPDF: React.FC<ClientPDFProps> = ({ client, label = "Descargar PDF" }) => {
-  const contentRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<HTMLDivElement>(null);
+  const { toPDF, targetRef: pdfTargetRef } = usePDF({
+    filename: `cliente-${client.id}.pdf`,
+    page: {
+      margin: 20,
+      format: 'letter',
+    }
+  });
   
-  const handleDownload = () => {
-    if (!contentRef.current) return;
-    
-    toPDF(contentRef, {
-      filename: `cliente-${client.id}.pdf`,
-      page: {
-        margin: 20,
-        format: 'letter',
-      },
-    });
-  };
-
   return (
     <div>
       <div className="hidden">
-        <div ref={contentRef} className="p-6 bg-white">
+        <div ref={targetRef} className="p-6 bg-white">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold">Expediente de Cliente</h1>
             <p className="text-gray-500">ID: {client.id}</p>
@@ -66,7 +61,7 @@ const ClientPDF: React.FC<ClientPDFProps> = ({ client, label = "Descargar PDF" }
       </div>
       
       <Button 
-        onClick={handleDownload} 
+        onClick={() => toPDF(targetRef)}
         variant="outline" 
         size="sm"
         className="flex items-center gap-2"
